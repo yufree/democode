@@ -1,0 +1,15 @@
+Title
+========================================================
+
+```{r setup,echo=FALSE}
+library(knitr)
+opts_knit$set(animation.fun = hook_scianimator)
+```
+<link rel="stylesheet" href="http://vis.supstat.com//assets/themes/dinky/css/scianimator.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://vis.supstat.com/assets/themes/dinky/js/jquery.scianimator.min.js"></script>
+```{r test, fig.show='animate',interval=.1,echo=FALSE}
+library('animation')
+par(mar = c(1.5, 3, 2.5, 0.1), cex.main = 1)
+boot.iid(heights = c(1, 2))
+```
