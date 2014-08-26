@@ -1,0 +1,514 @@
+PLOT
+========================================================
+
+```{r}
+# mydata <- read.delim("clipboard")
+
+library(plotrix)
+
+M6BDE47 <- read.table('data/M6BDE47')
+
+M40BDE47 <- read.table('data/M40BDE47')
+
+O4BDE42 <- read.table('data/O4BDE42')
+
+O3BDE47 <- read.table('data/O3BDE47')
+
+M6BDE47$first <- c(200000,-38000,-38000,0,200000,-38000,-38000,0,200000)
+M6BDE47$second <- c(0,0,0,0,0,0,0,0,0)
+
+ss <- t(M6BDE47[1,c(9,1:4)])
+ss[5] <- ss[5]*20-38000
+sss <- t(M6BDE47[1,1:4])
+sss[4] <- sss[4]*20-38000
+sssd <- t(M6BDE47[1,5:8])
+sssd[4] <- sssd[4]*20
+
+sr <- t(M6BDE47[2,c(9,1:4)])
+ssr <- t(M6BDE47[2,1:4])
+srsd <- t(M6BDE47[2,5:8])
+
+st <- t(M6BDE47[3,c(9,1:4)])
+sst <-  t(M6BDE47[3,1:4])
+stsd <- t(M6BDE47[3,5:8])
+
+sl <- t(M6BDE47[4,c(9,1:4)])*20-38000
+ssl <- t(M6BDE47[4,1:4])*20-38000
+slsd <- t(M6BDE47[4,5:8])*20
+
+ws <- t(M6BDE47[5,c(9,1:4)])
+ws[5] <- ws[5]*20-38000
+wws <- t(M6BDE47[5,1:4])
+wws[4] <- wws[4]*20-38000
+wssd <- t(M6BDE47[5,5:8])
+wssd[4] <- wssd[4]*20
+
+wr <- t(M6BDE47[6,c(9,1:4)])
+wwr <- t(M6BDE47[6,1:4])
+wrsd <- t(M6BDE47[6,5:8])
+
+wt <- t(M6BDE47[7,c(9,1:4)])
+wwt <- t(M6BDE47[7,1:4])
+wtsd <- t(M6BDE47[7,5:8])
+
+wl <- t(M6BDE47[8,c(9,1:4)])
+wl[c(1:4)] <- wl[c(1:4)]*20-38000
+wwl <- t(M6BDE47[8,1:4])
+wwl[c(1:3)] <- wwl[c(1:3)]*20-38000
+wlsd <- t(M6BDE47[8,5:8])
+wlsd[c(1:3)] <- wlsd[c(1:3)]*20
+
+us <- t(M6BDE47[9,c(9,1:4)])
+uus <- t(M6BDE47[9,1:4])
+ussd <- t(M6BDE47[9,5:8])
+pdf("figure/M6BDE47.pdf",height=8,width=10)
+plot(ss,
+     cex=0.8,
+     axes=F,
+     bty="n",
+     type="b",
+     xaxt="n",
+     ylim=c(-40000,200000),
+     xlab="Exposure time(days)",
+     ylab="The amounts of compound(pg)")
+axis(1,at=c(1:5),labels=c(0,4,8,12,16))
+axis(2,at=c(-38000,2000,50000,100000,150000,200000),labels=c(0,2000,'50000','100000','150000','200000'))
+axis.break(2,2000, style="slash") 
+
+arrows(c(2:5), c(sss-sssd), c(2:5), c(sss+sssd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(ssr-srsd), c(2:5), c(ssr+srsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(sst-stsd), c(2:5), c(sst+stsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(ssl-slsd), c(2:5), c(ssl+slsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wws-wssd), c(2:5), c(wws+wssd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wwr-wrsd), c(2:5), c(wwr+wrsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wwt-wtsd), c(2:5), c(wwt+wtsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wwl-wlsd), c(2:5), c(wwl+wlsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(uus-ussd), c(2:5), c(uus+ussd), code = 3, angle = 90, length = 0.03)
+
+lines(sr,
+      cex=0.8,
+      pch=22,
+      type="b")
+
+lines(st,
+      cex=0.8,
+      pch=24,
+      type="b")
+
+lines(sl,
+      cex=0.8,
+      pch=23,
+      type="b")
+
+lines(ws,
+      cex=0.8,
+      type="b",
+      lty=2)
+
+lines(wr,
+      cex=0.8,
+      pch=22,
+      type="b",
+      lty=2)
+
+lines(wt,
+      cex=0.8,
+      pch=24,
+      type="b",
+      lty=2)
+
+lines(wl,
+      cex=0.8,
+      pch=23,
+      type="b",
+      lty=2)
+
+lines(us,
+      cex=0.8,
+      type="b",
+      lty=4)
+
+legend(3.8,130000,
+       box.lty=0,
+       legend=c("unplanted control solution","soybean","wheat","root","stem","leaves","solution"),
+       pch=c(21,-1,-1,22,24,23,21),
+       lty=c(4,1,2,-1,-1,-1,-1)
+       )
+dev.off()
+```
+
+```{r}
+M40BDE47$first <- c(200000,-38000,-38000,0,200000,-38000,-38000,0,200000)
+M40BDE47$second <- c(0,0,0,0,0,0,0,0,0)
+
+ss <- t(M40BDE47[1,c(9,1:4)])
+ss[5] <- ss[5]*20-38000
+sss <- t(M40BDE47[1,1:4])
+sss[4] <- sss[4]*20-38000
+sssd <- t(M40BDE47[1,5:8])
+sssd[4] <- sssd[4]*20
+
+sr <- t(M40BDE47[2,c(9,1:4)])
+ssr <- t(M40BDE47[2,1:4])
+srsd <- t(M40BDE47[2,5:8])
+
+st <- t(M40BDE47[3,c(9,1:4)])
+sst <-  t(M40BDE47[3,1:4])
+stsd <- t(M40BDE47[3,5:8])
+
+sl <- t(M40BDE47[4,c(9,1:4)])*20-38000
+ssl <- t(M40BDE47[4,1:4])*20-38000
+slsd <- t(M40BDE47[4,5:8])*20
+
+ws <- t(M40BDE47[5,c(9,1:4)])
+ws[5] <- ws[5]*20-38000
+wws <- t(M40BDE47[5,1:4])
+wws[4] <- wws[4]*20-38000
+wssd <- t(M40BDE47[5,5:8])
+wssd[4] <- wssd[4]*20
+
+wr <- t(M40BDE47[6,c(9,1:4)])
+wwr <- t(M40BDE47[6,1:4])
+wrsd <- t(M40BDE47[6,5:8])
+
+wt <- t(M40BDE47[7,c(9,1:4)])
+wwt <- t(M40BDE47[7,1:4])
+wtsd <- t(M40BDE47[7,5:8])
+
+wl <- t(M40BDE47[8,c(9,1:4)])*20-38000
+wwl <- t(M40BDE47[8,1:4])*20-38000
+wlsd <- t(M40BDE47[8,5:8])*20
+
+us <- t(M40BDE47[9,c(9,1:4)])
+uus <- t(M40BDE47[9,1:4])
+ussd <- t(M40BDE47[9,5:8])
+pdf("figure/M40BDE47.pdf",height=8,width=10)
+plot(ss,
+     cex=0.8,
+     axes=F,
+     bty="n",
+     type="b",
+     xaxt="n",
+     ylim=c(-40000,200000),
+     xlab="Exposure time(days)",
+     ylab="The amounts of compound(pg)")
+axis(1,at=c(1:5),labels=c(0,4,8,12,16))
+axis(2,at=c(-38000,2000,50000,100000,150000,200000),labels=c(0,2000,'50000','100000','150000','200000'))
+axis.break(2,2000, style="slash") 
+
+arrows(c(2:5), c(sss-sssd), c(2:5), c(sss+sssd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(ssr-srsd), c(2:5), c(ssr+srsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(sst-stsd), c(2:5), c(sst+stsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(ssl-slsd), c(2:5), c(ssl+slsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wws-wssd), c(2:5), c(wws+wssd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wwr-wrsd), c(2:5), c(wwr+wrsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wwt-wtsd), c(2:5), c(wwt+wtsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wwl-wlsd), c(2:5), c(wwl+wlsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(uus-ussd), c(2:5), c(uus+ussd), code = 3, angle = 90, length = 0.03)
+
+lines(sr,
+      cex=0.8,
+      pch=22,
+      type="b")
+
+lines(st,
+      cex=0.8,
+      pch=24,
+      type="b")
+
+lines(sl,
+      cex=0.8,
+      pch=23,
+      type="b")
+
+lines(ws,
+      cex=0.8,
+      type="b",
+      lty=2)
+
+lines(wr,
+      cex=0.8,
+      pch=22,
+      type="b",
+      lty=2)
+
+lines(wt,
+      cex=0.8,
+      pch=24,
+      type="b",
+      lty=2)
+
+lines(wl,
+      cex=0.8,
+      pch=23,
+      type="b",
+      lty=2)
+
+lines(us,
+      cex=0.8,
+      type="b",
+      lty=4)
+
+legend(3.8,130000,
+       box.lty=0,
+       legend=c("unplanted control solution","soybean","wheat","root","stem","leaves","solution"),
+       pch=c(21,-1,-1,22,24,23,21),
+       lty=c(4,1,2,-1,-1,-1,-1)
+       )
+dev.off()
+```
+
+```{r}
+O4BDE42$first <- c(200000,-38000,-38000,0,200000,-38000,-38000,0,200000)
+O4BDE42$second <- c(0,0,0,0,0,0,0,0,0)
+
+ss <- t(O4BDE42[1,c(9,1:4)])
+ss[c(4:5)] <- ss[c(4:5)]*20-38000
+sss <- t(O4BDE42[1,1:4])
+sss[c(3:4)] <- sss[c(3:4)]*20-38000
+sssd <- t(O4BDE42[1,5:8])
+sssd[c(3:4)] <- sssd[c(3:4)]*20
+
+sr <- t(O4BDE42[2,c(9,1:4)])
+ssr <- t(O4BDE42[2,1:4])
+srsd <- t(O4BDE42[2,5:8])
+
+st <- t(O4BDE42[3,c(9,1:4)])
+st[2] <- st[2]*20-38000
+sst <-  t(O4BDE42[3,1:4])
+sst[1] <- st[1]*20-38000
+stsd <- t(O4BDE42[3,5:8])
+stsd[1] <- stsd[1]*20
+
+sl <- t(O4BDE42[4,c(9,1:4)])*20-38000
+ssl <- t(O4BDE42[4,1:4])*20-38000
+slsd <- t(O4BDE42[4,5:8])*20
+
+ws <- t(O4BDE42[5,c(9,1:4)])
+ws[c(4:5)] <- ws[c(4:5)]*20-38000
+wws <- t(O4BDE42[5,1:4])
+wws[c(3:4)] <- wws[c(3:4)]*20-38000
+wssd <- t(O4BDE42[5,5:8])
+wssd[c(3:4)] <- wssd[c(3:4)]*20
+
+wr <- t(O4BDE42[6,c(9,1:4)])
+wwr <- t(O4BDE42[6,1:4])
+wrsd <- t(O4BDE42[6,5:8])
+
+wt <- t(O4BDE42[7,c(9,1:4)])
+wt[c(2:3)] <- wt[c(2:3)]*20-38000
+wwt <- t(O4BDE42[7,1:4])
+wwt[c(1:2)] <- wwt[c(1:2)]*20-38000
+wtsd <- t(O4BDE42[7,5:8])
+wtsd[c(1:2)] <- wtsd[c(1:2)]*20
+
+wl <- t(O4BDE42[8,c(9,1:4)])*20-38000
+wwl <- t(O4BDE42[8,1:4])*20-38000
+wlsd <- t(O4BDE42[8,5:8])*20
+
+us <- t(O4BDE42[9,c(9,1:4)])
+uus <- t(O4BDE42[9,1:4])
+ussd <- t(O4BDE42[9,5:8])
+
+pdf("figure/O4BDE42.pdf",height=8,width=10)
+plot(ss,
+     cex=0.8,
+     axes=F,
+     bty="n",
+     type="b",
+     xaxt="n",
+     ylim=c(-40000,200000),
+     xlab="Exposure time(days)",
+     ylab="The amounts of compound(pg)")
+axis(1,at=c(1:5),labels=c(0,4,8,12,16))
+axis(2,at=c(-38000,2000,50000,100000,150000,200000),labels=c(0,2000,'50000','100000','150000','200000'))
+axis.break(2,2000, style="slash") 
+
+arrows(c(2:5), c(sss-sssd), c(2:5), c(sss+sssd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(ssr-srsd), c(2:5), c(ssr+srsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(sst-stsd), c(2:5), c(sst+stsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(ssl-slsd), c(2:5), c(ssl+slsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wws-wssd), c(2:5), c(wws+wssd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wwr-wrsd), c(2:5), c(wwr+wrsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wwt-wtsd), c(2:5), c(wwt+wtsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wwl-wlsd), c(2:5), c(wwl+wlsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(uus-ussd), c(2:5), c(uus+ussd), code = 3, angle = 90, length = 0.03)
+
+lines(sr,
+      cex=0.8,
+      pch=22,
+      type="b")
+
+lines(st,
+      cex=0.8,
+      pch=24,
+      type="b")
+
+lines(sl,
+      cex=0.8,
+      pch=23,
+      type="b")
+
+lines(ws,
+      cex=0.8,
+      type="b",
+      lty=2)
+
+lines(wr,
+      cex=0.8,
+      pch=22,
+      type="b",
+      lty=2)
+
+lines(wt,
+      cex=0.8,
+      pch=24,
+      type="b",
+      lty=2)
+
+lines(wl,
+      cex=0.8,
+      pch=23,
+      type="b",
+      lty=2)
+
+lines(us,
+      cex=0.8,
+      type="b",
+      lty=4)
+
+legend(3.8,130000,
+       box.lty=0,
+       legend=c("unplanted control solution","soybean","wheat","root","stem","leaves","solution"),
+       pch=c(21,-1,-1,22,24,23,21),
+       lty=c(4,1,2,-1,-1,-1,-1)
+       )
+dev.off()
+```
+
+```{r}
+O3BDE47$first <- c(200000,-38000,-38000,0,200000,-38000,-38000,0,200000)
+O3BDE47$second <- c(0,0,0,0,0,0,0,0,0)
+
+ss <- t(O3BDE47[1,c(9,1:4)])
+ss[c(4:5)] <- ss[c(4:5)]*20-38000
+sss <- t(O3BDE47[1,1:4])
+sss[c(3:4)] <- sss[c(3:4)]*20-38000
+sssd <- t(O3BDE47[1,5:8])
+sssd[c(3:4)] <- sssd[c(3:4)]*20
+
+sr <- t(O3BDE47[2,c(9,1:4)])
+ssr <- t(O3BDE47[2,1:4])
+srsd <- t(O3BDE47[2,5:8])
+
+st <- t(O3BDE47[3,c(9,1:4)])
+st[2] <- st[2]*20-38000
+sst <-  t(O3BDE47[3,1:4])
+sst[1] <- sst[1]*20-38000
+stsd <- t(O3BDE47[3,5:8])
+stsd[1] <- stsd[1]*20
+
+sl <- t(O3BDE47[4,c(9,1:4)])*20-38000
+ssl <- t(O3BDE47[4,1:4])*20-38000
+slsd <- t(O3BDE47[4,5:8])*20
+
+ws <- t(O3BDE47[5,c(9,1:4)])
+ws[c(4:5)] <- ws[c(4:5)]*20-38000
+wws <- t(O3BDE47[5,1:4])
+wws[c(3:4)] <- wws[c(3:4)]*20-38000
+wssd <- t(O3BDE47[5,5:8])
+wssd[c(3:4)] <- wssd[c(3:4)]*20
+
+wr <- t(O3BDE47[6,c(9,1:4)])
+wwr <- t(O3BDE47[6,1:4])
+wrsd <- t(O3BDE47[6,5:8])
+
+wt <- t(O3BDE47[7,c(9,1:4)])
+wt[2] <- wt[2]*20-38000
+wwt <- t(O3BDE47[7,1:4])
+wwt[1] <- wwt[1]*20-38000
+wtsd <- t(O3BDE47[7,5:8])
+wtsd[1] <- wtsd[1]*20
+
+wl <- t(O3BDE47[8,c(9,1:4)])*20-38000
+wwl <- t(O3BDE47[8,1:4])*20-38000
+wlsd <- t(O3BDE47[8,5:8])*20
+
+us <- t(O3BDE47[9,c(9,1:4)])
+uus <- t(O3BDE47[9,1:4])
+ussd <- t(O3BDE47[9,5:8])
+pdf("figure/O3BDE47.pdf",height=8,width=10)
+plot(ss,
+     cex=0.8,
+     axes=F,
+     bty="n",
+     type="b",
+     xaxt="n",
+     ylim=c(-40000,200000),
+     xlab="Exposure time(days)",
+     ylab="The amounts of compound(pg)")
+axis(1,at=c(1:5),labels=c(0,4,8,12,16))
+axis(2,at=c(-38000,2000,50000,100000,150000,200000),labels=c(0,2000,'50000','100000','150000','200000'))
+axis.break(2,2000, style="slash") 
+
+arrows(c(2:5), c(sss-sssd), c(2:5), c(sss+sssd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(ssr-srsd), c(2:5), c(ssr+srsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(sst-stsd), c(2:5), c(sst+stsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(ssl-slsd), c(2:5), c(ssl+slsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wws-wssd), c(2:5), c(wws+wssd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wwr-wrsd), c(2:5), c(wwr+wrsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wwt-wtsd), c(2:5), c(wwt+wtsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(wwl-wlsd), c(2:5), c(wwl+wlsd), code = 3, angle = 90, length = 0.03)
+arrows(c(2:5), c(uus-ussd), c(2:5), c(uus+ussd), code = 3, angle = 90, length = 0.03)
+
+lines(sr,
+      cex=0.8,
+      pch=22,
+      type="b")
+
+lines(st,
+      cex=0.8,
+      pch=24,
+      type="b")
+
+lines(sl,
+      cex=0.8,
+      pch=23,
+      type="b")
+
+lines(ws,
+      cex=0.8,
+      type="b",
+      lty=2)
+
+lines(wr,
+      cex=0.8,
+      pch=22,
+      type="b",
+      lty=2)
+
+lines(wt,
+      cex=0.8,
+      pch=24,
+      type="b",
+      lty=2)
+
+lines(wl,
+      cex=0.8,
+      pch=23,
+      type="b",
+      lty=2)
+
+lines(us,
+      cex=0.8,
+      type="b",
+      lty=4)
+
+legend(3.8,130000,
+       box.lty=0,
+       legend=c("unplanted control solution","soybean","wheat","root","stem","leaves","solution"),
+       pch=c(21,-1,-1,22,24,23,21),
+       lty=c(4,1,2,-1,-1,-1,-1)
+       )
+dev.off()
+```
