@@ -1,0 +1,20 @@
+---
+title: "test"
+author: "于淼"
+data: "2014年9月10日"
+output:
+  pdf_document:
+    includes:
+      in_header: header.tex
+    latex_engine: xelatex
+---
+中英文混合(knitr需升级到最新版至少1.6.10)
+
+This is an R Markdown document. 
+
+```{r fig.showtext=TRUE}
+plot(cars,main='中文issue',family='wqy')
+plot(cars,main='中文issue2',family='wqy')
+```
+
+完
