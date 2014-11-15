@@ -1,0 +1,34 @@
+% 加载模块
+\usemodule[simplefonts]
+
+% 中西文衬线体、无衬线体和等宽体的字体设置
+\setmainfont[Courier]
+\setsansfont[Helvetica]
+\setmonofont[Futura-Medium]
+\setcjkmainfont[STXihei]
+\setcjksansfont[MicrosoftYaHei]
+\setcjkmonofont[STFangsong]
+
+% 设置正文字体默认尺寸
+\setupsimplefonts[size=12pt]
+
+% 中文断行
+\setscript[hanzi]
+
+\starttext
+
+测试 test 测试
+
+\ss 测试 test 测试
+
+\tt 测试 test 测试
+
+\startuseMPgraphic{box-ornament}
+offset := uniformdeviate 10pt;
+width := 2*offset + 30pt + uniformdeviate 30pt;
+height := 2*offset + 20pt + uniformdeviate 10pt;
+x1 := offset ; y1 := offset; x2 := width-offset; y2 := height-offset; fill z1--(x2,y1)--z2--(x1,y2)--cycle
+withcolor \MPcolor{BackgroundColor}; draw z1--(x2,y1)--z2--(x1,y2)--cycle
+withcolor \MPcolor{OrnamentColor}; \stopuseMPgraphic
+\useMPgraphic{box-ornament}
+\stoptext
