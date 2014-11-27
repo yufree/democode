@@ -2,6 +2,8 @@
 #' 
 #' This function generates HTML code to encode an RData/rda file within the HTML file.
 #' 
+#' Try to use results = 'asis' in R code Chunk
+#' 
 #' @export
 #' @author Richard Morey, slightly modified by F. Rodriguez-Sanchez.
 #' @source \link{http://bayesfactor.blogspot.com.es/2014/09/embedding-rdata-files-in-rmarkdown.html}
