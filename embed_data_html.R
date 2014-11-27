@@ -35,3 +35,11 @@ embed_data_html <-  function(dataset, textHTML = "Click here to download the dat
       </script>",
       sep="")
 }
+
+add_download_link = function(file){
+        cat(sprintf("<a href='%s' target='_blank' download='mynb.Rmd'>
+   <span class='glyphicon glyphicon-cloud-download' style='font-size:1.2em;'></span> Download
+  </a>",
+                    base64enc::dataURI(file = file, mime = 'text/rmd')        
+        ))
+}
