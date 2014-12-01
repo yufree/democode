@@ -1,3 +1,5 @@
+# script modified from Author: Luke Miller   Mar 1, 2011
+
 library(ncdf)
 library(lubridate)
 library(fields)
