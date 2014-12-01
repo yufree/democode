@@ -2,6 +2,9 @@ library(ncdf)
 library(lubridate)
 library(fields)
 library(animation)
+
+# data could be access from http://www.esrl.noaa.gov/psd/data/gridded/data.noaa.oisst.v2.html
+
 lats = seq(89.5,-89.5,-1) 
 lons = seq(0.5,359.5,1) 
 
