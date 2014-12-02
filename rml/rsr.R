@@ -1,5 +1,5 @@
 # recommamder system for envirnmental science
-df0 <- read.csv('./2008_BOLD_Survey_of_Puget_Sound_Levels_for_PCB_Congeners_Raw_Data.csv')
+df0 <- read.csv('./data/2008_BOLD_Survey_of_Puget_Sound_Levels_for_PCB_Congeners_Raw_Data.csv')
 df <- df0[,8:173]
 rownames(df) <- df0$Station.ID
 dfm <- data.matrix(df)

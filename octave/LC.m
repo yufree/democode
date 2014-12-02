@@ -11,22 +11,11 @@ m = length(y); % number of training examples
 J = 0;
 grad = zeros(size(theta));
 
-% ====================== YOUR CODE HERE ======================
-% Instructions: Compute the cost of a particular choice of theta.
-%               You should set J to the cost.
-%               Compute the partial derivatives and set grad to the partial
-%               derivatives of the cost w.r.t. each parameter in theta
-%
-% Note: grad should have the same dimensions as theta
-%
-
 h = sigmoid(X * theta);
 
 J = -1/m * (y' * log(h) + (1 - y)' * log(1 - h));
 
 grad = 1/m * (h - y)' * X;
-
-% =============================================================
 
 end
 
@@ -43,18 +32,10 @@ m = length(y); % number of training examples
 J = 0;
 grad = zeros(size(theta));
 
-% ====================== YOUR CODE HERE ======================
-% Instructions: Compute the cost of a particular choice of theta.
-%               You should set J to the cost.
-%               Compute the partial derivatives and set grad to the partial
-%               derivatives of the cost w.r.t. each parameter in theta
-
 h = sigmoid(X * theta);
 ntheta = theta(2:size(theta));
 J = -1/m * (y' * log(h) + (1 - y)' * log(1 - h)) + lambda/(2*m) * ntheta' *ntheta;
 grad = 1/m * ((h - y)' * X)' + lambda/m * [0;ntheta];
-
-% =============================================================
 
 end
 
@@ -65,13 +46,7 @@ function g = sigmoid(z)
 % You need to return the following variables correctly 
 g = zeros(size(z));
 
-% ====================== YOUR CODE HERE ======================
-% Instructions: Compute the sigmoid of each value of z (z can be a matrix,
-%               vector or scalar).
-
 g = 1 ./ (1 + exp(-z));
-
-% =============================================================
 
 end
 function out = mapFeature(X1, X2)
@@ -104,11 +79,6 @@ unction plotData(X, y)
 % Create New Figure
 figure; hold on;
 
-% ====================== YOUR CODE HERE ======================
-% Instructions: Plot the positive and negative examples on a
-%               2D plot, using the option 'k+' for the positive
-%               examples and 'ko' for the negative examples.
-%
 
 % Find Indices of Positive and Negative Examples
 pos = find(y==1); neg = find(y == 0);
@@ -117,10 +87,6 @@ plot(X(pos, 1), X(pos, 2), 'k+','LineWidth', 2, ...
      'MarkerSize', 7);
 plot(X(neg, 1), X(neg, 2), 'ko', 'MarkerFaceColor', 'y', ...
      'MarkerSize', 7);
-
-% =========================================================================
-
-
 
 hold off;
 
@@ -185,18 +151,9 @@ m = size(X, 1); % Number of training examples
 % You need to return the following variables correctly
 p = zeros(m, 1);
 
-% ====================== YOUR CODE HERE ======================
-% Instructions: Complete the following code to make predictions using
-%               your learned logistic regression parameters. 
-%               You should set p to a vector of 0's and 1's
-%
-
 pt = sigmoid(X * theta);
 
 p(find(pt >= 0.5),1) = 1;
-
-% =========================================================================
-
 
 end
 

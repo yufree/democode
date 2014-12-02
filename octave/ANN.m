@@ -12,38 +12,12 @@ m = length(y); % number of training examples
 J = 0;
 grad = zeros(size(theta));
 
-% ====================== YOUR CODE HERE ======================
-% Instructions: Compute the cost of a particular choice of theta.
-%               You should set J to the cost.
-%               Compute the partial derivatives and set grad to the partial
-%               derivatives of the cost w.r.t. each parameter in theta
-%
-% Hint: The computation of the cost function and gradients can be
-%       efficiently vectorized. For example, consider the computation
-%
-%           sigmoid(X * theta)
-%
-%       Each row of the resulting matrix will contain the value of the
-%       prediction for that example. You can make use of this to vectorize
-%       the cost function and gradient computations. 
-%
-% Hint: When computing the gradient of the regularized cost function, 
-%       there're many possible vectorized solutions, but one solution
-%       looks like:
-%           grad = (unregularized gradient for logistic regression)
-%           temp = theta; 
-%           temp(1) = 0;   % because we don't add anything for j = 0  
-%           grad = grad + YOUR_CODE_HERE (using the temp variable)
-%
-
 h = sigmoid(X * theta);
 temp = theta; 
 temp(1) = 0; 
 J = -1/m * sum(y .* log(h) + (1-y) .* log(1 - h)) + lambda/(2 * m) * temp' * temp;
 grad = 1/m * X' * (h - y);
 grad = grad + lambda/m * temp;
-
-% =============================================================
 
 grad = grad(:);
 
@@ -68,47 +42,12 @@ all_theta = zeros(num_labels, n + 1);
 % Add ones to the X data matrix
 X = [ones(m, 1) X];
 
-% ====================== YOUR CODE HERE ======================
-% Instructions: You should complete the following code to train num_labels
-%               logistic regression classifiers with regularization
-%               parameter lambda. 
-%
-% Hint: theta(:) will return a column vector.
-%
-% Hint: You can use y == c to obtain a vector of 1's and 0's that tell use 
-%       whether the ground truth is true/false for this class.
-%
-% Note: For this assignment, we recommend using fmincg to optimize the cost
-%       function. It is okay to use a for-loop (for c = 1:num_labels) to
-%       loop over the different classes.
-%
-%       fmincg works similarly to fminunc, but is more efficient when we
-%       are dealing with large number of parameters.
-%
-% Example Code for fmincg:
-%
-%     % Set Initial theta
-%     initial_theta = zeros(n + 1, 1);
-%     
-%     % Set options for fminunc
-%     options = optimset('GradObj', 'on', 'MaxIter', 50);
-% 
-%     % Run fmincg to obtain the optimal theta
-%     % This function will return theta and the cost 
-%     [theta] = ...
-%         fmincg (@(t)(lrCostFunction(t, X, (y == c), lambda)), ...
-%                 initial_theta, options);
-%
-
 for c = 1: num_labels
         initial_theta = zeros(n + 1, 1);
 	options = optimset('GradObj', 'on', 'MaxIter', 50);
 	[theta] =  fmincg (@(t)(lrCostFunction(t, X, (y == c), lambda)), initial_theta, options);
 	all_theta(c,:) = theta';
 end
-
-% =========================================================================
-
 
 end
 function p = predictOneVsAll(all_theta, X)
@@ -130,27 +69,14 @@ p = zeros(size(X, 1), 1);
 % Add ones to the X data matrix
 X = [ones(m, 1) X];
 
-% ====================== YOUR CODE HERE ======================
-% Instructions: Complete the following code to make predictions using
-%               your learned logistic regression parameters (one-vs-all).
-%               You should set p to a vector of predictions (from 1 to
-%               num_labels).
-%
-% Hint: This code can be done all vectorized using the max function.
-%       In particular, the max function can also return the index of the 
-%       max element, for more information see 'help max'. If your examples 
-%       are in rows, then, you can use max(A, [], 2) to obtain the max 
-%       for each row.
-%       
+
 
 pt = sigmoid(X * all_theta');
 [c,i] = max(pt, [], 2);
 p = i;
 
-% =========================================================================
-
-
 end
+
 function [X, fX, i] = fmincg(f, X, options, P1, P2, P3, P4, P5)
 % Minimize a continuous differentialble multivariate function. Starting point
 % is given by "X" (D by 1), and the function named in the string "f", must
@@ -339,25 +265,11 @@ num_labels = size(Theta2, 1);
 % You need to return the following variables correctly 
 p = zeros(size(X, 1), 1);
 
-% ====================== YOUR CODE HERE ======================
-% Instructions: Complete the following code to make predictions using
-%               your learned neural network. You should set p to a 
-%               vector containing labels between 1 to num_labels.
-%
-% Hint: The max function might come in useful. In particular, the max
-%       function can also return the index of the max element, for more
-%       information see 'help max'. If your examples are in rows, then, you
-%       can use max(A, [], 2) to obtain the max for each row.
-%
-
 X1 = [ones(m, 1) X];
 p1 = sigmoid(X1 * Theta1');
 X2 = [ones(m, 1) p1];
 p2 = sigmoid(X2 * Theta2');
 [c,i] = max(p2, [], 2);
 p = i;
-
-% =========================================================================
-
 
 end

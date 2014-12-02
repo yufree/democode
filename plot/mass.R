@@ -1,5 +1,3 @@
-
-```{r}
 source("http://bioconductor.org/biocLite.R")
 biocLite("mzR")
 library(mzR)
@@ -52,8 +50,3 @@ df9 <- as.data.frame(t(df8))
 rownames(df8) <- ddd
 colnames(df9) <- time
 write.table(df3,'df3.txt')
-
-```
-
-
-

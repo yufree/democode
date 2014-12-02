@@ -30,38 +30,6 @@ J = 0;
 Theta1_grad = zeros(size(Theta1));
 Theta2_grad = zeros(size(Theta2));
 
-% ====================== YOUR CODE HERE ======================
-% Instructions: You should complete the code by working through the
-%               following parts.
-%
-% Part 1: Feedforward the neural network and return the cost in the
-%         variable J. After implementing Part 1, you can verify that your
-%         cost function computation is correct by verifying the cost
-%         computed in ex4.m
-%
-% Part 2: Implement the backpropagation algorithm to compute the gradients
-%         Theta1_grad and Theta2_grad. You should return the partial derivatives of
-%         the cost function with respect to Theta1 and Theta2 in Theta1_grad and
-%         Theta2_grad, respectively. After implementing Part 2, you can check
-%         that your implementation is correct by running checkNNGradients
-%
-%         Note: The vector y passed into the function is a vector of labels
-%               containing values from 1..K. You need to map this vector into a 
-%               binary vector of 1's and 0's to be used with the neural network
-%               cost function.
-%
-%         Hint: We recommend implementing backpropagation using a for-loop
-%               over the training examples if you are implementing it for the 
-%               first time.
-%
-% Part 3: Implement regularization with the cost function and gradients.
-%
-%         Hint: You can implement this around the code for
-%               backpropagation. That is, you can compute the gradients for
-%               the regularization separately and then add them to Theta1_grad
-%               and Theta2_grad from Part 2.
-%
-
 X1 = [ones(m, 1) X];
 p1 = sigmoid(X1 * Theta1');
 X2 = [ones(m, 1) p1];
@@ -99,10 +67,6 @@ Theta1_grad(:, 2:end) = Theta1_grad(:, 2:end) + (lambda/m) * Theta1(:, 2:end);
 Theta2_grad = Theta2_grad ./ m;
 Theta2_grad(:, 2:end) = Theta2_grad(:, 2:end) + (lambda/m) * Theta2(:, 2:end);
 
-% -------------------------------------------------------------
-
-% =========================================================================
-
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
 
@@ -119,16 +83,7 @@ function g = sigmoidGradient(z)
 
 g = zeros(size(z));
 
-% ====================== YOUR CODE HERE ======================
-% Instructions: Compute the gradient of the sigmoid function evaluated at
-%               each value of z (z can be a matrix, vector or scalar).
-
 g = sigmoid(z) .* (1 - sigmoid(z));
-
-% =============================================================
-
-
-
 
 end
 function W = randInitializeWeights(L_in, L_out)
@@ -145,18 +100,10 @@ function W = randInitializeWeights(L_in, L_out)
 % You need to return the following variables correctly 
 W = zeros(L_out, 1 + L_in);
 
-% ====================== YOUR CODE HERE ======================
-% Instructions: Initialize W randomly so that we break the symmetry while
-%               training the neural network.
-%
-% Note: The first row of W corresponds to the parameters for the bias units
-%
 
 % Randomly initialize the weights to small values
 epsilon_init = 0.12;
 W = rand(L_out, 1 + L_in) * 2 * epsilon_init - epsilon_init;
-
-% =========================================================================
 
 end
 function numgrad = computeNumericalGradient(J, theta)

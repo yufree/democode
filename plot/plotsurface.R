@@ -4,7 +4,7 @@ library(rgl)
 
 # read in the data
 
-data <- read.xlsx('2D.xlsx',sheetIndex = 1)
+data <- read.xlsx('./data/2D.xlsx',sheetIndex = 1)
 raw <- data[,-1]
 rownames(raw) <- data[,1]
 rawm <- as.matrix(raw)
