@@ -1,7 +1,7 @@
 source("http://bioconductor.org/biocLite.R")
 biocLite("mzR")
 library(mzR)
-all <- openMSfile('./TEST01.CDF')
+all <- openMSfile('./FULL200.CDF')
 df <- header(all)
 bb <- peaks(all)
 aaaa <- sapply(bb,as.data.frame)
