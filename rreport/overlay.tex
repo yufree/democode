@@ -1,0 +1,200 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+
+\usepackage[T1]{fontenc}
+\usepackage[american,ngerman]{babel}
+\usepackage{tikz}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% version 1: needs $ $ in math mode; not work across line boundaries
+\newcommand*{\yellowemph}[1]{%
+  \tikz[baseline=(text.base)]\node(text)[rectangle, fill=yellow, rounded
+corners, inner sep=0.3mm]{#1};%
+}
+
+% version 2: does not seem to work in math mode, not even with $ $
+\usepackage{soul}% use \hl{} to highlight
+
+% version 3: does not work across line boundaries
+% see http://tex.stackexchange.com/questions/35319/a-boxed-alternative-with-minimal-spacing/35357#35357
+\usetikzlibrary{calc, shapes}
+\makeatletter
+\newcommand*{\@DrawBoxHeightSep}{0.030em}%
+\newcommand*{\@DrawBoxDepthSep}{0.025em}%
+\newcommand{\@DrawBox}[3][red]{% #1=style, #2=height, #3=depth
+    \tikz[overlay,remember picture]{
+    \draw[#1]
+      ($(bl)+(-0.2em,#2+\@DrawBoxHeightSep)$) rectangle
+      ($(br)+(0.2em,-#3-+\@DrawBoxDepthSep)$);}
+}
+\newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \node (#1) {};}
+\newdimen\@myBoxHeight%
+\newdimen\@myBoxDepth%
+\newcommand{\MyBox}[2][red]{%
+    \settoheight{\@myBoxHeight}{#2}% record height of box
+    \settodepth{\@myBoxDepth}{#2}% record height of box
+    \tikzmark{bl}#2\tikzmark{br}\@DrawBox[#1]{\@myBoxHeight}{\@myBoxDepth}% draw the box
+}
+\makeatother
+
+% version 4: text gets overwritten
+% see
+% http://tex.stackexchange.com/questions/5959/cool-text-highlighting-in-latex
+% \usepackage{soul}
+% \usepackage{tikz}
+% \usetikzlibrary{calc}
+\usetikzlibrary{decorations.pathmorphing}
+
+\makeatletter
+
+\newcommand{\defhighlighter}[3][]{%
+  \tikzset{every highlighter/.style={color=#2, fill opacity=#3, #1}}%
+}
+
+\defhighlighter{yellow}{.5}
+
+\newcommand{\highlight@DoHighlight}{
+  \fill [ decoration = {random steps, amplitude=1pt, segment length=15pt}
+        , outer sep = -15pt, inner sep = 0pt, decorate
+        , every highlighter, this highlighter ]
+        ($(begin highlight)+(0,8pt)$) rectangle ($(end highlight)+(0,-3pt)$) ;
+}
+
+\newcommand{\highlight@BeginHighlight}{
+  \coordinate (begin highlight) at (0,0) ;
+}
+
+\newcommand{\highlight@EndHighlight}{
+  \coordinate (end highlight) at (0,0) ;
+}
+
+\newdimen\highlight@previous
+\newdimen\highlight@current
+
+\DeclareRobustCommand*\highlight[1][]{%
+  \tikzset{this highlighter/.style={#1}}%
+  \SOUL@setup
+  %
+  \def\SOUL@preamble{%
+    \begin{tikzpicture}[overlay, remember picture]
+      \highlight@BeginHighlight
+      \highlight@EndHighlight
+    \end{tikzpicture}%
+  }%
+  %
+  \def\SOUL@postamble{%
+    \begin{tikzpicture}[overlay, remember picture]
+      \highlight@EndHighlight
+      \highlight@DoHighlight
+    \end{tikzpicture}%
+  }%
+  %
+  \def\SOUL@everyhyphen{%
+    \discretionary{%
+      \SOUL@setkern\SOUL@hyphkern
+      \SOUL@sethyphenchar
+      \tikz[overlay, remember picture] \highlight@EndHighlight ;%
+    }{%
+    }{%
+      \SOUL@setkern\SOUL@charkern
+    }%
+  }%
+  %
+  \def\SOUL@everyexhyphen##1{%
+    \SOUL@setkern\SOUL@hyphkern
+    \hbox{##1}%
+    \discretionary{%
+      \tikz[overlay, remember picture] \highlight@EndHighlight ;%
+    }{%
+    }{%
+      \SOUL@setkern\SOUL@charkern
+    }%
+  }%
+  %
+  \def\SOUL@everysyllable{%
+    \begin{tikzpicture}[overlay, remember picture]
+      \path let \p0 = (begin highlight), \p1 = (0,0) in \pgfextra
+        \global\highlight@previous=\y0
+        \global\highlight@current =\y1
+      \endpgfextra (0,0) ;
+      \ifdim\highlight@current < \highlight@previous
+        \highlight@DoHighlight
+        \highlight@BeginHighlight
+      \fi
+    \end{tikzpicture}%
+    \the\SOUL@syllable
+    \tikz[overlay, remember picture] \highlight@EndHighlight ;%
+  }%
+  \SOUL@
+}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
+\begin{document}
+\noindent
+word $\frac{1}{2}$ $\displaystyle\frac{1}{2}$\\
+\yellowemph{word} \yellowemph{$\frac{1}{2}$}
+\yellowemph{$\displaystyle\frac{1}{2}$} $\yellowemph{$\displaystyle\frac{1}{2}$}$; Version 1: does not work across lines\\
+\hl{word} \hl{$\frac{1}{2}$} \hl{$\displaystyle\frac{1}{2}$}
+%$\text{\hl{$\displaystyle\frac{1}{2}$}}$
+; Version 2: soul, does not work \emph{within} math mode!\\
+\MyBox[fill=yellow, draw=yellow, opacity=0.3]{word} \MyBox[fill=yellow,
+draw=yellow, opacity=0.3]{$\frac{1}{2}$} \MyBox[fill=yellow, draw=yellow,
+opacity=0.3]{$\displaystyle\frac{1}{2}$}
+%$\MyBox[fill=yellow, draw=yellow, opacity=0.3]{$\displaystyle\frac{1}{2}$}$
+; Version 3: overwrites text; does not work \emph{within} math mode or across lines\\
+\highlight{word} \highlight{$\frac{1}{2}$}
+\highlight{$\displaystyle\frac{1}{2}$} $\highlight{$\displaystyle\frac{1}{2}$}$;
+Version 4: overwrites text
+\end{document}

@@ -1,0 +1,112 @@
+---
+title       : 幻灯片测试
+subtitle    : 原理及应用
+author      : 于淼
+job         : 学生
+logo        : lab-logo.png
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      #
+widgets     : [mathjax,bootstrap, quiz]            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {selfcontained,standalone, draft}
+knit        : slidify::knit2slides
+ext_widgets : {rCharts: [libraries/nvd3]}
+---
+
+`r opts_chunk$set(echo=FALSE,message=FALSE,comment="",fig.path='./assets/fig')`
+
+## 列表
+
+>- 张三
+- 李四
+- 王二
+
+--- 
+
+## 图片
+
+<img class=center src=assets/img/summer.jpg height='500px'/>
+
+---&twocol w1:50% w2:50%
+
+*** =left 
+
+### 左
+
+> - first
+- second
+- third
+
+*** =right 
+
+### 右
+
+> - 一
+- 二
+- 三
+
+---
+
+## 代码
+
+```{r}
+library(rcdk)
+library(knitr)
+formula <- get.formula('C12OH6Br4', charge = 0)
+isotopes <- get.isotopes.pattern(formula,minAbund=0.00001);plot(isotopes,type="h", xlab="m/z", ylab="Intensity",frame.plot = F)
+```
+
+
+---
+
+## 表格
+
+```{r kable, results="asis"}
+sigmaS <- c(-9.751256,3.584068)
+sigmaI <- c(-4.676878,-8.097842)
+sigma70 <- c(12.57255,NA)
+sigma71 <- c(6.320181,NA)
+df <- rbind(sigmaS,sigmaI,sigma70,sigma71)
+rownames(df) <- c('污泥','BDE-CSM','DE-71','DE-70')
+colnames(df) <- c('BDE-47','BDE-209')
+df <- as.data.frame(df)
+kable(df)
+```
+
+---
+
+## 公式
+
+$$\frac{a}{b} \cdot x = Y $$
+
+---
+
+## rChart
+
+```{r results = 'asis', commment = NA, message = F, echo = F}
+require(rCharts)
+haireye = as.data.frame(HairEyeColor)
+n1 <- nPlot(Freq ~ Hair, group = 'Eye', type = 'multiBarChart',
+  data = subset(haireye, Sex == 'Male')
+)
+n1$print('chart1')
+```
+
+---&radio
+
+## 测试
+
+What is 1 + 1?
+
+1. 1 
+2. _2_
+3. 3
+4. 4
+
+*** .hint
+
+This is a hint
+
+*** .explanation
+
+This is an explanation

@@ -1,0 +1,159 @@
+RStudio幻灯片试用
+========================================================
+author: yufree
+date: 2013-11-16
+navigation:slide
+
+列表的使用
+========================================================
+transition:fade
+与markdown语法一致
+
+- 项目一
+  1. 测试
+  1. 测试
+  1. 测试
+  1. 测试
+- Bullet 2
+- Bullet 3
+
+R代码的插入
+========================================================
+transition:linear
+- 与knitr相同
+
+```{r}
+summary(cars)
+```
+
+载入源文件
+========================================================
+transition:linear
+- 使用**source**函数
+
+插入图片
+========================================================
+transition:rotate
+- 使用R代码或者markdown语法均可插入图片
+```{r, echo=FALSE}
+plot(cars)
+```
+
+双栏显示
+========================================================
+transition:zoom
+left: 70%
+
+- 用***隔开
+- 用**left: x%**表示两栏间距
+
+***
+张三李四王二麻
+
+公式显示
+========================================================
+transition:concave
+- 支持MathJax
+- 懂一点latex
+- $latex P(E) = {n \choose k}p^K (1-p)^{n-k}$
+
+切换效果
+========================================================
+transition-speed:slow
+- 使用**transition**变化效果，如
+  - none
+  - linear
+  - rotate
+  - fade
+  - zoom
+  - concave
+  
+***
+
+- 使用**transition-speed**变化速度，如
+  - default
+  - slow
+  - fast
+
+层级结构
+========================================================
+
+- 颜色区分 不同层次包括
+    1. section 章节
+    1. sub-section 章节中的章节
+    1. prompt 提示符
+    1. alert 警告
+
+New Section
+====================================
+type: section
+- 不同层次包括
+    1. section 章节
+    1. sub-section 章节中的章节
+    1. prompt 提示符
+    1. alert 警告
+
+New subSection
+====================================
+type: sub-section
+- 不同层次包括
+    1. section 章节
+    1. sub-section 章节中的章节
+    1. prompt 提示符
+    1. alert 警告
+
+Prompt Slide
+====================================
+type: prompt
+- 不同层次包括
+    1. section 章节
+    1. sub-section 章节中的章节
+    1. prompt 提示符
+    1. alert 警告
+
+Alert Slide
+====================================
+type: alert
+- 不同层次包括
+    1. section 章节
+    1. sub-section 章节中的章节
+    1. prompt 提示符
+    1. alert 警告
+
+增量显示
+====================================
+type: alert
+incremental: true
+- 使用**incremental: true**实现
+- 不同层次包括
+    1. section 章节
+    1. sub-section 章节中的章节
+    1. prompt 提示符
+    1. alert 警告
+
+导航按钮
+====================================
+id:nav
+- 在第一页上使用**navigation**参数
+- none 隐藏按钮
+- section 只在章节间跳转
+- slide 一张一张切换 默认
+
+幻灯片链接
+====================================
+
+- 使用url
+- 使用**id**指定 [回顾导航](#/nav)
+
+更多自定义
+====================================
+incremental: true
+- **font-family** 修改字体
+- **font-import** 导入在线字体 如google的字体库
+- **<small>** 使用小号字small
+- **css** 使用自定义样式
+- [官方](http://www.rstudio.com/ide/docs/presentations/slide_transitions_and_navigation)
+- THANKs
+```{r echo=FALSE}
+# 问题 切换与导航
+```

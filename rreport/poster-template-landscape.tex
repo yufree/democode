@@ -1,0 +1,162 @@
+% Template file for an a0 landscape poster.
+% Written by Graeme, 2001-03 based on Norman's original microlensing
+% poster.
+%
+% See discussion and documentation at
+% <http://www.astro.gla.ac.uk/users/norman/docs/posters/> 
+%
+% $Id$
+
+
+% Default mode is landscape, which is what we want, however dvips and
+% a0poster do not quite do the right thing, so we end up with text in
+% landscape style (wide and short) down a portrait page (narrow and
+% long). Printing this onto the a0 printer chops the right hand edge.
+% However, 'psnup' can save the day, reorienting the text so that the
+% poster prints lengthways down an a0 portrait bounding box.
+%
+% 'psnup -w85cm -h119cm -f poster_from_dvips.ps poster_in_landscape.ps'
+
+\documentclass[a0]{a0poster}
+% You might find the 'draft' option to a0 poster useful if you have
+% lots of graphics, because they can take some time to process and
+% display. (\documentclass[a0,draft]{a0poster})
+
+\pagestyle{empty}
+\setcounter{secnumdepth}{0}
+
+% The textpos package is necessary to position textblocks at arbitary 
+% places on the page.
+\usepackage[absolute]{textpos}
+
+% Graphics to include graphics. Times is nice on posters, but you
+% might want to switch it off and go for CMR fonts.
+\usepackage{graphics,wrapfig,times}
+
+% These colours are tried and tested for titles and headers. Don't
+% over use color!
+\usepackage{color}
+\definecolor{DarkBlue}{rgb}{0.1,0.1,0.5}
+\definecolor{Red}{rgb}{0.9,0.0,0.1}
+
+% see documentation for a0poster class for the size options here
+\let\Textsize\normalsize
+\def\Head#1{\noindent\hbox to \hsize{\hfil{\LARGE\color{DarkBlue} #1}}\bigskip}
+\def\LHead#1{\noindent{\LARGE\color{DarkBlue} #1}\bigskip}
+\def\Subhead#1{\noindent{\large\color{DarkBlue} #1}\bigskip}
+\def\Title#1{\noindent{\VeryHuge\color{Red} #1}}
+
+
+% Set up the grid
+%
+% Note that [40mm,40mm] is the margin round the edge of the page --
+% it is _not_ the grid size. That is always defined as 
+% PAGE_WIDTH/HGRID and PAGE_HEIGHT/VGRID. In this case we use
+% 23 x 12. This gives us three columns of width 7 boxes, with a gap of
+% width 1 in between them. 12 vertical boxes is a good number to work
+% with.
+%
+% Note however that texblocks can be positioned fractionally as well,
+% so really any convenient grid size can be used.
+%
+\TPGrid[40mm,40mm]{23}{12}      % 3 cols of width 7, plus 2 gaps width 1
+
+\parindent=0pt
+\parskip=0.5\baselineskip
+
+\begin{document}
+
+% Understanding textblocks is the key to being able to do a poster in
+% LaTeX. In
+%
+%    \begin{textblock}{wid}(x,y)
+%    ...
+%    \end{textblock}
+%
+% the first argument gives the block width in units of the grid
+% cells specified above in \TPGrid; the second gives the (x,y)
+% position on the grid, with the y axis pointing down.
+
+% You will have to do a lot of previewing to get everything in the 
+% right place.
+
+% This gives good title positioning for a portrait poster.
+% Watch out for hyphenation in titles - LaTeX will do it
+% but it looks awful.
+\begin{textblock}{23}(0,0)
+\Title{Look at this Poster, which is in Landscape mode}
+\end{textblock}
+
+\begin{textblock}{20}(0,1.0)
+\LHead{Miao YU$^1$\\
+\hfil\break
+\textsl{1:State Key Laboratory of Environmental Chemistry and Ecotoxicology,RCEES, CAS\\}}
+\end{textblock}
+
+
+% Uni logo in the top right corner. A&A in the bottom left. Gives a
+% good visual balance, but you may want to change this depending upon
+% the graphics that are in your poster.
+\begin{textblock}{2}(0,10)
+\resizebox{2\TPHorizModule}{!}{\includegraphics{./figure/institution-logo-rcees.jpg}}
+\end{textblock}
+
+\begin{textblock}{2}(21.6,0)
+\resizebox{2\TPHorizModule}{!}{\includegraphics{./figure/lab-logo.png}}
+\end{textblock}
+
+
+\begin{textblock}{7}(0,2.5)
+\hrule\medskip
+
+\Head{Summary}
+
+\slshape
+
+ Blah, blah, blah.
+
+  We three sit in the grid.\\
+  Like spades hanging in the wind.\\
+  Falling down.
+
+  Concrete poetry is a concrete poetry is a concrete poetry is a 
+  concrete poetry is a concrete poetry is a concrete poetry is a 
+  concrete poetry is a concrete poetry is a concrete poetry is a 
+  concrete poetry is a concrete poetry is a concrete poetry is a 
+  concrete poetry is a concrete poetry is a concrete poetry is a 
+  concrete poetry is a concrete poetry is a concrete poetry is a 
+  concrete poetry is a concrete poetry is a concrete poetry is a 
+  CON
+
+  \[
+  x' = \frac{1}{x}
+  \]
+
+  Circular arguments go round and round, they don't go down the page
+  like this, hence this is not a circular arguments go round and round, they don't go down the page
+  like this, hence this is not a circular arguments go round and round, they don't go down the page
+  like this, hence this is not a circular arguments go round and round, they don't go down the page
+  like this, hence this is not a circular arguments go round and round, they don't go down the page
+  like this, hence this is not a circular arguments go round and round, they don't go down the page
+  like this, hence this is not a circular arguments go round and round, they don't go down the page
+  like this, hence this is not a circular arguments go round and round, they don't go down the page
+  like this, hence this is not a 
+
+\bigskip
+\hrule
+\end{textblock}
+
+\begin{textblock}{7}(16,8)
+
+\Head{Conclusions}
+
+Landscape posters are possible (and there was much rejoycing).
+Landscape posters are possible (and there was much rejoycing).
+Landscape posters are possible (and there was much rejoycing).
+Landscape posters are possible (and there was much rejoycing).
+Landscape posters are possible (and there was much rejoycing).
+  
+\end{textblock}
+
+
+\end{document}
