@@ -122,7 +122,7 @@ find.regression <- function(Yhat,R0,coef.det,p,j=1,eps=10e-13)
     X <- (diag(rep(1,n))-PR0)%*%M
     Y <- beta0+X%*%betas+epsilon
     
-    list(X=X,Y=Y)
+    data.frame(cbind(Y=Y,X=X))
   }
 
 
