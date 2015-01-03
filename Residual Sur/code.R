@@ -127,7 +127,7 @@ find.regression <- function(Yhat,R0,coef.det,p,j=1,eps=10e-13)
 
 
 
-temp <- scan("~/Downloads/yufree.pbm",skip = 1)
+temp <- scan("yufree.pbm",skip = 1)
 # yufree.pbm is a bitmap file (from R's files) that was saved
 # as a bitmap text file (bitsize=1) by imagemagick
 # try convert 'fig.jpg'  -resize 100x100 -extent 100x100 -monochrome -compress none 'fig.pbm'
