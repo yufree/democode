@@ -1,0 +1,32 @@
+Cancer type, Lifetime cancer incidence, Total number of normal cells* in tissue of origin, Number of normal stem cells* in tissue of origin(s), Number of divisions of each stem cell per year, Number of divisions of each stem cell per lifetime (d), Cumulative number of divisions of all stem cells per lifetime (lscd)
+Acute myeloid leukemia,0.0041,3e12,1.35e8,12,960,1.299e11
+Basal cell carcinoma,0.3,1.8e11,5.82e9,7.6,608,3.550e12
+Chronic lymphocytic leukemia,0.0052,3e12,1.35e8,12,960,1.299e11
+Colorectal adenocarcinoma,0.048,3e10,2e8,73,5840,1.168e12
+Colorectal adenocarcinoma with FAP,1,3e10,2e8,73,5840,1.168e12
+Colorectal adenocarcinoma with Lynch syndrome,0.5,3e10,2e8,73,5840,1.168e12
+Duodenum adenocarcinoma,0.0003,6.8e8,4e6,24,1947,7.796e9
+Duodenum adenocarcinoma with FAP,0.035,6.8e8,4e6,24,1947,7.796e9
+Esophageal squamous cell carcinoma,0.001938,3.24e9,8.64e5,17.4,1390,1.203e9
+Gallbladder non papillary adenocarcinoma,0.0028,1.6e8,1.6e6,0.584,47,7.840e7
+Glioblastoma,0.00219,8.46e10,1.35e8,0,0,2.700e8
+Head & neck squamous cell carcinoma,0.0138,1.67e10,1.85e7,21.5,1720,3.186e10
+Head & neck squamous cell carcinoma with HPV-16,0.07935,1.67e10,1.85e7,21.5,1720,3.186e10
+Hepatocellular carcinoma,0.0071,2.41e11,3.01e9,0.9125,88,2.709e11
+Hepatocellular carcinoma with HCV,0.071,2.41e11,3.01e9,0.9125,88,2.709e11
+Lung adenocarcinoma (nonsmokers),0.0045,4.34e11,1.22e9,0.07,5.6,9.272e9
+Lung adenocarcinoma (smokers),0.081,4.34e11,1.22e9,0.07,5.6,9.272e
+Medulloblastoma,0.00011,8.5e10,1.36e8,0,0,2.720e8
+Melanoma,0.0203,3.8e9,3.8e9,2.48,199,7.638e11
+Osteosarcoma,0.00035,1.9e9,4.18e6,0.067,5,2.926e7
+Osteosarcoma of the arms,0.00004,3e8,6.5e5,0.067,5,4.550e6
+Osteosarcoma of the head,0.0000302,3.9e8,8.6e5,0.067,5,6.020e6
+Osteosarcoma of the legs,0.00022,7.2e8,1.59e6,0.067,5,1.113e7
+Osteosarcoma of the pelvis,0.00003,2e8,4.5e5,0.067,5,3.150e6
+Ovarian germ cell,0.000411,1.1e7,1.1e7,0,0,2.200e7
+Pancreatic ductal adenocarcinoma,0.013589,1.672e11,4.18e9,1,80,3.428e11
+Pancreatic endocrine (islet cell) carcinoma,0.000194,2.95e9,7.4e7,1,80,6.068e9
+Small intestine adenocarcinoma,0.0007,1.7e10,1e8,36,2920,2.922e11
+Testicular germ cell cancer,0.0037,2.16e10,7.2e6,5.8,463,3.348e9
+Thyroid papillary/follicular carcinoma,0.01026,1010,6.5e7,0.087,7,5.850e8
+Thyroid medullary carcinoma,0.000324,109,6.5e6,0.087,7,5.850e7
