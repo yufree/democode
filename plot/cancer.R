@@ -22,6 +22,6 @@ plot(cancer$Lifetime.cancer.incidence~cancer$Cumulative.number.of.divisions.of.a
 
 plot(cancer$Lifetime.cancer.incidence~log(cancer$Cumulative.number.of.divisions.of.all.stem.cells.per.lifetime..lscd.),pch=19,main=expression(paste('log x ',r^2,' 0.183')),xlab='Total stem cell division',ylab='lifetime risk')
 
-plot(cancer$Lifetime.cancer.incidence~sqrt(cancer$Cumulative.number.of.divisions.of.all.stem.cells.per.lifetime..lscd.),pch=19,main=expression(paste('squared x ',r^2,' 0.183')),xlab='Total stem cell division',ylab='lifetime risk')
+plot(cancer$Lifetime.cancer.incidence~sqrt(cancer$Cumulative.number.of.divisions.of.all.stem.cells.per.lifetime..lscd.),pch=19,main=expression(paste('squared x ',r^2,' 0.356')),xlab='Total stem cell division',ylab='lifetime risk')
 dev.off()
 
