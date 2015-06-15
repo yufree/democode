@@ -1,4 +1,6 @@
+# the original code is written by Prof. John Staudenmayer(http://people.math.umass.edu/~jstauden/) and post on Prof. Leonard A. Stefanski's website(http://www4.stat.ncsu.edu/~stefansk/). I made some modifications for my blog posts and please refer to the comments in the following code.
 
+# the following code is the same with Prof. John Staudenmayer's R script
 border <- function(alpha,x,y,M,bord.size,blur.sd)
 {
 	# This function adds a border to the scatterplot
@@ -125,12 +127,14 @@ find.regression <- function(Yhat,R0,coef.det,p,j=1,eps=10e-13)
     data.frame(cbind(Y=Y,X=X))
   }
 
-
+# The following code is revised to import a bitmap file
 
 temp <- scan("yufree.pbm",skip = 1)
 # yufree.pbm is a bitmap file (from R's files) that was saved
 # as a bitmap text file (bitsize=1) by imagemagick
 # try convert 'fig.jpg'  -resize 100x100 -extent 100x100 -monochrome -compress none 'fig.pbm'
+
+# the following code is the same with Prof. John Staudenmayer's R script
 
 # The code below makes it into "scatterplot" format.
 y <- rep(1:temp[2],each=temp[1])
@@ -143,6 +147,8 @@ x <- x[temp[-(1:2)]==1]
 picture <- find.bord(x,y,blur.sd=0)
 Yhat <- picture$x
 R0 <- picture$y
+
+# I moved the plot part to the decode.R for display the hidden message.
 
 data <- find.regression(Yhat,R0,coef.det=.05,p=5,j=1,eps=10e-13)
 # data$X has covariates (without intercept)
