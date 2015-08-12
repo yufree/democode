@@ -80,4 +80,18 @@ fix(data)或者使用reshape包中的rename函数
 library(plyr)
 ddply(x,.(a0),function(df) df[seq(min(5,nrow(df))),])
 ```
+或者
 
+```
+aggregate(x, factor, mean)[-1]
+```
+
+## 将交集应用于多于两个对象
+
+该思路可扩展到需要输入多个数据集的情况
+```
+intersection <- function(x, y, ...){
+        if (missing(...)) intersect(x, y)
+        else intersect(x, intersection(y, ...))
+}
+```
