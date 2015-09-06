@@ -1,0 +1,22 @@
+\documentclass[presentation]{beamer}
+
+\usepackage{xcolor,soul}
+\definecolor{lightblue}{rgb}{.90,.95,1}
+\sethlcolor{lightblue}
+\renewcommand<>{\hl}[1]{\only#2{\beameroriginal{\hl}}{#1}}
+
+\begin{document}
+\begin{frame} {Some possibly highlighted text}
+
+This is some normal text
+
+\hl<2>{I'd like this text to appear on both slides, but only be
+  highlighted from the second slide}
+
+\hl<3>{I'd like this text to appear on both slides, but only be
+  highlighted from the second slide.  This is a long one, so it should
+be more than one line}
+
+This is some normal text
+\end{frame}
+\end{document}
