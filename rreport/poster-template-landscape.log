@@ -1,0 +1,208 @@
+This is XeTeX, Version 3.14159265-2.6-0.99992 (TeX Live 2015) (preloaded format=xelatex 2015.7.1)  15 SEP 2015 11:08
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**poster-template-landscape.tex
+(./poster-template-landscape.tex
+LaTeX2e <2015/01/01>
+Babel <3.9l> and hyphenation patterns for 79 languages loaded.
+(/usr/local/texlive/2015/texmf-dist/tex/latex/a0poster/a0poster.cls
+Document Class: a0poster 2004/01/31 v1.22b a0poster class (GK, MW)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+\xkoord=\count87
+\ykoord=\count88
+\xscale=\count89
+\yscale=\count90
+\Ausgabe=\write3
+\openout3 = `a0header.ps'.
+
+
+(/usr/local/texlive/2015/texmf-dist/tex/latex/a0poster/a0size.sty
+File: a0size.sty 2004/01/31 v1.22b a0poster class (GK, MW)
+LaTeX Font Info:    Redeclaring symbol font `largesymbols' on input line 229.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/cmex/m/n on input line 229.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> OMX/cmex/m/n on input line 229.
+\big@size=\dimen103
+))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/textpos/textpos.sty
+Package: textpos 2014/01/03 v1.7j
+
+Package: textpos 2014/01/03 1.7j, absolute positioning of text on the page
+(/usr/local/texlive/2015/texmf-dist/tex/latex/ms/everyshi.sty
+Package: everyshi 2001/05/15 v3.00 EveryShipout Package (MS)
+)
+\TP@textbox=\box26
+\TP@holdbox=\box27
+\TPHorizModule=\dimen104
+\TPVertModule=\dimen105
+\TP@margin=\dimen106
+\TP@absmargin=\dimen107
+
+Grid set 16 x 16 = 211.29729pt x 149.30585pt
+\TPboxrulesize=\dimen108
+\TP@ox=\dimen109
+\TP@oy=\dimen110
+\TP@tbargs=\toks14
+\TP@prevdepth=\dimen111
+TextBlockOrigin set to 0pt x 0pt
+) (/usr/local/texlive/2015/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2014/10/28 v1.0p Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2015/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: xetex.def on input line 94.
+
+(/usr/local/texlive/2015/texmf-dist/tex/xelatex/xetex-def/xetex.def
+File: xetex.def 2015/03/25 v4.04 LaTeX color/graphics driver for XeTeX (TeX Liv
+e/RRM/JK)
+))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/wrapfig/wrapfig.sty
+\wrapoverhang=\dimen112
+\WF@size=\dimen113
+\c@WF@wrappedlines=\count91
+\WF@box=\box28
+\WF@everypar=\toks15
+Package: wrapfig 2003/01/31  v 3.6
+)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/times.sty
+Package: times 2005/04/12 PSNFSS-v9.2a (SPQR) 
+)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2014/10/28 v1.1a Standard LaTeX Color (DPC)
+
+(/usr/local/texlive/2015/texmf-dist/tex/latex/latexconfig/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: xetex.def on input line 142.
+)
+Grid set 23 x 12 = 137.0928pt x 180.10596pt
+TextBlockOrigin set to 40mm x 40mm
+(./poster-template-landscape.aux)
+\openout1 = `poster-template-landscape.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 67.
+LaTeX Font Info:    ... okay on input line 67.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 67.
+LaTeX Font Info:    ... okay on input line 67.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 67.
+LaTeX Font Info:    ... okay on input line 67.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 67.
+LaTeX Font Info:    ... okay on input line 67.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 67.
+LaTeX Font Info:    ... okay on input line 67.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 67.
+LaTeX Font Info:    ... okay on input line 67.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 67.
+
+(/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/ot1ptm.fd
+File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
+)
+ABD: EveryShipout initializing macros
+Underfull \hbox (badness 10000) in paragraph at lines 93--94
+
+ []
+
+
+LaTeX Warning: File `./figure/institution-logo-rcees.jpg' not found on input li
+ne 101.
+
+! Unable to load picture or PDF file './figure/institution-logo-rcees.jpg'.
+<to be read again> 
+                   }
+l.101 ...ics{./figure/institution-logo-rcees.jpg}}
+                                                  
+The requested image couldn't be read because
+it was not a recognized image format.
+
+File: ./figure/institution-logo-rcees.jpg Graphic file (type QTm)
+<use  "./figure/institution-logo-rcees.jpg" >
+! Unable to load picture or PDF file './figure/institution-logo-rcees.jpg'.
+<to be read again> 
+                   }
+l.101 ...ics{./figure/institution-logo-rcees.jpg}}
+                                                  
+The requested image couldn't be read because
+it was not a recognized image format.
+
+
+! Package graphics Error: Division by 0.
+
+See the graphics package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.101 ...ics{./figure/institution-logo-rcees.jpg}}
+                                                  
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+LaTeX Warning: File `./figure/lab-logo.png' not found on input line 105.
+
+! Unable to load picture or PDF file './figure/lab-logo.png'.
+<to be read again> 
+                   }
+l.105 ...{\includegraphics{./figure/lab-logo.png}}
+                                                  
+The requested image couldn't be read because
+it was not a recognized image format.
+
+File: ./figure/lab-logo.png Graphic file (type QTm)
+<use  "./figure/lab-logo.png" >
+! Unable to load picture or PDF file './figure/lab-logo.png'.
+<to be read again> 
+                   }
+l.105 ...{\includegraphics{./figure/lab-logo.png}}
+                                                  
+The requested image couldn't be read because
+it was not a recognized image format.
+
+
+! Package graphics Error: Division by 0.
+
+See the graphics package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.105 ...{\includegraphics{./figure/lab-logo.png}}
+                                                  
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+[1
+
+] (./poster-template-landscape.aux) ) 
+Here is how much of TeX's memory you used:
+ 844 strings out of 493706
+ 13845 string characters out of 6145770
+ 66365 words of memory out of 5000000
+ 4217 multiletter control sequences out of 15000+600000
+ 11908 words of font info for 39 fonts, out of 8000000 for 9000
+ 1328 hyphenation exceptions out of 8191
+ 29i,6n,19p,275b,131s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on poster-template-landscape.pdf (1 page).

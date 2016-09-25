@@ -2,58 +2,58 @@
 
 library(plotrix)
 
-# M40BDE47
-
-"4" "8" "12" "16" "4" "8" "12" "16"
-"soybean solution" 149676 59745 3990 341 8644 5489 1438 47
-"soybean roots" 25823 103867 151167 159638 5480 3740 10217 10339
-"soybean stems" 8134 18774 25800 21070 439 387 2665 1295
-"soybean leaves" 568 1001 1847 1942 170 8 92 61
-"wheat solution" 143810 60142 7380 667 694 10190 4395 309
-"wheat roots" 30571 102688 150900 162550 1352 3062 2808 2945
-"wheat stems" 7007 14307 21733 21283 959 692 1130 2584
-"wheat leaves" 704 958 1500 1860 55 8 512 58
-"Unplanted wheat solution" 193547 192201 189764 184476 827 1943 3981 4493
-
-
-# M6BDE47
-
-"4" "8" "12" "16" "4" "8" "12" "16"
-"soybean solution" 146269 64863 9430 971 5389 5040 543 286
-"soybean roots" 27739 99697 147152 158463 616 2973 2115 1935
-"soybean stems" 6641 17126 21747 22928 1210 903 915 492
-"soybean leaves" 684 931 1780 1806 53 8 25 56
-"wheat solution" 140488 49313 9562 588 5582 5874 623 138
-"wheat roots" 34401 114994 148144 159812 5113 6997 5396 2583
-"wheat stems" 3438 19182 24357 23346 784 1012 1024 2424
-"wheat leaves" 566 1042 1994 2023 147 9 28 63
-"Unplanted wheat solution" 191250 190382 189782 183956 4041 744 910 3296
-
-# O4BDE42
-
-"4" "8" "12" "16" "4" "8" "12" "16"
-"soybean solution" 144776 68362 584 230 1686 6299 81 80
-"soybean roots" 37976 105366 161158 164476 3880 6982 1665 3908
-"soybean stems" 1574 8779 12520 12940 115 1057 1505 1590
-"soybean leaves" 117 285 390 479 40 66 50 52
-"wheat solution" 141429 72284 488 218 2221 5026 94 71
-"wheat roots" 42702 109673 165743 165363 4029 3149 2868 3744
-"wheat stems" 435 1644 13871 13601 133 354 335 908
-"wheat leaves" 50 175 653 542 18 32 144 119
-"Unplanted wheat solution" 185498 185226 182190 181815 1267 804 1150 1688
-
-# O3BDE47
-
-"4" "8" "12" "16" "4" "8" "12" "16"
-"soybean solution" 142652 72433 391 117 2696 3188 50 12
-"soybean roots" 40261 102347 169013 169617 1107 1265 1391 1596
-"soybean stems" 1213 7031 11002 12842 100 383 660 601
-"soybean leaves" 150 312 472 501 18 28 31 22
-"wheat solution" 145599 72530 397 280 4103 4453 60 55
-"wheat roots" 36555 106834 172790 171560 3500 5864 1380 808
-"wheat stems" 1110 6076 10644 12408 116 253 821 317
-"wheat leaves" 100 252 375 333 34 50 60 15
-"Unplanted wheat solution" 184726 185769 183546 184560 542 671 1011 1987
+# # M40BDE47
+# 
+# "4" "8" "12" "16" "4" "8" "12" "16"
+# "soybean solution" 149676 59745 3990 341 8644 5489 1438 47
+# "soybean roots" 25823 103867 151167 159638 5480 3740 10217 10339
+# "soybean stems" 8134 18774 25800 21070 439 387 2665 1295
+# "soybean leaves" 568 1001 1847 1942 170 8 92 61
+# "wheat solution" 143810 60142 7380 667 694 10190 4395 309
+# "wheat roots" 30571 102688 150900 162550 1352 3062 2808 2945
+# "wheat stems" 7007 14307 21733 21283 959 692 1130 2584
+# "wheat leaves" 704 958 1500 1860 55 8 512 58
+# "Unplanted wheat solution" 193547 192201 189764 184476 827 1943 3981 4493
+# 
+# 
+# # M6BDE47
+# 
+# "4" "8" "12" "16" "4" "8" "12" "16"
+# "soybean solution" 146269 64863 9430 971 5389 5040 543 286
+# "soybean roots" 27739 99697 147152 158463 616 2973 2115 1935
+# "soybean stems" 6641 17126 21747 22928 1210 903 915 492
+# "soybean leaves" 684 931 1780 1806 53 8 25 56
+# "wheat solution" 140488 49313 9562 588 5582 5874 623 138
+# "wheat roots" 34401 114994 148144 159812 5113 6997 5396 2583
+# "wheat stems" 3438 19182 24357 23346 784 1012 1024 2424
+# "wheat leaves" 566 1042 1994 2023 147 9 28 63
+# "Unplanted wheat solution" 191250 190382 189782 183956 4041 744 910 3296
+# 
+# # O4BDE42
+# 
+# "4" "8" "12" "16" "4" "8" "12" "16"
+# "soybean solution" 144776 68362 584 230 1686 6299 81 80
+# "soybean roots" 37976 105366 161158 164476 3880 6982 1665 3908
+# "soybean stems" 1574 8779 12520 12940 115 1057 1505 1590
+# "soybean leaves" 117 285 390 479 40 66 50 52
+# "wheat solution" 141429 72284 488 218 2221 5026 94 71
+# "wheat roots" 42702 109673 165743 165363 4029 3149 2868 3744
+# "wheat stems" 435 1644 13871 13601 133 354 335 908
+# "wheat leaves" 50 175 653 542 18 32 144 119
+# "Unplanted wheat solution" 185498 185226 182190 181815 1267 804 1150 1688
+# 
+# # O3BDE47
+# 
+# "4" "8" "12" "16" "4" "8" "12" "16"
+# "soybean solution" 142652 72433 391 117 2696 3188 50 12
+# "soybean roots" 40261 102347 169013 169617 1107 1265 1391 1596
+# "soybean stems" 1213 7031 11002 12842 100 383 660 601
+# "soybean leaves" 150 312 472 501 18 28 31 22
+# "wheat solution" 145599 72530 397 280 4103 4453 60 55
+# "wheat roots" 36555 106834 172790 171560 3500 5864 1380 808
+# "wheat stems" 1110 6076 10644 12408 116 253 821 317
+# "wheat leaves" 100 252 375 333 34 50 60 15
+# "Unplanted wheat solution" 184726 185769 183546 184560 542 671 1011 1987
 
 
 M6BDE47 <- read.table('data/M6BDE47')
@@ -62,7 +62,7 @@ M40BDE47 <- read.table('data/M40BDE47')
 
 O4BDE42 <- read.table('data/O4BDE42')
 
-O3BDE47 <- read.table('data/O3BDE47')
+O3BDE47 <- read.table('data/O40BDE47')
 
 M6BDE47$first <- c(200000,-38000,-38000,0,200000,-38000,-38000,0,200000)
 M6BDE47$second <- c(0,0,0,0,0,0,0,0,0)
@@ -111,9 +111,11 @@ wlsd[c(1:3)] <- wlsd[c(1:3)]*20
 us <- t(M6BDE47[9,c(9,1:4)])
 uus <- t(M6BDE47[9,1:4])
 ussd <- t(M6BDE47[9,5:8])
-pdf("figure/M6BDE47.pdf",height=8,width=10)
+# bmp("sunpic.bmp",height=8,width=10,units = "in", res = 300)
+pdf('sun.pdf',height = 8,width = 10)
+par(mfrow = c(2,2),mar = c(4,4,2,2))
 plot(ss,
-     cex=0.8,
+     cex=1,
      axes=F,
      bty="n",
      type="b",
@@ -123,7 +125,7 @@ plot(ss,
      ylab="The amounts of compound(pg)")
 axis(1,at=c(1:5),labels=c(0,4,8,12,16))
 axis(2,at=c(-38000,2000,50000,100000,150000,200000),labels=c(0,2000,'50000','100000','150000','200000'))
-axis.break(2,2000, style="slash") 
+axis.break(2,2200, style="slash") 
 
 arrows(c(2:5), c(sss-sssd), c(2:5), c(sss+sssd), code = 3, angle = 90, length = 0.03)
 arrows(c(2:5), c(ssr-srsd), c(2:5), c(ssr+srsd), code = 3, angle = 90, length = 0.03)
@@ -136,55 +138,60 @@ arrows(c(2:5), c(wwl-wlsd), c(2:5), c(wwl+wlsd), code = 3, angle = 90, length = 
 arrows(c(2:5), c(uus-ussd), c(2:5), c(uus+ussd), code = 3, angle = 90, length = 0.03)
 
 lines(sr,
-      cex=0.8,
+      cex=1,
       pch=22,
       type="b")
 
 lines(st,
-      cex=0.8,
+      cex=1,
       pch=24,
       type="b")
 
 lines(sl,
-      cex=0.8,
+      cex=1,
       pch=23,
       type="b")
 
 lines(ws,
-      cex=0.8,
+      cex=1,
       type="b",
       lty=2)
 
 lines(wr,
-      cex=0.8,
+      cex=1,
       pch=22,
       type="b",
       lty=2)
 
 lines(wt,
-      cex=0.8,
+      cex=1,
       pch=24,
       type="b",
       lty=2)
 
 lines(wl,
-      cex=0.8,
+      cex=1,
       pch=23,
       type="b",
       lty=2)
 
 lines(us,
-      cex=0.8,
+      cex=1,
       type="b",
       lty=4)
 
-legend(3.8,130000,
+mtext('(a)',
+      side=3,
+      adj=1)
+
+legend(3.4,135000,
+       cex = 0.8,
        box.lty=0,
        legend=c("unplanted control solution","soybean","wheat","root","stem","leaves","solution"),
        pch=c(21,-1,-1,22,24,23,21),
        lty=c(4,1,2,-1,-1,-1,-1)
        )
-dev.off()
+
 
 M40BDE47$first <- c(200000,-38000,-38000,0,200000,-38000,-38000,0,200000)
 M40BDE47$second <- c(0,0,0,0,0,0,0,0,0)
@@ -230,9 +237,9 @@ wlsd <- t(M40BDE47[8,5:8])*20
 us <- t(M40BDE47[9,c(9,1:4)])
 uus <- t(M40BDE47[9,1:4])
 ussd <- t(M40BDE47[9,5:8])
-pdf("figure/M40BDE47.pdf",height=8,width=10)
+
 plot(ss,
-     cex=0.8,
+     cex=1,
      axes=F,
      bty="n",
      type="b",
@@ -242,7 +249,7 @@ plot(ss,
      ylab="The amounts of compound(pg)")
 axis(1,at=c(1:5),labels=c(0,4,8,12,16))
 axis(2,at=c(-38000,2000,50000,100000,150000,200000),labels=c(0,2000,'50000','100000','150000','200000'))
-axis.break(2,2000, style="slash") 
+axis.break(2,2200, style="slash") 
 
 arrows(c(2:5), c(sss-sssd), c(2:5), c(sss+sssd), code = 3, angle = 90, length = 0.03)
 arrows(c(2:5), c(ssr-srsd), c(2:5), c(ssr+srsd), code = 3, angle = 90, length = 0.03)
@@ -255,55 +262,60 @@ arrows(c(2:5), c(wwl-wlsd), c(2:5), c(wwl+wlsd), code = 3, angle = 90, length = 
 arrows(c(2:5), c(uus-ussd), c(2:5), c(uus+ussd), code = 3, angle = 90, length = 0.03)
 
 lines(sr,
-      cex=0.8,
+      cex=1,
       pch=22,
       type="b")
 
 lines(st,
-      cex=0.8,
+      cex=1,
       pch=24,
       type="b")
 
 lines(sl,
-      cex=0.8,
+      cex=1,
       pch=23,
       type="b")
 
 lines(ws,
-      cex=0.8,
+      cex=1,
       type="b",
       lty=2)
 
 lines(wr,
-      cex=0.8,
+      cex=1,
       pch=22,
       type="b",
       lty=2)
 
 lines(wt,
-      cex=0.8,
+      cex=1,
       pch=24,
       type="b",
       lty=2)
 
 lines(wl,
-      cex=0.8,
+      cex=1,
       pch=23,
       type="b",
       lty=2)
 
 lines(us,
-      cex=0.8,
+      cex=1,
       type="b",
       lty=4)
 
-legend(3.8,130000,
+mtext('(b)',
+      side=3,
+      adj=1)
+
+legend(3.4,135000,
+       cex = 0.8,
        box.lty=0,
        legend=c("unplanted control solution","soybean","wheat","root","stem","leaves","solution"),
        pch=c(21,-1,-1,22,24,23,21),
        lty=c(4,1,2,-1,-1,-1,-1)
        )
-dev.off()
+
 
 O4BDE42$first <- c(200000,-38000,-38000,0,200000,-38000,-38000,0,200000)
 O4BDE42$second <- c(0,0,0,0,0,0,0,0,0)
@@ -356,9 +368,9 @@ us <- t(O4BDE42[9,c(9,1:4)])
 uus <- t(O4BDE42[9,1:4])
 ussd <- t(O4BDE42[9,5:8])
 
-pdf("figure/O4BDE42.pdf",height=8,width=10)
+
 plot(ss,
-     cex=0.8,
+     cex=1,
      axes=F,
      bty="n",
      type="b",
@@ -368,7 +380,7 @@ plot(ss,
      ylab="The amounts of compound(pg)")
 axis(1,at=c(1:5),labels=c(0,4,8,12,16))
 axis(2,at=c(-38000,2000,50000,100000,150000,200000),labels=c(0,2000,'50000','100000','150000','200000'))
-axis.break(2,2000, style="slash") 
+axis.break(2,2200, style="slash") 
 
 arrows(c(2:5), c(sss-sssd), c(2:5), c(sss+sssd), code = 3, angle = 90, length = 0.03)
 arrows(c(2:5), c(ssr-srsd), c(2:5), c(ssr+srsd), code = 3, angle = 90, length = 0.03)
@@ -381,55 +393,60 @@ arrows(c(2:5), c(wwl-wlsd), c(2:5), c(wwl+wlsd), code = 3, angle = 90, length = 
 arrows(c(2:5), c(uus-ussd), c(2:5), c(uus+ussd), code = 3, angle = 90, length = 0.03)
 
 lines(sr,
-      cex=0.8,
+      cex=1,
       pch=22,
       type="b")
 
 lines(st,
-      cex=0.8,
+      cex=1,
       pch=24,
       type="b")
 
 lines(sl,
-      cex=0.8,
+      cex=1,
       pch=23,
       type="b")
 
 lines(ws,
-      cex=0.8,
+      cex=1,
       type="b",
       lty=2)
 
 lines(wr,
-      cex=0.8,
+      cex=1,
       pch=22,
       type="b",
       lty=2)
 
 lines(wt,
-      cex=0.8,
+      cex=1,
       pch=24,
       type="b",
       lty=2)
 
 lines(wl,
-      cex=0.8,
+      cex=1,
       pch=23,
       type="b",
       lty=2)
 
 lines(us,
-      cex=0.8,
+      cex=1,
       type="b",
       lty=4)
 
-legend(3.8,130000,
+mtext('(c)',
+      side=3,
+      adj=1)
+
+legend(3.4,135000,
+       cex = 0.8,
        box.lty=0,
        legend=c("unplanted control solution","soybean","wheat","root","stem","leaves","solution"),
        pch=c(21,-1,-1,22,24,23,21),
        lty=c(4,1,2,-1,-1,-1,-1)
        )
-dev.off()
+
 
 O3BDE47$first <- c(200000,-38000,-38000,0,200000,-38000,-38000,0,200000)
 O3BDE47$second <- c(0,0,0,0,0,0,0,0,0)
@@ -481,9 +498,9 @@ wlsd <- t(O3BDE47[8,5:8])*20
 us <- t(O3BDE47[9,c(9,1:4)])
 uus <- t(O3BDE47[9,1:4])
 ussd <- t(O3BDE47[9,5:8])
-pdf("figure/O3BDE47.pdf",height=8,width=10)
+
 plot(ss,
-     cex=0.8,
+     cex=1,
      axes=F,
      bty="n",
      type="b",
@@ -493,7 +510,7 @@ plot(ss,
      ylab="The amounts of compound(pg)")
 axis(1,at=c(1:5),labels=c(0,4,8,12,16))
 axis(2,at=c(-38000,2000,50000,100000,150000,200000),labels=c(0,2000,'50000','100000','150000','200000'))
-axis.break(2,2000, style="slash") 
+axis.break(2,2200, style="slash") 
 
 arrows(c(2:5), c(sss-sssd), c(2:5), c(sss+sssd), code = 3, angle = 90, length = 0.03)
 arrows(c(2:5), c(ssr-srsd), c(2:5), c(ssr+srsd), code = 3, angle = 90, length = 0.03)
@@ -506,49 +523,54 @@ arrows(c(2:5), c(wwl-wlsd), c(2:5), c(wwl+wlsd), code = 3, angle = 90, length = 
 arrows(c(2:5), c(uus-ussd), c(2:5), c(uus+ussd), code = 3, angle = 90, length = 0.03)
 
 lines(sr,
-      cex=0.8,
+      cex=1,
       pch=22,
       type="b")
 
 lines(st,
-      cex=0.8,
+      cex=1,
       pch=24,
       type="b")
 
 lines(sl,
-      cex=0.8,
+      cex=1,
       pch=23,
       type="b")
 
 lines(ws,
-      cex=0.8,
+      cex=1,
       type="b",
       lty=2)
 
 lines(wr,
-      cex=0.8,
+      cex=1,
       pch=22,
       type="b",
       lty=2)
 
 lines(wt,
-      cex=0.8,
+      cex=1,
       pch=24,
       type="b",
       lty=2)
 
 lines(wl,
-      cex=0.8,
+      cex=1,
       pch=23,
       type="b",
       lty=2)
 
 lines(us,
-      cex=0.8,
+      cex=1,
       type="b",
       lty=4)
 
-legend(3.8,130000,
+mtext('(d)',
+      side=3,
+      adj=1)
+
+legend(3.4,135000,
+       cex = 0.8,
        box.lty=0,
        legend=c("unplanted control solution","soybean","wheat","root","stem","leaves","solution"),
        pch=c(21,-1,-1,22,24,23,21),
