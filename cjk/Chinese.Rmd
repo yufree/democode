@@ -1,0 +1,14 @@
+---
+title: "中文"
+author: "Yufree"
+date: "2016年9月19日"
+header-includes:
+  - \usepackage{ctex}
+output: 
+  pdf_document:
+    latex_engine: xelatex
+---
+
+## 中文
+
+这是一段中文

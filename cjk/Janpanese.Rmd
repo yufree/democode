@@ -1,0 +1,13 @@
+---
+title: "にほんご"
+author: "Yufree"
+date: "2016-09-19"
+CJKmainfont: Noto Sans CJK JP
+output: 
+  pdf_document:
+    latex_engine: xelatex
+---
+
+## にほんご
+
+これは日本で

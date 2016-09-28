@@ -1,0 +1,14 @@
+---
+title: "한국의"
+author: "Yufree"
+date: "2016-09-19"
+header-includes:
+  - \usepackage{kotex}
+output: 
+  pdf_document:
+    latex_engine: xelatex
+---
+
+## 한국의
+
+이것은 한국인
