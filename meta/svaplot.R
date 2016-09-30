@@ -9,13 +9,20 @@ library(limma)
 
 svadata <- function(path,...){
         cdffiles <- list.files(path, recursive = TRUE, full.names = TRUE)
-        xset <- xcmsSet(cdffiles,nSlaves = 12)
+        xset <- xcmsSet(cdffiles,
+                        nSlaves = 12,
+                        polarity = "positive",
+                        ppm=2.5,
+                        peakwidth = c(5,20),
+                        mzdiff = 0.01,
+                        snthresh = 10,
+                        method = "centWave")
         xset <- group(xset)
         xset2 <- retcor(xset, method = "obiwarp")
         # you need group the peaks again for this corrected data
         xset2 <- group(xset2)
         xset3 <- fillPeaks(xset2,nSlaves=12)
-        data <- groupval(xset3,"maxint", value='into',...)
+        data <- groupval(xset3,"maxint", value='into')
         return(data)
 }
 
