@@ -1,0 +1,23 @@
+---
+title: "test"
+author: "yufree"
+date: "September 30, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+```
+
+```{r}
+source('svaplot.R')
+lv <- gl(2,6)
+df <- svadata(system.file("cdf",package = "faahKO"))
+dd <- svaplot(df,lv)
+ddanova <- svaplot(df,lv,pqvalues = 'anova')
+ddsa <- svaplot(df,lv,pqvalues = 'sv')
+
+dim(ddanova)
+dim(ddsa)
+```
+

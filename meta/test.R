@@ -1,7 +1,0 @@
-lv <- gl(2,6)
-df <- svadata(system.file("cdf",package = "faahKO"))
-dd <- svaplot(df,lv)
-ddanova <- svaplot(df,lv,pqvalues = 'anova')
-dim(ddanova)
-ddsa <- svaplot(df,lv,pqvalues = 'sv')
-dim(ddsa)
