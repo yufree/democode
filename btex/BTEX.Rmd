@@ -46,7 +46,7 @@ ggplot(time,aes(y =`%RSD`, x =`Time(min)`))+
 
 ```{r cal}
 ggplot(cal,aes(x=`Concentration(ppb)`,y=Average,col=X1))+
-        geom_errorbar(aes(ymin = Average-Stdev, ymax = Average+Stdev),width=10)+
+        geom_errorbar(aes(ymin = Average-Stdev, ymax = Average+Stdev),width=25)+
         geom_smooth(method='lm')+
         geom_point()+
         xlab("Concentration(ppb)")+
