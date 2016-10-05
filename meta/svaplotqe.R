@@ -7,21 +7,36 @@ library(RColorBrewer)
 library(sva)
 library(limma)
 
-svadata <- function(path,xsmethod = "matchedFilter",fwhm=35,snthresh=3, step=0.115, steps=3, sigma=14.8632580261593, max=5, mzdiff=0.455, index=FALSE, nSlaves=12,gmethod="density", 
-                    bw=12.4, mzwid=0.047, minfrac=0.892, minsamp=1, gmax=50,rmethod="obiwarp",
-                    plottype="none", distFunc="cor_opt", profStep=1, center=2, response=1, gapInit=0.4, gapExtend=2.064, factorDiag=2, factorGap=1, localAlignment=0,...){
+svadata <- function(path,xsmethod = "centWave", 
+                    peakwidth=c(18, 40), ppm=2.5, 
+                    noise=0, snthresh=10, 
+                    mzdiff=-0.00265, prefilter=c(3, 100),
+                    mzCenterFun="wMean", integrate=1,
+                    fitgauss=FALSE, verbose.columns=FALSE,
+                    nSlaves=12,rmethod="obiwarp",
+                    plottype="none", distFunc="cor_opt", 
+                    profStep=1, center=5, 
+                    response=1, gapInit=0.4, 
+                    gapExtend=2.7, factorDiag=2, 
+                    factorGap=1, localAlignment=0,
+                    gmethod="density", bw=12.4,
+                    mzwid=0.003, minfrac=0.94,
+                    minsamp=1, gmax=50,...){
         cdffiles <- list.files(path, recursive = TRUE, full.names = TRUE)
         xset <- xcmsSet(cdffiles,
                         method=xsmethod, 
-                        fwhm=fwhm, 
                         snthresh=snthresh, 
-                        step=step, 
-                        steps=steps, 
-                        sigma=sigma, 
-                        max=max, 
-                        mzdiff=mzdiff, 
-                        index=index, 
-                        nSlaves=nSlaves,...)
+                        mzdiff=mzdiff,
+                        nSlaves=nSlaves,
+                        peakwidth = peakwidth,
+                        ppm=ppm, 
+                        noise=noise, 
+                        prefilter=prefilter, 
+                        mzCenterFun=mzCenterFun, 
+                        integrate=integrate, 
+                        fitgauss=fitgauss, 
+                        verbose.columns=verbose.columns,
+                        ...)
         xset <- group(xset)
         xset2 <- retcor(xset, method=rmethod,
                         plottype=plottype,
@@ -54,8 +69,8 @@ svaplot <- function(data,lv,pqvalues=F){
         svaX <- model.matrix(~lv+svafit$sv)
         lmfit <- lmFit(data,svaX)
         
-        Batch<- lmfit$coef[,3:(2+svafit$n.sv)]%*%t(svaX[,3:(2+svafit$n.sv)])
-        Signal<-lmfit$coef[,1:2]%*%t(svaX[,1:2])
+        Batch<- lmfit$coef[,(length(levels(lv))+1):(length(levels(lv))+svafit$n.sv)]%*%t(svaX[,3:(2+svafit$n.sv)])
+        Signal<-lmfit$coef[,1:length(levels(lv))]%*%t(svaX[,1:length(levels(lv))])
         error <- data-Signal-Batch
         rownames(Signal) <- rownames(Batch) <- rownames(error) <- rownames(data)
         colnames(Signal) <- colnames(Batch) <- colnames(error) <- colnames(data)
