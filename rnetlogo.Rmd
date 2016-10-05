@@ -1,0 +1,24 @@
+---
+title: "rnetlogo"
+author: "Yufree"
+date: "2016年9月25日"
+output: html_document
+---
+
+```{r}
+Sys.setenv(NOAWT=1)
+library(RNetLogo)
+nlDir <- "/Users/yufree/NetLogo\ 5.3.1/java/"
+setwd(nlDir)
+nl.path <- getwd()
+model.path <- file.path("models", "Sample Models", "Earth Science","Fire.nlogo")
+NLStart(nl.path,gui = F)
+model.path <- "/Users/yufree/NetLogo\ 5.3.1/models/Sample Models/Earth Science/Fire.nlogo"
+NLLoadModel(model.path)
+NLCommand("setup")
+NLDoCommand(10, "go")
+burned <- NLReport("burned-trees")
+print(burned)
+NLQuit() 
+```
+
