@@ -1,0 +1,84 @@
+---
+title: "BTEX"
+author: "Yufree"
+date: "2016/10/4"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F,cache = T)
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(magrittr)
+library(tidyr)
+library(ggpmisc)
+```
+
+## Data import
+
+
+```{r import}
+time <- read_csv("MIAO_BTEX/time.csv")
+cal <- read_csv("MIAO_BTEX/cal.csv")
+samples <- read_csv("MIAO_BTEX/samples.csv")
+```
+
+## Plot
+
+```{r time}
+ggplot(time,aes(x=time$`Time(min)`,y=Average,col = X1))+
+        geom_errorbar(aes(ymin = Average-Stdev, ymax = Average+Stdev),width=.1)+
+        geom_line()+
+        geom_point()+
+        xlab("Time(min)")+
+        ylab("Area")+
+        scale_colour_hue(name="Componds",    
+                     l=40) +
+        ggtitle("Time profiles of BTEX")+
+        theme_bw()
+
+ggplot(time,aes(y =`%RSD`, x =`Time(min)`))+
+        geom_bar(stat = "identity")+
+        facet_wrap(~ X1)+
+        xlab("Time(min)")
+```
+
+```{r cal}
+ggplot(cal,aes(x=`Concentration(ppb)`,y=Average,col=X1))+
+        geom_errorbar(aes(ymin = Average-Stdev, ymax = Average+Stdev),width=10)+
+        geom_smooth(method='lm')+
+        geom_point()+
+        xlab("Concentration(ppb)")+
+        ylab("Area")+
+        scale_colour_hue(name="Componds") +
+        ggtitle("Calibration curves of BTEX")+
+        facet_wrap(~X1)+
+        stat_poly_eq(formula = y~x,
+                     label.x = 200,
+                     label.y = 3200000,
+                     aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                     rr.digits = 4,
+                     parse = TRUE) + 
+        theme_bw()
+ggplot(cal,aes(y =`%RSD`, x =`Concentration(ppb)`))+
+        geom_bar(stat = "identity")+
+        facet_wrap(~ X1)+
+        xlab("Concentration(ppb)")       
+```
+
+```{r samples}
+ggplot(samples[1:4,],aes(x =X1, y =`Concentration(ppb)`))+
+        geom_bar(stat = "identity")+
+        xlab("Compounds")
+ggplot(samples[1:4,],aes(x =X1, y =`% DIFFERENCE`))+
+        geom_bar(stat = "identity")+
+        xlab("Compounds")
+ggplot(samples[5:8,],aes(x =X1, y =`Concentration(ppb)`))+
+        geom_bar(stat = "identity")+
+        xlab("Compounds")
+ggplot(samples[5:8,],aes(x =X1, y =`% DIFFERENCE`))+
+        geom_bar(stat = "identity")+
+        xlab("Compounds")
+```
+
