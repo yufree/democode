@@ -27,14 +27,13 @@ samples <- read_csv("MIAO_BTEX/samples.csv")
 ## Plot
 
 ```{r time}
-ggplot(time,aes(x=time$`Time(min)`,y=Average,col = X1))+
+ggplot(time,aes(x=time$`Time(min)`,y=Average,shape = X1))+
         geom_errorbar(aes(ymin = Average-Stdev, ymax = Average+Stdev),width=.1)+
         geom_line()+
         geom_point()+
         xlab("Time(min)")+
         ylab("Area")+
-        scale_colour_hue(name="Componds",    
-                     l=40) +
+        scale_shape(name="Componds")+
         ggtitle("Time profiles of BTEX")+
         theme_bw()
 
@@ -45,13 +44,13 @@ ggplot(time,aes(y =`%RSD`, x =`Time(min)`))+
 ```
 
 ```{r cal}
-ggplot(cal,aes(x=`Concentration(ppb)`,y=Average,col=X1))+
+ggplot(cal,aes(x=`Concentration(ppb)`,y=Average,shape=X1))+
         geom_errorbar(aes(ymin = Average-Stdev, ymax = Average+Stdev),width=25)+
         geom_smooth(method='lm')+
         geom_point()+
         xlab("Concentration(ppb)")+
         ylab("Area")+
-        scale_colour_hue(name="Componds") +
+        scale_shape(name="Componds") +
         ggtitle("Calibration curves of BTEX")+
         facet_wrap(~X1)+
         stat_poly_eq(formula = y~x,
