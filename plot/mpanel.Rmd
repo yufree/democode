@@ -1,0 +1,27 @@
+---
+title: "mpanel"
+author: "Yufree"
+date: "2016/10/8"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\begin{figure}[htb]
+\centering
+  \begin{tabular}{@{}cc@{}}
+    \includegraphics[width=.5\textwidth]{lab-logo} &
+    \includegraphics[width=.5\textwidth]{onestep} \\
+    \includegraphics[width=.5\textwidth]{onestep} &
+    \includegraphics[width=.5\textwidth]{lab-logo}   \\
+  \end{tabular}
+  \caption{This is   some figure side by side}
+\end{figure}
+
+```{r multi-plots, out.width = '50%', fig.show='hold',fig.cap='Four plots placed side by side.'}
+par(mar = c(4, 4, 0.1, 0.1))
+knitr::include_graphics(c('lab-logo.png','onestep.png','onestep.png','lab-logo.png'))
+```
+
