@@ -1,53 +1,14 @@
-library(multtest)
-library(xcms)
-library(CAMERA)
+# library(multtest)
+# library(CAMERA)
 # library(faahKO)
-library(rafalib)
+# library(rafalib)
+library(xcms)
 library(RColorBrewer)
 library(sva)
 library(limma)
 
-svadata <- function(path,xsmethod = "matchedFilter",fwhm=35,snthresh=3, step=0.115, steps=3, sigma=14.8632580261593, max=5, mzdiff=0.455, index=FALSE, nSlaves=12,gmethod="density", 
-                    bw=12.4, mzwid=0.047, minfrac=0.892, minsamp=1, gmax=50,rmethod="obiwarp",
-                    plottype="none", distFunc="cor_opt", profStep=1, center=2, response=1, gapInit=0.4, gapExtend=2.064, factorDiag=2, factorGap=1, localAlignment=0,...){
-        cdffiles <- list.files(path, recursive = TRUE, full.names = TRUE)
-        xset <- xcmsSet(cdffiles,
-                        method=xsmethod, 
-                        fwhm=fwhm, 
-                        snthresh=snthresh, 
-                        step=step, 
-                        steps=steps, 
-                        sigma=sigma, 
-                        max=max, 
-                        mzdiff=mzdiff, 
-                        index=index, 
-                        nSlaves=nSlaves,...)
-        xset <- group(xset)
-        xset2 <- retcor(xset, method=rmethod,
-                        plottype=plottype,
-                        distFunc=distFunc, 
-                        profStep=profStep, 
-                        center=center, 
-                        response=response,
-                        gapInit=gapInit, 
-                        gapExtend=gapExtend, 
-                        factorDiag=factorDiag, 
-                        factorGap=factorGap, 
-                        localAlignment=localAlignment)
-        # you need group the peaks again for this corrected data
-        xset2 <- group(xset2,
-                       method=gmethod, 
-                       bw=bw,
-                       mzwid=mzwid, 
-                       minfrac=minfrac, 
-                       minsamp=minsamp, 
-                       max=gmax)
-        xset3 <- fillPeaks(xset2,nSlaves=nSlaves)
-        data <- groupval(xset3,"maxint", value='into')
-        return(data)
-}
-
-svaplot <- function(data,lv,pqvalues=F){
+svaplot <- function(xset,lv,pqvalues=F){
+        data <- groupval(xset,"maxint", value='into')
         mod <- model.matrix(~lv)
         mod0 <- as.matrix(c(rep(1,ncol(data))))
         svafit <- sva(data,mod)
