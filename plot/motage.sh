@@ -16,7 +16,7 @@ done | montage -       \
 convert file1.png \
 	-fill black \
 	-pointsize 28 \
-	label:' (B) ' \
+	label:' (A) ' \
 	-gravity northwest -geometry +10+12 \
 	-composite file1.png
 convert file2.png \
@@ -28,17 +28,17 @@ convert file2.png \
 convert file3.png \
 	-fill black \
 	-pointsize 28 \
-	label:' (B) ' \
+	label:' (C) ' \
 	-gravity northwest -geometry +10+12 \
 	-composite file3.png
 convert file4.png \
 	-fill black \
 	-pointsize 28 \
-	label:' (B) ' \
+	label:' (D) ' \
 	-gravity northwest -geometry +10+12 \
 	-composite file4.png
 
-montage file1.tiff file2.tiff file3.tiff .tiff\
+montage file1.tiff file2.tiff file3.tiff file4.tiff\
 		-tile 2x2\  
 		-geometry 800x800 +1+1 \
 		huge.tiff
