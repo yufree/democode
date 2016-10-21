@@ -1,6 +1,4 @@
-library(multtest)
 library(xcms)
-library(CAMERA)
 
 getdata <- function(path,nSlaves=12,pmethod='hplcorbitrap',...){
   cdffiles <- list.files(path, recursive = TRUE, full.names = TRUE)
