@@ -1,0 +1,114 @@
+---
+title: "tidyverse"
+author: "Yufree"
+date: "2016/10/22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages(c("dplyr", "tidyr", "readr", "readxl"))
+```
+
+```{r}
+library("dplyr")
+library("tidyr")
+library("readr")
+library("readxl")
+library(lubridate)
+pmdata <- read_csv(file = "../data/daily_SPEC_2014.csv.bz2")
+
+pmdata %>%
+        filter(`State Name` == "Wisconsin", `Parameter Name` == "Bromine PM2.5 LC") %>%
+        summarise(avg = mean(`Arithmetic Mean`))
+
+pmdata %>%
+        group_by(`Parameter Name`,`State Name`, `Site Num`, `Date Local`) %>%
+        summarise(avg = mean(`Arithmetic Mean`)) %>%
+        arrange(desc(avg))
+
+pmdata %>%
+        filter(`Parameter Name` == "Sulfate PM2.5 LC") %>%
+        group_by(`Site Num`,`County Code`,`State Code`) %>%
+        summarise(avg = mean(`Arithmetic Mean`)) %>%
+        arrange(desc(avg))
+
+pmdata %>%
+        filter(`Parameter Name` == "EC PM2.5 LC TOR", `State Name` == 'California'|`State Name`=='Arizona') %>%
+        group_by(`State Name`) %>%
+        summarise(avg = mean(`Arithmetic Mean`)) %>%
+        arrange(desc(avg))
+
+pmdata %>%
+        filter(`Longitude` < -100, `Parameter Name` == "OC PM2.5 LC TOR") %>%
+        summarise(avg = median(`Arithmetic Mean`)) 
+
+aqsdata <- read_excel("../data/aqs_sites.xlsx")
+str(aqsdata)
+
+aqsdata %>%
+        filter(`Land Use` == "RESIDENTIAL", `Location Setting` == "SUBURBAN") %>%
+        nrow()
+
+aqsdata2 <- aqsdata %>%
+        filter(`Land Use` == "RESIDENTIAL", `Location Setting` == "SUBURBAN",`Longitude` >= -100 )
+
+pmdata %>%
+        filter(`Parameter Name` == "EC PM2.5 LC TOR" ) %>%
+        inner_join(aqsdata2, by = "Address") %>%
+        summarise(avg = median(`Arithmetic Mean`))
+
+aqsdata3 <- aqsdata %>%
+        filter(`Land Use` == "COMMERCIAL")
+
+pmdata %>%
+        mutate(month = month(pmdata$`Date Local`))%>%
+        filter(`Parameter Name` == "Sulfate PM2.5 LC" ) %>%
+        inner_join(aqsdata3, by = "Address") %>%
+        group_by(month) %>%
+        summarise(avg = mean(`Arithmetic Mean`)) %>%
+        arrange(desc(avg))
+
+pmdata %>%
+        filter(`State Code`=='06',`County Code` == '065', `Site Num` == '8001',`Parameter Name` == "Sulfate PM2.5 LC"|`Parameter Name` == "Total Nitrate PM2.5 LC") %>%
+        group_by(`Date Local`,`Parameter Name`) %>%
+        summarise(avg = mean(`Arithmetic Mean`)) %>%
+        spread('Parameter Name',avg) %>%
+        mutate(sum=sum(`Sulfate PM2.5 LC`, `Total Nitrate PM2.5 LC`)) %>%
+        filter(sum>10) %>%
+        arrange(desc(sum))
+         
+
+a <- pmdata %>%
+        filter(`State Code`=='42',`County Code` == '045', `Site Num` == '0002',`Parameter Name` == "Sulfate PM2.5 LC"|`Parameter Name` == "Total Nitrate PM2.5 LC") %>%
+        group_by(`Date Local`,`Parameter Name`) %>%
+        summarise(avg = mean(`Arithmetic Mean`)) %>%
+        spread('Parameter Name',avg)
+        
+cor(a[,2],a[,3])
+
+b <- pmdata %>%
+        filter(`State Code`=='05',`County Code` == '113', `Site Num` == '0003',`Parameter Name` == "Sulfate PM2.5 LC"|`Parameter Name` == "Total Nitrate PM2.5 LC") %>%
+        group_by(`Date Local`,`Parameter Name`) %>%
+        summarise(avg = mean(`Arithmetic Mean`)) %>%
+        spread('Parameter Name',avg)
+        
+cor(b[,2],b[,3])
+
+c <- pmdata %>%
+        filter(`State Code`=='02',`County Code` == '090', `Site Num` == '0035',`Parameter Name` == "Sulfate PM2.5 LC"|`Parameter Name` == "Total Nitrate PM2.5 LC") %>%
+        group_by(`Date Local`,`Parameter Name`) %>%
+        summarise(avg = mean(`Arithmetic Mean`)) %>%
+        spread('Parameter Name',avg)
+        
+cor(c[,2],c[,3])
+
+d <- pmdata %>%
+        filter(`State Code`=='16',`County Code` == '037', `Site Num` == '0002',`Parameter Name` == "Sulfate PM2.5 LC"|`Parameter Name` == "Total Nitrate PM2.5 LC") %>%
+        group_by(`Date Local`,`Parameter Name`) %>%
+        summarise(avg = mean(`Arithmetic Mean`)) %>%
+        spread('Parameter Name',avg)
+        
+cor(d[,2],d[,3])
+```
+
