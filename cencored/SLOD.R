@@ -23,3 +23,6 @@ mean(int)
 mean(slp)
 sd(int)
 sd(slp)
+
+t.test(int)
+t.test(slp)
