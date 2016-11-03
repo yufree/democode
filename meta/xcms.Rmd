@@ -25,6 +25,7 @@ xcmsSet数据集是xcms处理数据的类型（S4）。该类型对象可通过`
 
 ```{r}
 # 读入xcms包
+library(BiocParallel)
 library(xcms)
 # 从faahKO包里读取cdf目录
 cdfpath <- system.file("cdf", package = "faahKO")
@@ -33,7 +34,7 @@ cdfpath
 cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
 cdffiles
 # 构建xcmsSet数据集
-xset <- xcmsSet(cdffiles) 
+xset <- xcmsSet(cdffiles,BPPARAM=SnowParam(workers = 4)) 
 xset
 ```
 

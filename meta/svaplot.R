@@ -7,7 +7,7 @@ library(RColorBrewer)
 library(sva)
 library(limma)
 
-svaplot <- function(xset,lv,pqvalues=F){
+svaplot <- function(xset,lv,pqvalues=F,pca=T){
         data <- groupval(xset,"maxint", value='into')
         mod <- model.matrix(~lv)
         mod0 <- as.matrix(c(rep(1,ncol(data))))
@@ -29,53 +29,52 @@ svaplot <- function(xset,lv,pqvalues=F){
         qValues = p.adjust(pValues,method = "BH")
         
         dataout <- cbind(data,pValues,qValues,pValuesSv,qValuesSv)
-        mypar(2,4,mar = c(2.75, 2.2, 2.6, 1))
-        
-        pcao <- prcomp(t(data), center=TRUE, scale=TRUE)
-        plot(pcao, type = "l",main = "PCA")
-        
-        pca <- prcomp(t(Signal), center=TRUE, scale=TRUE) 
-        plot(pca, type = "l",main = "PCA-signal")
-        
-        pcab <- prcomp(t(Batch), center=TRUE, scale=TRUE)
-        plot(pcab, type = "l",main = "PCA-batch")
-        
-        pcae <- prcomp(t(error), center=TRUE, scale=TRUE)
-        plot(pcae, type = "l",main = "PCA-error")
-        
-        plot(pcao$x[,1], 
-             pcao$x[,2], 
-             xlab="PC1",
-             ylab="PC2",
-             pch=colnames(data),
-             cex=2,
-             main = "PCA")
-        
-        plot(pca$x[,1], 
-             pca$x[,2], 
-             xlab="PC1",
-             ylab="PC2",
-             pch=colnames(Signal),
-             cex=2,
-             main = "PCA-signal")
-        
-        plot(pcab$x[,1], 
-             pcab$x[,2], 
-             xlab="PC1",
-             ylab="PC2",
-             pch=colnames(Batch),
-             cex=2,
-             main = "PCA-batch")
-        
-        plot(pcae$x[,1], 
-             pcae$x[,2], 
-             xlab="PC1",
-             ylab="PC2",
-             pch=colnames(error),
-             cex=2,
-             main = "PCA-error")
-        
-        mypar(1,5,mar = c(2.75, 2.2, 2.6, 1))
+        if(pca){
+                par(mfrow=c(2,4),mar = c(2.75, 2.2, 2.6, 1))
+                pcao <- prcomp(t(data), center=TRUE, scale=TRUE)
+                plot(pcao, type = "l",main = "PCA")
+                
+                pca <- prcomp(t(Signal), center=TRUE, scale=TRUE) 
+                plot(pca, type = "l",main = "PCA-signal")
+                
+                pcab <- prcomp(t(Batch), center=TRUE, scale=TRUE)
+                plot(pcab, type = "l",main = "PCA-batch")
+                
+                pcae <- prcomp(t(error), center=TRUE, scale=TRUE)
+                plot(pcae, type = "l",main = "PCA-error")
+                
+                plot(pcao$x[,1], 
+                     pcao$x[,2], 
+                     xlab="PC1",
+                     ylab="PC2",
+                     pch=colnames(data),
+                     cex=2,
+                     main = "PCA")
+                
+                plot(pca$x[,1], 
+                     pca$x[,2], 
+                     xlab="PC1",
+                     ylab="PC2",
+                     pch=colnames(Signal),
+                     cex=2,
+                     main = "PCA-signal")
+                
+                plot(pcab$x[,1], 
+                     pcab$x[,2], 
+                     xlab="PC1",
+                     ylab="PC2",
+                     pch=colnames(Batch),
+                     cex=2,
+                     main = "PCA-batch")
+                
+                plot(pcae$x[,1], 
+                     pcae$x[,2], 
+                     xlab="PC1",
+                     ylab="PC2",
+                     pch=colnames(error),
+                     cex=2,
+                     main = "PCA-error")
+        }
         par(mfrow=c(1,5),mar = c(3,3,1,1))
         icolors <- colorRampPalette(rev(brewer.pal(11,"RdYlBu")))(100)
         if(pqvalues == "anova"){
