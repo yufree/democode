@@ -1,13 +1,14 @@
-# library(multtest)
-# library(CAMERA)
-# library(faahKO)
-# library(rafalib)
 library(xcms)
 library(RColorBrewer)
 library(sva)
 library(limma)
+library(CAMERA)
+library(tidyverse)
 
-svaplot <- function(xset,lv,pqvalues=F,pca=T){
+svaplot <- function(xset,lv,pqvalues=F,pca=T,polarity = "positive",nSlaves = 12){
+        dreport <- xset %>%
+          annotateDiffreport(metlin = T,polarity = polarity,nSlaves = nSlaves) %>%
+          arrange(as.numeric(rownames(dreport)))
         data <- groupval(xset,"maxint", value='into')
         mod <- model.matrix(~lv)
         mod0 <- as.matrix(c(rep(1,ncol(data))))
@@ -28,7 +29,7 @@ svaplot <- function(xset,lv,pqvalues=F,pca=T){
         pValues = f.pvalue(data,mod,mod0)
         qValues = p.adjust(pValues,method = "BH")
         
-        dataout <- cbind(data,pValues,qValues,pValuesSv,qValuesSv)
+        dataout <- cbind(dreport,Signal,pValues,qValues,pValuesSv,qValuesSv)
         if(pca){
                 par(mfrow=c(2,4),mar = c(2.75, 2.2, 2.6, 1))
                 pcao <- prcomp(t(data), center=TRUE, scale=TRUE)
