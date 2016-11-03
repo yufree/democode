@@ -1,64 +1,62 @@
-library(multtest)
 library(xcms)
-library(CAMERA)
 library(BiocParallel)
 
-getdata <- function(path,BPPARAM=SnowParam(workers = 4),pmethod='hplcorbitrap',...){
+getdata <- function(path,BPPARAM=SnowParam(workers = 12),pmethod='hplcorbitrap',...){
   cdffiles <- list.files(path, recursive = TRUE, full.names = TRUE)
   if(pmethod=='hplcorbitrap'){
-    xset <- xcmsSet(cdffiles,BPPARAM=SnowParam(workers = 4),method = "centWave",ppm=2.5,peakwidth=c(10,60),prefilter=c(3,5000),...)
+    xset <- xcmsSet(cdffiles,BPPARAM=BPPARAM,method = "centWave",ppm=2.5,peakwidth=c(10,60),prefilter=c(3,5000),...)
     xset <- group(xset,bw=5,mzwid=0.015)
     xset2 <- retcor(xset)
     # you need group the peaks again for this corrected data
     xset2 <- group(xset2,bw=5,mzwid=0.015)
-    xset3 <- fillPeaks(xset2,BPPARAM=SnowParam(workers = 4))
+    xset3 <- fillPeaks(xset2,BPPARAM=BPPARAM)
   }else if(pmethod=='uplcorbitrap'){
-    xset <- xcmsSet(cdffiles,BPPARAM=SnowParam(workers = 4),method = "centWave",ppm=2.5,peakwidth=c(5,20),prefilter=c(3,5000),...)
+    xset <- xcmsSet(cdffiles,BPPARAM=BPPARAM,method = "centWave",ppm=2.5,peakwidth=c(5,20),prefilter=c(3,5000),...)
     xset <- group(xset,bw=2,mzwid=0.015)
     xset2 <- retcor(xset)
     # you need group the peaks again for this corrected data
     xset2 <- group(xset2,bw=2,mzwid=0.015)
-    xset3 <- fillPeaks(xset2,BPPARAM=SnowParam(workers = 4))
+    xset3 <- fillPeaks(xset2,BPPARAM=BPPARAM)
   }else if(pmethod=='hplcqtof'){
-    xset <- xcmsSet(cdffiles,BPPARAM=SnowParam(workers = 4),method = "centWave",ppm=30,peakwidth=c(10,60),prefilter=c(0,0),...)
+    xset <- xcmsSet(cdffiles,BPPARAM=BPPARAM,method = "centWave",ppm=30,peakwidth=c(10,60),prefilter=c(0,0),...)
     xset <- group(xset,bw=5,mzwid=0.025)
     xset2 <- retcor(xset)
     # you need group the peaks again for this corrected data
     xset2 <- group(xset2,bw=5,mzwid=0.025)
-    xset3 <- fillPeaks(xset2,BPPARAM=SnowParam(workers = 4))
+    xset3 <- fillPeaks(xset2,BPPARAM=BPPARAM)
   }else if(pmethod=='hplchqtof'){
-    xset <- xcmsSet(cdffiles,BPPARAM=SnowParam(workers = 4),method = "centWave",ppm=15,peakwidth=c(10,60),prefilter=c(0,0),...)
+    xset <- xcmsSet(cdffiles,BPPARAM=BPPARAM,method = "centWave",ppm=15,peakwidth=c(10,60),prefilter=c(0,0),...)
     xset <- group(xset,bw=5,mzwid=0.015)
     xset2 <- retcor(xset)
     # you need group the peaks again for this corrected data
     xset2 <- group(xset2,bw=5,mzwid=0.015)
-    xset3 <- fillPeaks(xset2,BPPARAM=SnowParam(workers = 4))
+    xset3 <- fillPeaks(xset2,BPPARAM=BPPARAM)
   }else if(pmethod=='uplcqtof'){
-    xset <- xcmsSet(cdffiles,BPPARAM=SnowParam(workers = 4),method = "centWave",ppm=30,peakwidth=c(5,20),prefilter=c(0,0),...)
+    xset <- xcmsSet(cdffiles,BPPARAM=BPPARAM,method = "centWave",ppm=30,peakwidth=c(5,20),prefilter=c(0,0),...)
     xset <- group(xset,bw=2,mzwid=0.025)
     xset2 <- retcor(xset)
     # you need group the peaks again for this corrected data
     xset2 <- group(xset2,bw=2,mzwid=0.025)
-    xset3 <- fillPeaks(xset2,BPPARAM=SnowParam(workers = 4))
+    xset3 <- fillPeaks(xset2,BPPARAM=BPPARAM)
   }else if(pmethod=='uplchqtof'){
-    xset <- xcmsSet(cdffiles,BPPARAM=SnowParam(workers = 4),method = "centWave",ppm=15,peakwidth=c(5,20),prefilter=c(0,0),...)
+    xset <- xcmsSet(cdffiles,BPPARAM=BPPARAM,method = "centWave",ppm=15,peakwidth=c(5,20),prefilter=c(0,0),...)
     xset <- group(xset,bw=2,mzwid=0.015)
     xset2 <- retcor(xset)
     # you need group the peaks again for this corrected data
     xset2 <- group(xset2,bw=2,mzwid=0.015)
-    xset3 <- fillPeaks(xset2,BPPARAM=SnowParam(workers = 4))
+    xset3 <- fillPeaks(xset2,BPPARAM=BPPARAM)
   }else{
-    xset <- xcmsSet(cdffiles,BPPARAM=SnowParam(workers = 4),...)
+    xset <- xcmsSet(cdffiles,BPPARAM=BPPARAM,...)
     xset <- group(xset)
     xset2 <- retcor(xset)
     # you need group the peaks again for this corrected data
     xset2 <- group(xset2)
-    xset3 <- fillPeaks(xset2,BPPARAM=SnowParam(workers = 4))
+    xset3 <- fillPeaks(xset2,BPPARAM=BPPARAM)
   }
   return(xset3)
 }
 
-getopmsdata <- function(path,xsmethod = "matchedFilter",fwhm=35,snthresh=3, step=0.115, steps=3, sigma=14.8632580261593, max=5, mzdiff=0.455, index=FALSE, gmethod="density", 
+getopmsdata <- function(path,xsmethod = "matchedFilter",fwhm=35,snthresh=3, step=0.115, steps=3, sigma=14.8632580261593, max=5, mzdiff=0.455, index=FALSE, BPPARAM=SnowParam(workers = 12),gmethod="density", 
                     bw=12.4, mzwid=0.047, minfrac=0.892, minsamp=1, gmax=50,rmethod="obiwarp",
                     plottype="none", distFunc="cor_opt", profStep=1, center=2, response=1, gapInit=0.4, gapExtend=2.064, factorDiag=2, factorGap=1, localAlignment=0,...){
   cdffiles <- list.files(path, recursive = TRUE, full.names = TRUE)
@@ -72,7 +70,7 @@ getopmsdata <- function(path,xsmethod = "matchedFilter",fwhm=35,snthresh=3, step
                   max=max, 
                   mzdiff=mzdiff, 
                   index=index, 
-                  BPPARAM=SnowParam(workers = 4),...)
+                  BPPARAM=BPPARAM,...)
   xset <- group(xset)
   xset2 <- retcor(xset, method=rmethod,
                   plottype=plottype,
@@ -93,7 +91,7 @@ getopmsdata <- function(path,xsmethod = "matchedFilter",fwhm=35,snthresh=3, step
                  minfrac=minfrac, 
                  minsamp=minsamp, 
                  max=gmax)
-  xset3 <- fillPeaks(xset2,BPPARAM=SnowParam(workers = 4))
+  xset3 <- fillPeaks(xset2,BPPARAM=BPPARAM)
   return(xset3)
 }
 
@@ -103,7 +101,7 @@ getopqedata <- function(path,xsmethod = "centWave",
                         mzdiff=-0.00395, prefilter=c(3, 100),
                         mzCenterFun="wMean", integrate=1,
                         fitgauss=FALSE, verbose.columns=FALSE,
-                        BPPARAM=SnowParam(workers = 4),rmethod="obiwarp",
+                        BPPARAM=SnowParam(workers = 12),rmethod="obiwarp",
                         plottype="none", distFunc="cor_opt", 
                         profStep=1, center=2, 
                         response=1, gapInit=0.6176, 
@@ -117,7 +115,7 @@ getopqedata <- function(path,xsmethod = "centWave",
                   method=xsmethod, 
                   snthresh=snthresh, 
                   mzdiff=mzdiff,
-                  BPPARAM=SnowParam(workers = 4),
+                  BPPARAM=BPPARAM,
                   peakwidth = peakwidth,
                   ppm=ppm, 
                   noise=noise, 
@@ -147,6 +145,6 @@ getopqedata <- function(path,xsmethod = "centWave",
                  minfrac=minfrac, 
                  minsamp=minsamp, 
                  max=gmax)
-  xset3 <- fillPeaks(xset2,BPPARAM=SnowParam(workers = 4))
+  xset3 <- fillPeaks(xset2,BPPARAM=BPPARAM)
   return(xset3)
 }
