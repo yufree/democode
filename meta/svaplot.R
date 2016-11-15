@@ -3,7 +3,7 @@ library(RColorBrewer)
 library(sva)
 library(limma)
 library(CAMERA)
-
+library(limma)
 svameta <- function(xset,lv,pca=T,polarity = "positive",nSlaves=12){
         dreport <- annotateDiffreport(xset,metlin = T,polarity = polarity,nSlaves = nSlaves)
         dreport <- dreport[order(as.numeric(rownames(dreport))),]
