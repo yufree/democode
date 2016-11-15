@@ -14,8 +14,8 @@ svameta <- function(xset,lv,pca=T,polarity = "positive",nSlaves=12){
         svaX <- model.matrix(~lv+svafit$sv)
         lmfit <- lmFit(data,svaX)
         
-        Batch<- lmfit$coef[,3:(2+svafit$n.sv)]%*%t(svaX[,3:(2+svafit$n.sv)])
-        Signal<-lmfit$coef[,1:2]%*%t(svaX[,1:2])
+        Batch<- lmfit$coef[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)]%*%t(svaX[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)])
+        Signal<-lmfit$coef[,1:nlevels(lv)]%*%t(svaX[,1:nlevels(lv)])
         error <- data-Signal-Batch
         rownames(Signal) <- rownames(Batch) <- rownames(error) <- rownames(data)
         colnames(Signal) <- colnames(Batch) <- colnames(error) <- colnames(data)
@@ -105,8 +105,8 @@ svaplot <- function(xset,lv,pqvalues="sv"){
   svaX <- model.matrix(~lv+svafit$sv)
   lmfit <- lmFit(data,svaX)
   
-  Batch<- lmfit$coef[,3:(2+svafit$n.sv)]%*%t(svaX[,3:(2+svafit$n.sv)])
-  Signal<-lmfit$coef[,1:2]%*%t(svaX[,1:2])
+  Batch<- lmfit$coef[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)]%*%t(svaX[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)])
+  Signal<-lmfit$coef[,1:nlevels(lv)]%*%t(svaX[,1:nlevels(lv)])
   error <- data-Signal-Batch
   rownames(Signal) <- rownames(Batch) <- rownames(error) <- rownames(data)
   colnames(Signal) <- colnames(Batch) <- colnames(error) <- colnames(data)
