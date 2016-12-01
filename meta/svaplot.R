@@ -13,7 +13,6 @@ svameta <- function(xset,lv,pca=T,polarity = "positive",nSlaves=12){
         svafit <- sva(data,mod)
         svaX <- model.matrix(~lv+svafit$sv)
         lmfit <- lmFit(data,svaX)
-        
         Batch<- lmfit$coef[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)]%*%t(svaX[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)])
         Signal<-lmfit$coef[,1:nlevels(lv)]%*%t(svaX[,1:nlevels(lv)])
         error <- data-Signal-Batch
