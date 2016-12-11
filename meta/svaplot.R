@@ -4,13 +4,17 @@ library(sva)
 library(limma)
 library(CAMERA)
 library(limma)
-svameta <- function(xset,lv,pca=T,polarity = "positive",nSlaves=12){
+svameta <- function(xset,lv,pca=T,polarity = "positive",nSlaves=12,sva2 = TRUE){
         dreport <- annotateDiffreport(xset,metlin = T,polarity = polarity,nSlaves = nSlaves)
         dreport <- dreport[order(as.numeric(rownames(dreport))),]
         data <- groupval(xset,"maxint", value='into')
         mod <- model.matrix(~lv)
         mod0 <- as.matrix(c(rep(1,ncol(data))))
-        svafit <- sva(data,mod)
+        if (sva2){
+                svafit <- sva2(data,mod)
+        }else{
+                svafit <- sva(data,mod)
+        }
         svaX <- model.matrix(~lv+svafit$sv)
         lmfit <- lmFit(data,svaX)
         Batch<- lmfit$coef[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)]%*%t(svaX[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)])
@@ -94,6 +98,61 @@ svameta <- function(xset,lv,pca=T,polarity = "positive",nSlaves=12){
           polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
         }
         return(dataout)
+}
+
+sva2 <- function(dat, mod, mod0 = NULL,n.sv=NULL,B=5, numSVmethod = "be") {
+        if(is.null(n.sv)){
+                n.sv = sva::num.sv(dat,mod,method=numSVmethod,vfilter=vfilter)
+        }
+        
+        if(n.sv > 0){
+                cat(paste("Number of significant surrogate variables is: ",n.sv,"\n"))
+                return(irwsva2.build(dat=dat, mod=mod, mod0 = mod0,n.sv=n.sv,B=B))
+        }else{
+                cat("No significant surrogate variables\n"); return(list(sv=0,pprob.gam=0,pprob.b=0,n.sv=0))
+        }
+}
+
+irwsva2.build <- function(dat, mod, mod0 = NULL,n.sv,B=5) {
+        n <- ncol(dat)
+        m <- nrow(dat)
+        if(is.null(mod0)){mod0 <- mod[,1]}
+        Id <- diag(n)
+        resid <- dat %*% (Id - mod %*% solve(t(mod) %*% mod) %*% t(mod))  
+        uu <- eigen(t(resid)%*%resid)
+        vv <- uu$vectors
+        ndf <- n - dim(mod)[2]
+        
+        pprob <- rep(1,m)
+        one <- rep(1,n)
+        Id <- diag(n)
+        df1 <- dim(mod)[2] + n.sv
+        df0 <- dim(mod0)[2]  + n.sv
+        
+        rm(resid)
+        
+        cat(paste("Iteration (out of", B,"):"))
+        for(i in 1:B){
+                mod.b <- cbind(mod,uu$vectors[,1:n.sv])
+                mod0.b <- cbind(mod0,uu$vectors[,1:n.sv])
+                ptmp <- sva::f.pvalue(dat,mod.b,mod0.b)
+                pprob.b <- (1-ptmp)
+                
+                mod.gam <- cbind(mod0,uu$vectors[,1:n.sv])
+                mod0.gam <- cbind(mod0)
+                ptmp <- sva::f.pvalue(dat,mod.gam,mod0.gam)
+                pprob.gam <- (1-ptmp)
+                pprob <- pprob.gam*(1-pprob.b)
+                dats <- dat*pprob
+                dats <- dats - rowMeans(dats)
+                uu <- eigen(t(dats)%*%dats)
+                cat(paste(i," "))
+        }
+        
+        sv = svd(dats)$v[,1:n.sv]
+        retval <- list(sv=sv,pprob.gam = pprob.gam, pprob.b=pprob.b,n.sv=n.sv)
+        return(retval)
+        
 }
 
 svaplot <- function(xset,lv,pqvalues="sv"){
