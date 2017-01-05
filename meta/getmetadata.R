@@ -1,8 +1,11 @@
 library(xcms)
 library(BiocParallel)
 
-getdata <- function(path,BPPARAM=SnowParam(workers = 12),pmethod='hplcorbitrap',...){
+getdata <- function(path,index=F,BPPARAM=SnowParam(workers = 12),pmethod='hplcorbitrap',...){
   cdffiles <- list.files(path, recursive = TRUE, full.names = TRUE)
+  if(index){
+          cdffiles <- cdffiles[index]
+  }
   if(pmethod=='hplcorbitrap'){
     xset <- xcmsSet(cdffiles,BPPARAM=BPPARAM,method = "centWave",ppm=2.5,peakwidth=c(10,60),prefilter=c(3,5000),...)
     xset <- group(xset,bw=5,mzwid=0.015)
@@ -95,7 +98,7 @@ getopmsdata <- function(path,xsmethod = "matchedFilter",fwhm=35,snthresh=3, step
   return(xset3)
 }
 
-getopqedata <- function(path,xsmethod = "centWave", 
+getopqedata <- function(path,index = F,xsmethod = "centWave", 
                         peakwidth=c(14, 25), ppm=2.5, 
                         noise=0, snthresh=10, 
                         mzdiff=-0.00395, prefilter=c(3, 100),
@@ -111,6 +114,9 @@ getopqedata <- function(path,xsmethod = "centWave",
                         mzwid=0.0021748, minfrac=1,
                         minsamp=1, gmax=50,...){
   cdffiles <- list.files(path, recursive = TRUE, full.names = TRUE)
+  if(index){
+          cdffiles <- cdffiles[index]
+  }
   xset <- xcmsSet(cdffiles,
                   method=xsmethod, 
                   snthresh=snthresh, 
