@@ -73,7 +73,7 @@ svacor <- function(xset,lv,sva2 = F,B=5,annotation=F,polarity = "positive",nSlav
         }else{
                 svafit <- sva(data,mod,B=B)
         }
-        if (svafit$sv == 0){
+        if (svafit$n.sv == 0){
             svaX <- model.matrix(~lv)
             lmfit <- lmFit(data,svaX)
             Signal<-lmfit$coef[,1:nlevels(lv)]%*%t(svaX[,1:nlevels(lv)])
