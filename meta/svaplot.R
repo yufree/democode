@@ -3,22 +3,21 @@ library(RColorBrewer)
 library(sva)
 library(limma)
 library(CAMERA)
-library(limma)
 
-sva2 <- function(dat, mod, mod0 = NULL,n.sv=NULL,B=5, numSVmethod = "be") {
+sva2 <- function(dat, mod, mod0 = NULL,n.sv=NULL, numSVmethod = "be") {
         if(is.null(n.sv)){
                 n.sv = sva::num.sv(dat,mod,method=numSVmethod)
         }
         
         if(n.sv > 0){
                 cat(paste("Number of significant surrogate variables is: ",n.sv,"\n"))
-                return(irwsva2.build(dat=dat, mod=mod, mod0 = mod0,n.sv=n.sv,B=B))
+                return(irwsva2.build(dat=dat, mod=mod, mod0 = mod0,n.sv=n.sv))
         }else{
                 cat("No significant surrogate variables\n"); return(list(sv=0,pprob.gam=0,pprob.b=0,n.sv=0))
         }
 }
 
-irwsva2.build <- function(dat, mod, mod0 = NULL,n.sv,B=5) {
+irwsva2.build <- function(dat, mod, mod0 = NULL,n.sv) {
         n <- ncol(dat)
         m <- nrow(dat)
         if(is.null(mod0)){mod0 <- mod[,1]}
@@ -33,11 +32,12 @@ irwsva2.build <- function(dat, mod, mod0 = NULL,n.sv,B=5) {
         Id <- diag(n)
         df1 <- dim(mod)[2] + n.sv
         df0 <- dim(mod0)[2]  + n.sv
-        
+        dats2 = dat
+
         rm(resid)
+        i=1
         
-        cat(paste("Iteration (out of", B,"):"))
-        for(i in 1:B){
+        while(num.sv(dats2,mod,method="be") != 0){
                 mod.b <- cbind(mod,uu$vectors[,1:n.sv])
                 mod0.b <- cbind(mod0,uu$vectors[,1:n.sv])
                 ptmp <- sva::f.pvalue(dat,mod.b,mod0.b)
@@ -48,10 +48,14 @@ irwsva2.build <- function(dat, mod, mod0 = NULL,n.sv,B=5) {
                 ptmp <- sva::f.pvalue(dat,mod.gam,mod0.gam)
                 pprob.gam <- (1-ptmp)
                 pprob <- pprob.gam*(1-pprob.b)
+                dats2 <- dat*pprob.b*(1-pprob.gam)
+                dats2 <- dats2 - rowMeans(dats2)
                 dats <- dat*pprob
                 dats <- dats - rowMeans(dats)
                 uu <- eigen(t(dats)%*%dats)
+                n.sv <- sva::num.sv(dats,mod,method='be')
                 cat(paste(i," "))
+                i = i+1
         }
         
         sv = svd(dats)$v[,1:n.sv]
@@ -60,36 +64,54 @@ irwsva2.build <- function(dat, mod, mod0 = NULL,n.sv,B=5) {
         
 }
 
-svacor <- function(xset,lv,sva2 = F,annotation=F,polarity = "positive",nSlaves=12){
+svacor <- function(xset,lv,sva2 = F,B=5,annotation=F,polarity = "positive",nSlaves=12){
         data <- groupval(xset,"maxint", value='into')
         mod <- model.matrix(~lv)
         mod0 <- as.matrix(c(rep(1,ncol(data))))
         if (sva2){
                 svafit <- sva2(data,mod)
         }else{
-                svafit <- sva(data,mod)
+                svafit <- sva(data,mod,B=B)
         }
-        svaX <- model.matrix(~lv+svafit$sv)
-        lmfit <- lmFit(data,svaX)
-        Batch<- lmfit$coef[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)]%*%t(svaX[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)])
-        Signal<-lmfit$coef[,1:nlevels(lv)]%*%t(svaX[,1:nlevels(lv)])
-        error <- data-Signal-Batch
-        rownames(Signal) <- rownames(Batch) <- rownames(error) <- rownames(data)
-        colnames(Signal) <- colnames(Batch) <- colnames(error) <- colnames(data)
-        modSv = cbind(mod,svafit$sv)
-        mod0Sv = cbind(mod0,svafit$sv)
-        pValuesSv = f.pvalue(data,modSv,mod0Sv)
-        qValuesSv = p.adjust(pValuesSv,method="BH")
+        if (svafit$sv == 0){
+            svaX <- model.matrix(~lv)
+            lmfit <- lmFit(data,svaX)
+            Signal<-lmfit$coef[,1:nlevels(lv)]%*%t(svaX[,1:nlevels(lv)])
+            error <- data-Signal
+            rownames(Signal) <- rownames(error) <- rownames(data)
+            colnames(Signal) <- colnames(error) <- colnames(data)
+            pValues = f.pvalue(data,mod,mod0)
+            qValues = p.adjust(pValues,method = "BH")
+            if(annotation){
+                dreport <- annotateDiffreport(xset,metlin = T,polarity = polarity,nSlaves = nSlaves)
+                dreport <- dreport[order(as.numeric(rownames(dreport))),]
+                return(list(data,Signal,error,pValues,qValues,dreport))
+            }else{
+                return(list(data,Signal,error,pValues,qValues))
+            }
+        }else{
+            svaX <- model.matrix(~lv+svafit$sv)
+            lmfit <- lmFit(data,svaX)
+            Batch<- lmfit$coef[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)]%*%t(svaX[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)])
+            Signal<-lmfit$coef[,1:nlevels(lv)]%*%t(svaX[,1:nlevels(lv)])
+            error <- data-Signal-Batch
+            rownames(Signal) <- rownames(Batch) <- rownames(error) <- rownames(data)
+            colnames(Signal) <- colnames(Batch) <- colnames(error) <- colnames(data)
+            modSv = cbind(mod,svafit$sv)
+            mod0Sv = cbind(mod0,svafit$sv)
+            pValuesSv = f.pvalue(data,modSv,mod0Sv)
+            qValuesSv = p.adjust(pValuesSv,method="BH")
         
-        pValues = f.pvalue(data,mod,mod0)
-        qValues = p.adjust(pValues,method = "BH")
-        if(annotation){
+            pValues = f.pvalue(data,mod,mod0)
+            qValues = p.adjust(pValues,method = "BH")
+            if(annotation){
                 dreport <- annotateDiffreport(xset,metlin = T,polarity = polarity,nSlaves = nSlaves)
                 dreport <- dreport[order(as.numeric(rownames(dreport))),]
                 return(list(data,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv,dreport))
-        }else{
+            }else{
                 return(list(data,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv))
-        }
+            }
+        }     
 }
 
 svapca <- function(list){
