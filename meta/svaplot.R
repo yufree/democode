@@ -41,12 +41,12 @@ irwsva2.build <- function(dat, mod, mod0 = NULL,n.sv) {
                 mod.b <- cbind(mod,uu$vectors[,1:n.sv])
                 mod0.b <- cbind(mod0,uu$vectors[,1:n.sv])
                 ptmp <- sva::f.pvalue(dat,mod.b,mod0.b)
-                pprob.b <- (1-ptmp)
+                pprob.b <- (1-p.adjust(ptmp,"BH"))
                 
                 mod.gam <- cbind(mod0,uu$vectors[,1:n.sv])
                 mod0.gam <- cbind(mod0)
                 ptmp <- sva::f.pvalue(dat,mod.gam,mod0.gam)
-                pprob.gam <- (1-ptmp)
+                pprob.gam <- (1-p.adjust(ptmp,"BH"))
                 pprob <- pprob.gam*(1-pprob.b)
                 dats2 <- dat*pprob.b*(1-pprob.gam)
                 dats2 <- dats2 - rowMeans(dats2)
@@ -107,9 +107,9 @@ svacor <- function(xset,lv,sva2 = F,B=5,annotation=F,polarity = "positive",nSlav
             if(annotation){
                 dreport <- annotateDiffreport(xset,metlin = T,polarity = polarity,nSlaves = nSlaves)
                 dreport <- dreport[order(as.numeric(rownames(dreport))),]
-                return(list(data,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv,dreport))
+                return(list(data,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv,dreport,svafit$pprob.gam,svafit$pprob.b))
             }else{
-                return(list(data,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv))
+                return(list(data,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv,svafit$pprob.gam,svafit$pprob.b))
             }
         }     
 }
