@@ -24,11 +24,14 @@ svacor <- function(xset,lv,annotation=F,polarity = "positive",nSlaves=12){
             if(annotation){
                 dreport <- annotateDiffreport(xset,metlin = T,polarity = polarity,nSlaves = nSlaves)
                 dreport <- dreport[order(as.numeric(rownames(dreport))),]
-                return(list(data,Signal,error,pValues,qValues,dreport))
+                li <- list(data,Signal,error,pValues,qValues,dreport)
+                names(li) <- c('data','signal','error','p-values','q-values','diffreport')
             }else{
-                return(list(data,Signal,error,pValues,qValues))
+                li <- list(data,Signal,error,pValues,qValues)
+                names(li) <- c('data','signal','error','p-values','q-values')
             }
-        }else{
+        }
+        else{
             message('data is correcting ...')
             svaX <- model.matrix(~lv+svafit$sv)
             lmfit <- lmFit(data,svaX)
@@ -50,20 +53,24 @@ svacor <- function(xset,lv,annotation=F,polarity = "positive",nSlaves=12){
             if(annotation){
                 dreport <- annotateDiffreport(xset,metlin = T,polarity = polarity,nSlaves = nSlaves)
                 dreport <- dreport[order(as.numeric(rownames(dreport))),]
-                return(list(data,datacor,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv,dreport,svafit$pprob.gam,svafit$pprob.b))
+                li <- list(data,datacor,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv,dreport,svafit$pprob.gam,svafit$pprob.b)
+                names(li) <- c('data','dataCorrected','signal','batch','error','p-values','q-values','p-valuesCorrected','q-valuesCorrected','diffreport','PosteriorProbabilitiesSurrogate','PosteriorProbabilitiesMod')
             }else{
-                return(list(data,datacor,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv,svafit$pprob.gam,svafit$pprob.b))
+                li <- list(data,datacor,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv,svafit$pprob.gam,svafit$pprob.b)
+                names(li) <- c('data','dataCorrected','signal','batch','error','p-values','q-values','p-valuesCorrected','q-valuesCorrected','PosteriorProbabilitiesSurrogate','PosteriorProbabilitiesMod')
             }
-        }     
+        }
+        return(li)
 }
 
 svapca <- function(list){
-        data <- list[[1]]
-        Signal <- list[[2]]
-        Batch <- list[[3]]
-        error <- list[[4]]
+        data <- list$data
+        Signal <- list$signal
+        Batch <- list$batch
+        error <- list$error
+        datacor <- list$dataCorrected
         
-        par(mfrow=c(2,4),mar = c(2.75, 2.2, 2.6, 1))
+        par(mfrow=c(2,5),mar = c(2.75, 2.2, 2.6, 1))
         pcao <- prcomp(t(data), center=TRUE, scale=TRUE)
         plot(pcao, type = "l",main = "PCA")
         
@@ -75,6 +82,21 @@ svapca <- function(list){
         
         pcae <- prcomp(t(error), center=TRUE, scale=TRUE)
         plot(pcae, type = "l",main = "PCA-error")
+        
+        pcao <- prcomp(t(data), center=TRUE, scale=TRUE)
+        plot(pcao, type = "l",main = "PCA")
+        
+        pca <- prcomp(t(Signal), center=TRUE, scale=TRUE) 
+        plot(pca, type = "l",main = "PCA-signal")
+        
+        pcab <- prcomp(t(Batch), center=TRUE, scale=TRUE)
+        plot(pcab, type = "l",main = "PCA-batch")
+        
+        pcae <- prcomp(t(datacor), center=TRUE, scale=TRUE)
+        plot(pcae, type = "l",main = "PCA-error")
+        
+        pcac <- prcomp(t(datacor), center=TRUE, scale=TRUE)
+        plot(pcac, type = "l",main = "PCA-corrected")
         
         plot(pcao$x[,1], 
              pcao$x[,2], 
@@ -107,6 +129,14 @@ svapca <- function(list){
              pch=colnames(error),
              cex=2,
              main = "PCA-error")
+        
+        plot(pcac$x[,1], 
+             pcac$x[,2], 
+             xlab="PC1",
+             ylab="PC2",
+             pch=colnames(datacor),
+             cex=2,
+             main = "PCA-corrected")
 }
 
 svaplot <- function(list, pqvalues="sv"){
