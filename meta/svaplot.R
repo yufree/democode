@@ -225,7 +225,7 @@ svaplot <- function(list, pqvalues="sv",pt=0.05,qt=0.05){
                 for(i in seq(poly)){
                         polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
                 }
-                return(list(datacor[pValuesSv<pt&qValuesSv<qt,],pValuesSv<pt&qValuesSv<qt))
+                return(list(datacor,pValuesSv<pt&qValuesSv<qt))
                 }
         else{
                 par(mfrow=c(1,6),mar = c(3,3,1,1))
