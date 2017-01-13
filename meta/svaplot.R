@@ -36,7 +36,7 @@ svacor <- function(xset,lv,annotation=F,polarity = "positive",nSlaves=12){
             error <- data-Signal-Batch
             datacor <- Signal+error
             rownames(datacor) <- rownames(Signal) <- rownames(Batch) <- rownames(error) <- rownames(data)
-            rownames(datacor) <- colnames(Signal) <- colnames(Batch) <- colnames(error) <- colnames(data)
+            colnames(datacor) <- colnames(Signal) <- colnames(Batch) <- colnames(error) <- colnames(data)
             modSv = cbind(mod,svafit$sv)
             mod0Sv = cbind(mod0,svafit$sv)
             pValuesSv = f.pvalue(data,modSv,mod0Sv)
