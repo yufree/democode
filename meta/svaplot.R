@@ -64,7 +64,7 @@ svacor <- function(xset,lv,annotation=F,polarity = "positive",nSlaves=12){
         return(li)
 }
 
-svapca <- function(list){
+svapca <- function(list,center=T, scale=T){
         data <- list$data
         Signal <- list$signal
         Batch <- list$batch
@@ -73,57 +73,62 @@ svapca <- function(list){
         
         par(mfrow=c(2,5),mar = c(2.75, 2.2, 2.6, 1))
         
-        pcao <- prcomp(t(data), center=TRUE, scale=TRUE)
+        pcao <- prcomp(t(data),center=center, scale=scale)
+        pcaoVars=signif(((pcao$sdev)^2)/(sum((pcao$sdev)^2)),3)*100
         plot(pcao, type = "l",main = "PCA")
         
-        pca <- prcomp(t(Signal), center=TRUE, scale=TRUE) 
+        pca <- prcomp(t(Signal),center=TRUE, scale=TRUE) 
+        pcaVars=signif(((pca$sdev)^2)/(sum((pca$sdev)^2)),3)*100
         plot(pca, type = "l",main = "PCA-signal")
         
-        pcab <- prcomp(t(Batch), center=TRUE, scale=TRUE)
+        pcab <- prcomp(t(Batch),center=center, scale=scale)
+        pcabVars=signif(((pcab$sdev)^2)/(sum((pcab$sdev)^2)),3)*100
         plot(pcab, type = "l",main = "PCA-batch")
         
-        pcae <- prcomp(t(datacor), center=TRUE, scale=TRUE)
+        pcae <- prcomp(t(datacor),center=center, scale=scale)
+        pcaeVars=signif(((pcae$sdev)^2)/(sum((pcae$sdev)^2)),3)*100
         plot(pcae, type = "l",main = "PCA-error")
         
-        pcac <- prcomp(t(datacor), center=TRUE, scale=TRUE)
+        pcac <- prcomp(t(datacor),center=center, scale=scale)
+        pcacVars=signif(((pcac$sdev)^2)/(sum((pcac$sdev)^2)),3)*100
         plot(pcac, type = "l",main = "PCA-corrected")
         
         plot(pcao$x[,1], 
              pcao$x[,2], 
-             xlab="PC1",
-             ylab="PC2",
+             xlab=paste("PC1:",pcaoVars[1],"% of Variance Explained"),
+             ylab=paste("PC2:",pcaoVars[2],"% of Variance Explained"),
              pch=colnames(data),
              cex=2,
              main = "PCA")
         
         plot(pca$x[,1], 
              pca$x[,2], 
-             xlab="PC1",
-             ylab="PC2",
+             xlab=paste("PC1:",pcaVars[1],"% of Variance Explained"),
+             ylab=paste("PC2:",pcaVars[2],"% of Variance Explained"),
              pch=colnames(Signal),
              cex=2,
              main = "PCA-signal")
         
         plot(pcab$x[,1], 
              pcab$x[,2], 
-             xlab="PC1",
-             ylab="PC2",
+             xlab=paste("PC1:",pcabVars[1],"% of Variance Explained"),
+             ylab=paste("PC2:",pcabVars[2],"% of Variance Explained"),
              pch=colnames(Batch),
              cex=2,
              main = "PCA-batch")
         
         plot(pcae$x[,1], 
              pcae$x[,2], 
-             xlab="PC1",
-             ylab="PC2",
+             xlab=paste("PC1:",pcaeVars[1],"% of Variance Explained"),
+             ylab=paste("PC2:",pcaeVars[2],"% of Variance Explained"),
              pch=colnames(error),
              cex=2,
              main = "PCA-error")
         
         plot(pcac$x[,1], 
              pcac$x[,2], 
-             xlab="PC1",
-             ylab="PC2",
+             xlab=paste("PC1:",pcacVars[1],"% of Variance Explained"),
+             ylab=paste("PC2:",pcacVars[2],"% of Variance Explained"),
              pch=colnames(datacor),
              cex=2,
              main = "PCA-corrected")
