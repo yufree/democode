@@ -71,7 +71,7 @@ svapca <- function(list,center=T, scale=T){
         error <- list$error
         datacor <- list$dataCorrected
         
-        par(mfrow=c(2,5),mar = c(2.75, 2.2, 2.6, 1))
+        par(mfrow=c(2,5),mar = c(4, 4, 2.6, 1))
         
         pcao <- prcomp(t(data),center=center, scale=scale)
         pcaoVars=signif(((pcao$sdev)^2)/(sum((pcao$sdev)^2)),3)*100
@@ -140,10 +140,10 @@ svaplot <- function(list, pqvalues="sv"){
         batch <- list$batch
         error <- list$error
         datacor <- list$dataCorrected
-        pValues <- list$p-values
-        qValues <- list$q-values
-        pValuesSv <- list$p-valuesCorrected 
-        qValuesSv <- list$q-valuesCorrected
+        pValues <- list$'p-values'
+        qValues <- list$'q-values'
+        pValuesSv <- list$'p-valuesCorrected'
+        qValuesSv <- list$'q-valuesCorrected'
         par(mfrow=c(1,6),mar = c(3,3,1,1))
         icolors <- colorRampPalette(rev(brewer.pal(11,"RdYlBu")))(100)
         
