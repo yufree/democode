@@ -32,7 +32,7 @@ svacor <- function(xset,lv,annotation=F,polarity = "positive",nSlaves=12){
             }
         }
         else{
-            message('data is correcting ...')
+            message('Data is correcting ...')
             svaX <- model.matrix(~lv+svafit$sv)
             lmfit <- lmFit(data,svaX)
             Batch<- lmfit$coef[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)]%*%t(svaX[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)])
@@ -59,6 +59,7 @@ svacor <- function(xset,lv,annotation=F,polarity = "positive",nSlaves=12){
                 li <- list(data,datacor,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv,svafit$pprob.gam,svafit$pprob.b)
                 names(li) <- c('data','dataCorrected','signal','batch','error','p-values','q-values','p-valuesCorrected','q-valuesCorrected','PosteriorProbabilitiesSurrogate','PosteriorProbabilitiesMod')
             }
+            message('Done!')
         }
         return(li)
 }
@@ -71,17 +72,6 @@ svapca <- function(list){
         datacor <- list$dataCorrected
         
         par(mfrow=c(2,5),mar = c(2.75, 2.2, 2.6, 1))
-        pcao <- prcomp(t(data), center=TRUE, scale=TRUE)
-        plot(pcao, type = "l",main = "PCA")
-        
-        pca <- prcomp(t(Signal), center=TRUE, scale=TRUE) 
-        plot(pca, type = "l",main = "PCA-signal")
-        
-        pcab <- prcomp(t(Batch), center=TRUE, scale=TRUE)
-        plot(pcab, type = "l",main = "PCA-batch")
-        
-        pcae <- prcomp(t(error), center=TRUE, scale=TRUE)
-        plot(pcae, type = "l",main = "PCA-error")
         
         pcao <- prcomp(t(data), center=TRUE, scale=TRUE)
         plot(pcao, type = "l",main = "PCA")
@@ -140,19 +130,20 @@ svapca <- function(list){
 }
 
 svaplot <- function(list, pqvalues="sv"){
-        data <- list[[1]]
-        Signal <- list[[2]]
-        Batch <- list[[3]]
-        error <- list[[4]]
-        pValues <- list[[5]]
-        qValues <- list[[6]]
-        pValuesSv <- list[[7]]
-        qValuesSv <- list[[8]]
-        par(mfrow=c(1,5),mar = c(3,3,1,1))
+        data <- list$data
+        signal <- list$signal
+        batch <- list$batch
+        error <- list$error
+        datacor <- list$dataCorrected
+        pValues <- list$p-values
+        qValues <- list$q-values
+        pValuesSv <- list$p-valuesCorrected 
+        qValuesSv <- list$q-valuesCorrected
+        par(mfrow=c(1,6),mar = c(3,3,1,1))
         icolors <- colorRampPalette(rev(brewer.pal(11,"RdYlBu")))(100)
         
         if(pqvalues == "anova" & sum(pValues<0.05&qValues<0.05)!=0){
-                zlim <- range(c(Signal[pValues<0.05&qValues<0.05,],data[pValues<0.05&qValues<0.05,],Batch[pValues<0.05&qValues<0.05,],error[pValues<0.05&qValues<0.05,]))
+                zlim <- range(c(Signal[pValues<0.05&qValues<0.05,],data[pValues<0.05&qValues<0.05,],Batch[pValues<0.05&qValues<0.05,],error[pValues<0.05&qValues<0.05,],datacor[pValues<0.05&qValues<0.05,]))
     
                 image(t(data[pValues<0.05&qValues<0.05,]),col=icolors,xlab = 'samples',ylab = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
@@ -165,6 +156,9 @@ svaplot <- function(list, pqvalues="sv"){
     
                 image(t(error[pValues<0.05&qValues<0.05,]),col=icolors,xlab = 'samples',ylab = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(error),cex.axis=0.618,las=2)
+                
+                image(t(datacor[pValues<0.05&qValues<0.05,]),col=icolors,xlab = 'samples',ylab = 'peaks-corrected',xaxt="n",yaxt="n",zlim=zlim)
+                axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(datacor),cex.axis=0.618,las=2)
     
                 breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
                 poly <- vector(mode="list", length(icolors))
@@ -174,10 +168,10 @@ svaplot <- function(list, pqvalues="sv"){
                 for(i in seq(poly)){
                         polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
                         }
-                return(list(Signal[pValues<0.05&qValues<0.05,],pValues<0.05&qValues<0.05))
+                return(list(datacor[pValues<0.05&qValues<0.05,],pValues<0.05&qValues<0.05))
                 }
         else if(pqvalues == "sv"&sum(pValuesSv<0.05&qValuesSv<0.05)!=0){
-                zlim <- range(c(Signal[pValuesSv<0.05&qValuesSv<0.05,],data[pValuesSv<0.05&qValuesSv<0.05,],Batch[pValuesSv<0.05&qValuesSv<0.05,],error[pValuesSv<0.05&qValuesSv<0.05,]))
+                zlim <- range(c(Signal[pValuesSv<0.05&qValuesSv<0.05,],data[pValuesSv<0.05&qValuesSv<0.05,],Batch[pValuesSv<0.05&qValuesSv<0.05,],error[pValuesSv<0.05&qValuesSv<0.05,],datacor[pValuesSv<0.05&qValuesSv<0.05,]))
 
                 image(t(data[pValuesSv<0.05&qValuesSv<0.05,]),col=icolors,xlab = 'samples',ylab = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
@@ -190,6 +184,9 @@ svaplot <- function(list, pqvalues="sv"){
 
                 image(t(error[pValuesSv<0.05&qValuesSv<0.05,]),col=icolors,xlab = 'samples',ylab = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(error),cex.axis=0.618,las=2)
+                
+                image(t(datacor[pValuesSv<0.05&qValuesSv<0.05,]),col=icolors,xlab = 'samples',ylab = 'peaks-corrected',xaxt="n",yaxt="n",zlim=zlim)
+                axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(datacor),cex.axis=0.618,las=2)
 
                 breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
                 poly <- vector(mode="list", length(icolors))
@@ -199,10 +196,10 @@ svaplot <- function(list, pqvalues="sv"){
                 for(i in seq(poly)){
                         polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
                 }
-                return(list(Signal[pValuesSv<0.05&qValuesSv<0.05,],pValuesSv<0.05&qValuesSv<0.05))
+                return(list(datacor[pValuesSv<0.05&qValuesSv<0.05,],pValuesSv<0.05&qValuesSv<0.05))
                 }
         else{
-                zlim <- range(c(Signal,data,Batch,error))
+                zlim <- range(c(Signal,data,Batch,error,datacor))
 
                 image(t(data),col=icolors,xlab = 'samples',ylab = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
@@ -215,6 +212,9 @@ svaplot <- function(list, pqvalues="sv"){
     
                 image(t(error),col=icolors,xlab = 'samples',ylab = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(error),cex.axis=0.618,las=2)
+                
+                image(t(datacor),col=icolors,xlab = 'samples',ylab = 'peaks-corrected',xaxt="n",yaxt="n",zlim=zlim)
+                axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(datacor),cex.axis=0.618,las=2)
     
                 breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
                 poly <- vector(mode="list", length(icolors))
