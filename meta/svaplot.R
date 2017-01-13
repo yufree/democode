@@ -29,6 +29,7 @@ svacor <- function(xset,lv,annotation=F,polarity = "positive",nSlaves=12){
                 return(list(data,Signal,error,pValues,qValues))
             }
         }else{
+            message('data is correcting ...')
             svaX <- model.matrix(~lv+svafit$sv)
             lmfit <- lmFit(data,svaX)
             Batch<- lmfit$coef[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)]%*%t(svaX[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)])
