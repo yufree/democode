@@ -143,8 +143,10 @@ svapca <- function(list,center=T, scale=T){
 svaplot <- function(list, pqvalues="sv",pt=0.05,qt=0.05){
         data <- list$data
         signal <- list$signal
+        signal2 <- list$signal2
         batch <- list$batch
         error <- list$error
+        error2 <- list$error2
         datacor <- list$dataCorrected
         pValues <- list$'p-values'
         qValues <- list$'q-values'
