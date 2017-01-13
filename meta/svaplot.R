@@ -156,7 +156,7 @@ svaplot <- function(list, pqvalues="sv",pt=0.05,qt=0.05){
         icolors <- colorRampPalette(rev(brewer.pal(11,"RdYlBu")))(100)
         
         if(pqvalues == "anova" & sum(pValues<pt&qValues<qt)!=0){
-                par(mfrow=c(1,4),mar = c(3,3,1,1))
+                par(mfrow=c(1,4),mar=c(3,5,1,1),mgp=c(3,0.618,0))
                 data <- data[pValues<pt&qValues<qt,]
                 signal <- signal2[pValues<pt&qValues<qt,]
                 error <- error2[pValues<pt&qValues<qt,]
@@ -185,7 +185,7 @@ svaplot <- function(list, pqvalues="sv",pt=0.05,qt=0.05){
                 return(list(data,pValues<pt&qValues<qt))
                 }
         else if(pqvalues == "sv"&sum(pValuesSv<pt&qValuesSv<qt)!=0){
-                par(mfrow=c(1,6),mar = c(3,3,1,1))
+                par(mfrow=c(1,6),mar=c(3,5,1,1),mgp=c(3,0.618,0))
                 data <- data[pValuesSv<pt&qValuesSv<qt,]
                 signal <- signal[pValuesSv<pt&qValuesSv<qt,]
                 batch <- batch[pValuesSv<pt&qValuesSv<qt,]
@@ -195,23 +195,23 @@ svaplot <- function(list, pqvalues="sv",pt=0.05,qt=0.05){
 
                 image(t(data),col=icolors,xlab = 'samples',ylab = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(data)-1)), labels=rownames(data),cex.axis=0.618,las=2)
+                axis(2, at=seq(0,1,1/(nrow(data)-1)), labels=rownames(data),cex.axis=0.618,las=1)
 
                 image(t(signal),col=icolors,xlab = 'samples',ylab = 'peaks-signal',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(signal)-1)), labels=colnames(signal),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(signal)-1)), labels=rownames(signal),cex.axis=0.618,las=2)
+                axis(2, at=seq(0,1,1/(nrow(signal)-1)), labels=rownames(signal),cex.axis=0.618,las=1)
 
                 image(t(batch),col=icolors,xlab = 'samples',ylab = 'peaks-batch',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(batch)-1)), labels=colnames(batch),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(batch)-1)), labels=rownames(batch),cex.axis=0.618,las=2)
+                axis(2, at=seq(0,1,1/(nrow(batch)-1)), labels=rownames(batch),cex.axis=0.618,las=1)
 
                 image(t(error),col=icolors,xlab = 'samples',ylab = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(error)-1)), labels=colnames(error),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(error)-1)), labels=rownames(error),cex.axis=0.618,las=2)
+                axis(2, at=seq(0,1,1/(nrow(error)-1)), labels=rownames(error),cex.axis=0.618,las=1)
                 
                 image(t(datacor),col=icolors,xlab = 'samples',ylab = 'peaks-corrected',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(datacor)-1)), labels=colnames(datacor),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(datacor)-1)), labels=rownames(datacor),cex.axis=0.618,las=2)
+                axis(2, at=seq(0,1,1/(nrow(datacor)-1)), labels=rownames(datacor),cex.axis=0.618,las=1)
 
                 breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
                 poly <- vector(mode="list", length(icolors))
@@ -224,28 +224,24 @@ svaplot <- function(list, pqvalues="sv",pt=0.05,qt=0.05){
                 return(list(datacor,pValuesSv<pt&qValuesSv<qt))
                 }
         else{
-                par(mfrow=c(1,6),mar = c(3,3,1,1))
-                zlim <- range(c(signal,data,Batch,error,datacor))
-
+                par(mfrow=c(1,6),mar=c(3,5,1,1))
+                zlim <- range(c(signal,data,batch,error,datacor))
+                
                 image(t(data),col=icolors,xlab = 'samples',ylab = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
                 axis(2, at=seq(0,1,1/(nrow(data)-1)), labels=rownames(data),cex.axis=0.618,las=2)
                 
                 image(t(signal),col=icolors,xlab = 'samples',ylab = 'peaks-signal',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(signal)-1)), labels=colnames(signal),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(signal)-1)), labels=rownames(signal),cex.axis=0.618,las=2)
                 
                 image(t(batch),col=icolors,xlab = 'samples',ylab = 'peaks-batch',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(batch)-1)), labels=colnames(batch),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(batch)-1)), labels=rownames(batch),cex.axis=0.618,las=2)
                 
                 image(t(error),col=icolors,xlab = 'samples',ylab = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(error)-1)), labels=colnames(error),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(error)-1)), labels=rownames(error),cex.axis=0.618,las=2)
-                
+        
                 image(t(datacor),col=icolors,xlab = 'samples',ylab = 'peaks-corrected',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(datacor)-1)), labels=colnames(datacor),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(datacor)-1)), labels=rownames(datacor),cex.axis=0.618,las=2)
                 
                 breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
                 poly <- vector(mode="list", length(icolors))
