@@ -161,7 +161,7 @@ svaplot <- function(list, pqvalues="sv",pt=0.05,qt=0.05){
                 data <- data[pValues<pt&qValues<qt,]
                 signal <- signal2[pValues<pt&qValues<qt,]
                 error <- error2[pValues<pt&qValues<qt,]
-                zlim <- range(c(data,signal,error,datacor))
+                zlim <- range(c(data,signal,error))
                 
                 image(t(data),col=icolors,xlab = 'samples',main = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
                 axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
