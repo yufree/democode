@@ -34,8 +34,9 @@ svacor <- function(xset,lv,annotation=F,polarity = "positive",nSlaves=12){
             Batch<- lmfit$coef[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)]%*%t(svaX[,(nlevels(lv)+1):(nlevels(lv)+svafit$n.sv)])
             Signal<-lmfit$coef[,1:nlevels(lv)]%*%t(svaX[,1:nlevels(lv)])
             error <- data-Signal-Batch
-            rownames(Signal) <- rownames(Batch) <- rownames(error) <- rownames(data)
-            colnames(Signal) <- colnames(Batch) <- colnames(error) <- colnames(data)
+            datacor <- Signal+error
+            rownames(datacor) <- rownames(Signal) <- rownames(Batch) <- rownames(error) <- rownames(data)
+            rownames(datacor) <- colnames(Signal) <- colnames(Batch) <- colnames(error) <- colnames(data)
             modSv = cbind(mod,svafit$sv)
             mod0Sv = cbind(mod0,svafit$sv)
             pValuesSv = f.pvalue(data,modSv,mod0Sv)
@@ -43,14 +44,14 @@ svacor <- function(xset,lv,annotation=F,polarity = "positive",nSlaves=12){
             qValuesSv = qValuesSv$qvalues
             
             pValues = f.pvalue(data,mod,mod0)
-            qValues = qvalue(pValuesSv)
+            qValues = qvalue(pValues)
             qValues = qValues$qvalues
             if(annotation){
                 dreport <- annotateDiffreport(xset,metlin = T,polarity = polarity,nSlaves = nSlaves)
                 dreport <- dreport[order(as.numeric(rownames(dreport))),]
-                return(list(data,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv,dreport,svafit$pprob.gam,svafit$pprob.b))
+                return(list(data,datacor,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv,dreport,svafit$pprob.gam,svafit$pprob.b))
             }else{
-                return(list(data,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv,svafit$pprob.gam,svafit$pprob.b))
+                return(list(data,datacor,Signal,Batch,error,pValues,qValues,pValuesSv,qValuesSv,svafit$pprob.gam,svafit$pprob.b))
             }
         }     
 }
@@ -142,7 +143,7 @@ svaplot <- function(list, pqvalues="sv"){
                 for(i in seq(poly)){
                         polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
                         }
-                return(Signal[pValues<0.05&qValues<0.05,])
+                return(list(Signal[pValues<0.05&qValues<0.05,],pValues<0.05&qValues<0.05))
                 }
         else if(pqvalues == "sv"&sum(pValuesSv<0.05&qValuesSv<0.05)!=0){
                 zlim <- range(c(Signal[pValuesSv<0.05&qValuesSv<0.05,],data[pValuesSv<0.05&qValuesSv<0.05,],Batch[pValuesSv<0.05&qValuesSv<0.05,],error[pValuesSv<0.05&qValuesSv<0.05,]))
@@ -167,7 +168,7 @@ svaplot <- function(list, pqvalues="sv"){
                 for(i in seq(poly)){
                         polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
                 }
-                return(Signal[pValuesSv<0.05&qValuesSv<0.05,])
+                return(list(Signal[pValuesSv<0.05&qValuesSv<0.05,],pValuesSv<0.05&qValuesSv<0.05))
                 }
         else{
                 zlim <- range(c(Signal,data,Batch,error))
