@@ -160,8 +160,6 @@ svaplot <- function(list, pqvalues="sv",pt=0.05,qt=0.05){
                 data <- data[pValues<pt&qValues<qt,]
                 signal <- signal2[pValues<pt&qValues<qt,]
                 error <- error2[pValues<pt&qValues<qt,]
-                pValues <- pValues[pValues<pt&qValues<qt]
-                qValues <- qValues[pValues<pt&qValues<qt]
                 zlim <- range(c(data,signal,error,datacor))
                 
                 image(t(data),col=icolors,xlab = 'samples',ylab = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
@@ -193,8 +191,6 @@ svaplot <- function(list, pqvalues="sv",pt=0.05,qt=0.05){
                 batch <- batch[pValuesSv<pt&qValuesSv<qt,]
                 error <- error[pValuesSv<pt&qValuesSv<qt,]
                 datacor <- datacor[pValuesSv<pt&qValuesSv<qt,]
-                pValuesSv <- pValuesSv[pValuesSv<pt&qValuesSv<qt]
-                qValuesSv <- qValuesSv[pValuesSv<pt&qValuesSv<qt]
                 zlim <- range(c(data,signal,batch,error,datacor))
 
                 image(t(data),col=icolors,xlab = 'samples',ylab = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
