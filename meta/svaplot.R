@@ -19,7 +19,7 @@ svacor <- function(xset,lv,annotation=F,polarity = "positive",nSlaves=12){
             rownames(signal) <- rownames(error) <- rownames(data)
             colnames(signal) <- colnames(error) <- colnames(data)
             pValues = f.pvalue(data,mod,mod0)
-            qValues = qvalue(pValuesSv)
+            qValues = qvalue(pValues)
             qValues = qValues$qvalues
             if(annotation){
                 dreport <- annotateDiffreport(xset,metlin = T,polarity = polarity,nSlaves = nSlaves)
