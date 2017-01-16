@@ -27,3 +27,18 @@ getalign <- function(list){
         e <- lapply(list,function(x){x[c,]})
         return(e)
 }
+
+getQCraw <- function(path,mzrange,rtrange,index=NULL){
+	cdffiles <- list.files(path, recursive = TRUE, full.names = TRUE)
+	if(index){
+          cdffiles <- cdffiles[index]
+      }
+    nsamples <- length(cdffiles)
+    area <- numeric()
+    for (i in 1:nsamples){
+    	RAW <- xcmsRaw(cdffiles[i])
+    	peak <- rawEIC(RAW,mzrange,rtrange)
+    	area[i] <- sum(peak$intensity)
+    }
+    return(area)
+}

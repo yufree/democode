@@ -27,7 +27,7 @@ svacor <- function(xset,lv,annotation=F,polarity = "positive",nSlaves=12){
                 li <- list(data,signal,error,pValues,qValues,dreport)
                 names(li) <- c('data','signal','error','p-values','q-values','diffreport')
             }else{
-                li <- list(data,Signal,error,pValues,qValues)
+                li <- list(data,signal,error,pValues,qValues)
                 names(li) <- c('data','signal','error','p-values','q-values')
             }
         }
