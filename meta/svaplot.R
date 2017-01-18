@@ -155,7 +155,7 @@ svaplot <- function(list, pqvalues="sv",pt=0.05,qt=0.05){
         
         icolors <- colorRampPalette(rev(brewer.pal(11,"RdYlBu")))(100)
         
-        if(is.NULL(signal2)){
+        if(is.null(signal2)){
                 if(pqvalues == "anova" & sum(pValues<pt&qValues<qt)!=0){
                         message('No SV while p-values and q-values have results')
                         layout(matrix(rep(c(1,1,2,2,3,3,4,4,5),9),9,9, byrow = TRUE))
