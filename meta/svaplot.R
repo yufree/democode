@@ -155,131 +155,201 @@ svaplot <- function(list, pqvalues="sv",pt=0.05,qt=0.05){
         
         icolors <- colorRampPalette(rev(brewer.pal(11,"RdYlBu")))(100)
         
-        if(pqvalues == "anova" & sum(pValues<pt&qValues<qt)!=0){
-                layout(matrix(rep(c(1,1,2,2,3,3,4,4,5),9),9,9, byrow = TRUE))
-                par(mar=c(3,5,1,1))
-                data <- data[pValues<pt&qValues<qt,]
-                signal <- signal2[pValues<pt&qValues<qt,]
-                error <- error2[pValues<pt&qValues<qt,]
-                zlim <- range(c(data,signal,error))
-                
-                image(t(data),col=icolors,xlab = 'samples',main = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(data)-1)), labels=rownames(data),cex.axis=0.618,las=2)
-    
-                image(t(signal),col=icolors,xlab = 'samples',main = 'peaks-signal',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(signal)-1)), labels=colnames(signal),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(signal)-1)), labels=rownames(signal),cex.axis=0.618,las=2)
-    
-                image(t(error),col=icolors,xlab = 'samples',main = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(error)-1)), labels=colnames(error),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(error)-1)), labels=rownames(error),cex.axis=0.618,las=2)
-    
-                breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
-                poly <- vector(mode="list", length(icolors))
-                plot(1,1,t="n",xlim=c(0,1), ylim=zlim,xaxt='n', yaxt='n',xaxs="i", yaxs="i",ylab = '',xlab = 'intensity',frame.plot=F)
-                axis(4,at=breaks,labels = round(breaks),las=1,pos=0.4)
-                bks <- seq(zlim[1], zlim[2], length.out=(length(icolors)+1))
-                for(i in seq(poly)){
-                        polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
+        if(is.NULL(signal2)){
+                if(pqvalues == "anova" & sum(pValues<pt&qValues<qt)!=0){
+                        message('No SV while p-values and q-values have results')
+                        layout(matrix(rep(c(1,1,2,2,3,3,4,4,5),9),9,9, byrow = TRUE))
+                        par(mar=c(3,5,1,1))
+                        data <- data[pValues<pt&qValues<qt,]
+                        signal <- signal[pValues<pt&qValues<qt,]
+                        error <- error[pValues<pt&qValues<qt,]
+                        zlim <- range(c(data,signal,error))
+                        
+                        image(t(data),col=icolors,xlab = 'samples',main = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
+                        axis(2, at=seq(0,1,1/(nrow(data)-1)), labels=rownames(data),cex.axis=0.618,las=2)
+                        
+                        image(t(signal),col=icolors,xlab = 'samples',main = 'peaks-signal',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(signal)-1)), labels=colnames(signal),cex.axis=0.618,las=2)
+                        axis(2, at=seq(0,1,1/(nrow(signal)-1)), labels=rownames(signal),cex.axis=0.618,las=2)
+                        
+                        image(t(error),col=icolors,xlab = 'samples',main = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(error)-1)), labels=colnames(error),cex.axis=0.618,las=2)
+                        axis(2, at=seq(0,1,1/(nrow(error)-1)), labels=rownames(error),cex.axis=0.618,las=2)
+                        
+                        breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
+                        poly <- vector(mode="list", length(icolors))
+                        plot(1,1,t="n",xlim=c(0,1), ylim=zlim,xaxt='n', yaxt='n',xaxs="i", yaxs="i",ylab = '',xlab = 'intensity',frame.plot=F)
+                        axis(4,at=breaks,labels = round(breaks),las=1,pos=0.4)
+                        bks <- seq(zlim[1], zlim[2], length.out=(length(icolors)+1))
+                        for(i in seq(poly)){
+                                polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
                         }
-                return(list(data,pValues<pt&qValues<qt))
+                        li <- list(data,pValues<pt&qValues<qt)
+                        names(li) <- c('data','pqvalues')
+                        return(li)
                 }
-        else if(pqvalues == "sv"&sum(pValuesSv<pt&qValuesSv<qt)!=0){
-                layout(matrix(rep(c(1,1,2,2,3,3,4,4,5,5,6),11),11, 11, byrow = TRUE))
-                par(mar=c(3,4,2,1))
-                data <- data[pValuesSv<pt&qValuesSv<qt,]
-                signal <- signal[pValuesSv<pt&qValuesSv<qt,]
-                batch <- batch[pValuesSv<pt&qValuesSv<qt,]
-                error <- error[pValuesSv<pt&qValuesSv<qt,]
-                datacor <- datacor[pValuesSv<pt&qValuesSv<qt,]
-                zlim <- range(c(data,signal,batch,error,datacor))
-
-                image(t(data),col=icolors,xlab = 'samples',main = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(data)-1)), labels=rownames(data),cex.axis=0.618,las=1)
-
-                image(t(signal),col=icolors,xlab = 'samples',main = 'peaks-signal',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(signal)-1)), labels=colnames(signal),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(signal)-1)), labels=rownames(signal),cex.axis=0.618,las=1)
-
-                image(t(batch),col=icolors,xlab = 'samples',main = 'peaks-batch',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(batch)-1)), labels=colnames(batch),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(batch)-1)), labels=rownames(batch),cex.axis=0.618,las=1)
-
-                image(t(error),col=icolors,xlab = 'samples',main = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(error)-1)), labels=colnames(error),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(error)-1)), labels=rownames(error),cex.axis=0.618,las=1)
-                
-                image(t(datacor),col=icolors,xlab = 'samples',main = 'peaks-corrected',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(datacor)-1)), labels=colnames(datacor),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(datacor)-1)), labels=rownames(datacor),cex.axis=0.618,las=1)
-
-                breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
-                poly <- vector(mode="list", length(icolors))
-                par(mar=c(3,0,2,3))
-                plot(1,1,t="n",xlim=c(0,1), ylim=zlim,xaxt='n', yaxt='n',xaxs="i", yaxs="i",ylab = '',xlab = 'intensity',frame.plot=F)
-                axis(4,at=breaks,labels = round(breaks),las=1,pos=0.4)
-                bks <- seq(zlim[1], zlim[2], length.out=(length(icolors)+1))
-                for(i in seq(poly)){
-                        polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
+                else{
+                        message('No SV while p-values and q-values have no results')
+                        layout(matrix(rep(c(1,1,1,2,2,3,3,4),8),8,8, byrow = TRUE))
+                        par(mar=c(3,6,2,3))
+                        zlim <- range(c(data,signal,error))
+                        
+                        image(t(data),col=icolors,xlab = 'samples',main = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
+                        axis(2, at=seq(0,1,1/(nrow(data)-1)), labels=rownames(data),cex.axis=0.618,las=2)
+                        par(mar=c(3,3,2,1))
+                        image(t(signal),col=icolors,xlab = 'samples',main = 'peaks-signal',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(signal)-1)), labels=colnames(signal),cex.axis=0.618,las=2)
+                        par(mar=c(3,3,2,1))
+                        image(t(error),col=icolors,xlab = 'samples',main = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(error)-1)), labels=colnames(error),cex.axis=0.618,las=2)
+                        
+                        breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
+                        poly <- vector(mode="list", length(icolors))
+                        par(mar=c(3,0,2,3))
+                        plot(1,1,t="n",xlim=c(0,1), ylim=zlim,xaxt='n', yaxt='n',xaxs="i", yaxs="i",ylab = '',xlab = 'intensity',frame.plot=F)
+                        axis(4,at=breaks,labels = round(breaks),las=1,pos=0.4)
+                        bks <- seq(zlim[1], zlim[2], length.out=(length(icolors)+1))
+                        for(i in seq(poly)){
+                                polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
+                        }
                 }
-                return(list(datacor,pValuesSv<pt&qValuesSv<qt))
+        }else{
+                if(pqvalues == "anova" & sum(pValues<pt&qValues<qt)!=0){
+                        message('Have SVs while p-values and q-values have results')
+                        layout(matrix(rep(c(1,1,2,2,3,3,4,4,5),9),9,9, byrow = TRUE))
+                        par(mar=c(3,5,1,1))
+                        data <- data[pValues<pt&qValues<qt,]
+                        signal <- signal2[pValues<pt&qValues<qt,]
+                        error <- error2[pValues<pt&qValues<qt,]
+                        zlim <- range(c(data,signal,error))
+                        
+                        image(t(data),col=icolors,xlab = 'samples',main = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
+                        axis(2, at=seq(0,1,1/(nrow(data)-1)), labels=rownames(data),cex.axis=0.618,las=2)
+                        
+                        image(t(signal),col=icolors,xlab = 'samples',main = 'peaks-signal',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(signal)-1)), labels=colnames(signal),cex.axis=0.618,las=2)
+                        axis(2, at=seq(0,1,1/(nrow(signal)-1)), labels=rownames(signal),cex.axis=0.618,las=2)
+                        
+                        image(t(error),col=icolors,xlab = 'samples',main = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(error)-1)), labels=colnames(error),cex.axis=0.618,las=2)
+                        axis(2, at=seq(0,1,1/(nrow(error)-1)), labels=rownames(error),cex.axis=0.618,las=2)
+                        
+                        breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
+                        poly <- vector(mode="list", length(icolors))
+                        plot(1,1,t="n",xlim=c(0,1), ylim=zlim,xaxt='n', yaxt='n',xaxs="i", yaxs="i",ylab = '',xlab = 'intensity',frame.plot=F)
+                        axis(4,at=breaks,labels = round(breaks),las=1,pos=0.4)
+                        bks <- seq(zlim[1], zlim[2], length.out=(length(icolors)+1))
+                        for(i in seq(poly)){
+                                polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
+                        }
+                        li <- list(data,pValues<pt&qValues<qt)
+                        names(li) <- c('data','pqvalues')
+                        return(li)
                 }
-        else if(pqvalues == "all"){
-                layout(matrix(rep(c(1,1,1,2,2,3,3,4,4,5,5,5,6),13),13, 13, byrow = TRUE))
-                par(mar=c(3,6,2,3))
-                zlim <- range(c(signal,data,batch,error,datacor))
-                
-                image(t(data),col=icolors,xlab = 'samples',main = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(data)-1)), labels=rownames(data),cex.axis=0.618,las=2)
-                par(mar=c(3,3,2,1))
-                image(t(signal),col=icolors,xlab = 'samples',main = 'peaks-signal',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(signal)-1)), labels=colnames(signal),cex.axis=0.618,las=2)
-                par(mar=c(3,3,2,1))
-                image(t(batch),col=icolors,xlab = 'samples',main = 'peaks-batch',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(batch)-1)), labels=colnames(batch),cex.axis=0.618,las=2)
-                par(mar=c(3,3,2,1))
-                image(t(error),col=icolors,xlab = 'samples',main = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(error)-1)), labels=colnames(error),cex.axis=0.618,las=2)
-                par(mar=c(3,6,2,3))
-                image(t(datacor),col=icolors,xlab = 'samples',main = 'peaks-corrected',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(datacor)-1)), labels=colnames(datacor),cex.axis=0.618,las=2)
-                
-                breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
-                poly <- vector(mode="list", length(icolors))
-                par(mar=c(3,0,2,3))
-                plot(1,1,t="n",xlim=c(0,1), ylim=zlim,xaxt='n', yaxt='n',xaxs="i", yaxs="i",ylab = '',xlab = 'intensity',frame.plot=F)
-                axis(4,at=breaks,labels = round(breaks),las=1,pos=0.4)
-                bks <- seq(zlim[1], zlim[2], length.out=(length(icolors)+1))
-                for(i in seq(poly)){
-                        polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
+                else if(pqvalues == "anova"){
+                        message('Have SVs while p-values and q-values have no results')
+                        layout(matrix(rep(c(1,1,1,2,2,3,3,4),8),8,8, byrow = TRUE))
+                        par(mar=c(3,6,2,3))
+                        zlim <- range(c(data,signal2,error2))
+                        
+                        image(t(data),col=icolors,xlab = 'samples',main = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
+                        axis(2, at=seq(0,1,1/(nrow(data)-1)), labels=rownames(data),cex.axis=0.618,las=2)
+                        par(mar=c(3,3,2,1))
+                        image(t(signal2),col=icolors,xlab = 'samples',main = 'peaks-signal',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(signal2)-1)), labels=colnames(signal2),cex.axis=0.618,las=2)
+                        par(mar=c(3,3,2,1))
+                        image(t(error2),col=icolors,xlab = 'samples',main = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(error2)-1)), labels=colnames(error2),cex.axis=0.618,las=2)
+                        
+                        breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
+                        poly <- vector(mode="list", length(icolors))
+                        par(mar=c(3,0,2,3))
+                        plot(1,1,t="n",xlim=c(0,1), ylim=zlim,xaxt='n', yaxt='n',xaxs="i", yaxs="i",ylab = '',xlab = 'intensity',frame.plot=F)
+                        axis(4,at=breaks,labels = round(breaks),las=1,pos=0.4)
+                        bks <- seq(zlim[1], zlim[2], length.out=(length(icolors)+1))
+                        for(i in seq(poly)){
+                                polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
+                        }
                 }
-        }
-        else{
-                layout(matrix(rep(c(1,1,1,2,2,3,3,4),8),8,8, byrow = TRUE))
-                par(mar=c(3,6,2,3))
-                zlim <- range(c(data,signal2,error2))
-                
-                image(t(data),col=icolors,xlab = 'samples',main = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
-                axis(2, at=seq(0,1,1/(nrow(data)-1)), labels=rownames(data),cex.axis=0.618,las=2)
-                par(mar=c(3,3,2,1))
-                image(t(signal2),col=icolors,xlab = 'samples',main = 'peaks-signal',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(signal2)-1)), labels=colnames(signal2),cex.axis=0.618,las=2)
-                par(mar=c(3,3,2,1))
-                image(t(error2),col=icolors,xlab = 'samples',main = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
-                axis(1, at=seq(0,1,1/(ncol(error2)-1)), labels=colnames(error2),cex.axis=0.618,las=2)
-                
-                breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
-                poly <- vector(mode="list", length(icolors))
-                par(mar=c(3,0,2,3))
-                plot(1,1,t="n",xlim=c(0,1), ylim=zlim,xaxt='n', yaxt='n',xaxs="i", yaxs="i",ylab = '',xlab = 'intensity',frame.plot=F)
-                axis(4,at=breaks,labels = round(breaks),las=1,pos=0.4)
-                bks <- seq(zlim[1], zlim[2], length.out=(length(icolors)+1))
-                for(i in seq(poly)){
-                        polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
+                else if(pqvalues == "sv" & sum(pValuesSv<pt&qValuesSv<qt)!=0){
+                        message('SVs corrected while p-values and q-values have results')
+                        layout(matrix(rep(c(1,1,2,2,3,3,4,4,5,5,6),11),11, 11, byrow = TRUE))
+                        par(mar=c(3,4,2,1))
+                        data <- data[pValuesSv<pt&qValuesSv<qt,]
+                        signal <- signal[pValuesSv<pt&qValuesSv<qt,]
+                        batch <- batch[pValuesSv<pt&qValuesSv<qt,]
+                        error <- error[pValuesSv<pt&qValuesSv<qt,]
+                        datacor <- datacor[pValuesSv<pt&qValuesSv<qt,]
+                        zlim <- range(c(data,signal,batch,error,datacor))
+                        
+                        image(t(data),col=icolors,xlab = 'samples',main = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
+                        axis(2, at=seq(0,1,1/(nrow(data)-1)), labels=rownames(data),cex.axis=0.618,las=1)
+                        
+                        image(t(signal),col=icolors,xlab = 'samples',main = 'peaks-signal',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(signal)-1)), labels=colnames(signal),cex.axis=0.618,las=2)
+                        axis(2, at=seq(0,1,1/(nrow(signal)-1)), labels=rownames(signal),cex.axis=0.618,las=1)
+                        
+                        image(t(batch),col=icolors,xlab = 'samples',main = 'peaks-batch',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(batch)-1)), labels=colnames(batch),cex.axis=0.618,las=2)
+                        axis(2, at=seq(0,1,1/(nrow(batch)-1)), labels=rownames(batch),cex.axis=0.618,las=1)
+                        
+                        image(t(error),col=icolors,xlab = 'samples',main = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(error)-1)), labels=colnames(error),cex.axis=0.618,las=2)
+                        axis(2, at=seq(0,1,1/(nrow(error)-1)), labels=rownames(error),cex.axis=0.618,las=1)
+                        
+                        image(t(datacor),col=icolors,xlab = 'samples',main = 'peaks-corrected',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(datacor)-1)), labels=colnames(datacor),cex.axis=0.618,las=2)
+                        axis(2, at=seq(0,1,1/(nrow(datacor)-1)), labels=rownames(datacor),cex.axis=0.618,las=1)
+                        
+                        breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
+                        poly <- vector(mode="list", length(icolors))
+                        par(mar=c(3,0,2,3))
+                        plot(1,1,t="n",xlim=c(0,1), ylim=zlim,xaxt='n', yaxt='n',xaxs="i", yaxs="i",ylab = '',xlab = 'intensity',frame.plot=F)
+                        axis(4,at=breaks,labels = round(breaks),las=1,pos=0.4)
+                        bks <- seq(zlim[1], zlim[2], length.out=(length(icolors)+1))
+                        for(i in seq(poly)){
+                                polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
+                        }
+                        li <- list(datacor,pValuesSv<pt&qValuesSv<qt)
+                        names(li) <- c('data','pqvalues')
+                        return(li)
+                }
+                else{
+                        message('SVs corrected while p-values and q-values have no results')
+                        layout(matrix(rep(c(1,1,1,2,2,3,3,4,4,5,5,5,6),13),13, 13, byrow = TRUE))
+                        par(mar=c(3,6,2,3))
+                        zlim <- range(c(signal,data,batch,error,datacor))
+                        
+                        image(t(data),col=icolors,xlab = 'samples',main = 'peaks',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(data)-1)), labels=colnames(data),cex.axis=0.618,las=2)
+                        axis(2, at=seq(0,1,1/(nrow(data)-1)), labels=rownames(data),cex.axis=0.618,las=2)
+                        par(mar=c(3,3,2,1))
+                        image(t(signal),col=icolors,xlab = 'samples',main = 'peaks-signal',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(signal)-1)), labels=colnames(signal),cex.axis=0.618,las=2)
+                        par(mar=c(3,3,2,1))
+                        image(t(batch),col=icolors,xlab = 'samples',main = 'peaks-batch',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(batch)-1)), labels=colnames(batch),cex.axis=0.618,las=2)
+                        par(mar=c(3,3,2,1))
+                        image(t(error),col=icolors,xlab = 'samples',main = 'peaks-error',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(error)-1)), labels=colnames(error),cex.axis=0.618,las=2)
+                        par(mar=c(3,6,2,3))
+                        image(t(datacor),col=icolors,xlab = 'samples',main = 'peaks-corrected',xaxt="n",yaxt="n",zlim=zlim)
+                        axis(1, at=seq(0,1,1/(ncol(datacor)-1)), labels=colnames(datacor),cex.axis=0.618,las=2)
+                        
+                        breaks <- seq(zlim[1], zlim[2], round((zlim[2]-zlim[1])/10))
+                        poly <- vector(mode="list", length(icolors))
+                        par(mar=c(3,0,2,3))
+                        plot(1,1,t="n",xlim=c(0,1), ylim=zlim,xaxt='n', yaxt='n',xaxs="i", yaxs="i",ylab = '',xlab = 'intensity',frame.plot=F)
+                        axis(4,at=breaks,labels = round(breaks),las=1,pos=0.4)
+                        bks <- seq(zlim[1], zlim[2], length.out=(length(icolors)+1))
+                        for(i in seq(poly)){
+                                polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
+                        }  
                 }
         }
 }
