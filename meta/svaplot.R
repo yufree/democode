@@ -315,8 +315,8 @@ svaplot <- function(list, pqvalues="sv",pt=0.05,qt=0.05){
                         for(i in seq(poly)){
                                 polygon(c(0.1,0.1,0.3,0.3), c(bks[i], bks[i+1], bks[i+1], bks[i]),  col=icolors[i], border=NA)
                         }
-                        li <- list(datacor,pValuesSv<pt&qValuesSv<qt)
-                        names(li) <- c('data','pqvalues')
+                        li <- list(datacor,data,pValuesSv<pt&qValuesSv<qt)
+                        names(li) <- c('datacor','data','pqvalues')
                         return(li)
                 }
                 else{
