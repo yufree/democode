@@ -3,26 +3,27 @@ suppressWarnings(suppressPackageStartupMessages(library(xcms)))
 library(RColorBrewer)
 suppressPackageStartupMessages(library(sva))
 suppressPackageStartupMessages(library(limma))
+suppressPackageStartupMessages(library(MAIT))
 library(CAMERA)
 library(qvalue)
 
 svacor <-
         function(xset,
                  lv = NULL,
-                 annotation = T,
+                 annotation = F,
                  polarity = "positive",
                  nSlaves = 12) {
                 data <- groupval(xset, "maxint", value = 'into')
-                if(is.null(lv)){
-                        lv <- xset@phenoData[,1]
+                if (is.null(lv)) {
+                        lv <- xset@phenoData[, 1]
                 }
-                mz <- xset@groups[,1]
-                rt <- xset@groups[,4]
-                mod <- model.matrix(~ lv)
+                mz <- xset@groups[, 1]
+                rt <- xset@groups[, 4]
+                mod <- model.matrix( ~ lv)
                 mod0 <- as.matrix(c(rep(1, ncol(data))))
                 svafit <- sva(data, mod)
                 if (svafit$n.sv == 0) {
-                        svaX <- model.matrix(~ lv)
+                        svaX <- model.matrix( ~ lv)
                         lmfit <- lmFit(data, svaX)
                         signal <-
                                 lmfit$coef[, 1:nlevels(lv)] %*% t(svaX[, 1:nlevels(lv)])
@@ -43,7 +44,7 @@ svacor <-
                                                 nSlaves = nSlaves
                                         )
                                 dreport <-
-                                        dreport[order(as.numeric(rownames(dreport))),]
+                                        dreport[order(as.numeric(rownames(dreport))), ]
                                 li <-
                                         list(data,
                                              signal,
@@ -65,18 +66,28 @@ svacor <-
                                                 'rt'
                                         )
                         } else{
-                                li <- list(data, signal, error, pValues, qValues,mz,rt)
+                                li <- list(data,
+                                           signal,
+                                           error,
+                                           pValues,
+                                           qValues,
+                                           mz,
+                                           rt)
                                 names(li) <-
-                                        c('data',
-                                          'signal',
-                                          'error',
-                                          'p-values',
-                                          'q-values','mz','rt')
+                                        c(
+                                                'data',
+                                                'signal',
+                                                'error',
+                                                'p-values',
+                                                'q-values',
+                                                'mz',
+                                                'rt'
+                                        )
                         }
                 }
                 else{
                         message('Data is correcting ...')
-                        svaX <- model.matrix(~ lv + svafit$sv)
+                        svaX <- model.matrix( ~ lv + svafit$sv)
                         lmfit <- lmFit(data, svaX)
                         batch <-
                                 lmfit$coef[, (nlevels(lv) + 1):(nlevels(lv) + svafit$n.sv)] %*% t(svaX[, (nlevels(lv) +
@@ -85,7 +96,7 @@ svacor <-
                                 lmfit$coef[, 1:nlevels(lv)] %*% t(svaX[, 1:nlevels(lv)])
                         error <- data - signal - batch
                         datacor <- signal + error
-                        svaX2 <- model.matrix(~ lv)
+                        svaX2 <- model.matrix( ~ lv)
                         lmfit2 <- lmFit(data, svaX2)
                         signal2 <-
                                 lmfit2$coef[, 1:nlevels(lv)] %*% t(svaX2[, 1:nlevels(lv)])
@@ -121,7 +132,7 @@ svacor <-
                                                 nSlaves = nSlaves
                                         )
                                 dreport <-
-                                        dreport[order(as.numeric(rownames(dreport))),]
+                                        dreport[order(as.numeric(rownames(dreport))), ]
                                 li <-
                                         list(
                                                 data,
@@ -317,12 +328,12 @@ svaplot <- function(list,
                                 c(1, 1, 2, 2, 3, 3, 4, 4, 5), 9
                         ), 9, 9, byrow = TRUE))
                         par(mar = c(3, 5, 1, 1))
-                        data <- data[pValues < pt & qValues < qt,]
+                        data <- data[pValues < pt & qValues < qt, ]
                         signal <-
                                 signal[pValues < pt &
-                                               qValues < qt,]
+                                               qValues < qt, ]
                         error <-
-                                error[pValues < pt & qValues < qt,]
+                                error[pValues < pt & qValues < qt, ]
                         zlim <- range(c(data, signal, error))
                         
                         image(
@@ -568,13 +579,13 @@ svaplot <- function(list,
                                 c(1, 1, 2, 2, 3, 3, 4, 4, 5), 9
                         ), 9, 9, byrow = TRUE))
                         par(mar = c(3, 5, 1, 1))
-                        data <- data[pValues < pt & qValues < qt,]
+                        data <- data[pValues < pt & qValues < qt, ]
                         signal <-
                                 signal2[pValues < pt &
-                                                qValues < qt,]
+                                                qValues < qt, ]
                         error <-
                                 error2[pValues < pt &
-                                               qValues < qt,]
+                                               qValues < qt, ]
                         zlim <- range(c(data, signal, error))
                         
                         image(
@@ -823,18 +834,18 @@ svaplot <- function(list,
                         par(mar = c(3, 4, 2, 1))
                         data <-
                                 data[pValuesSv < pt &
-                                             qValuesSv < qt,]
+                                             qValuesSv < qt, ]
                         signal <- signal[pValuesSv < pt &
-                                                 qValuesSv < qt,]
+                                                 qValuesSv < qt, ]
                         batch <-
                                 batch[pValuesSv < pt &
-                                              qValuesSv < qt,]
+                                              qValuesSv < qt, ]
                         error <-
                                 error[pValuesSv < pt &
-                                              qValuesSv < qt,]
+                                              qValuesSv < qt, ]
                         datacor <-
                                 datacor[pValuesSv < pt &
-                                                qValuesSv < qt,]
+                                                qValuesSv < qt, ]
                         zlim <-
                                 range(c(data, signal, batch, error, datacor))
                         
@@ -1175,3 +1186,33 @@ svaplot <- function(list,
                 }
         }
 }
+
+svaanno <-
+        function(raw,
+                 lv,
+                 polarity = "positive",
+                 projectname = "test") {
+                table <- MAITbuilder(
+                        data = raw$dataCorrected,
+                        spectraID = NULL,
+                        masses = raw$mz,
+                        rt = raw$rt,
+                        spectraEstimation = TRUE,
+                        classes = lv,
+                        rtRange = 0.2,
+                        corThresh = 0.7
+                )
+                importMAIT <- Biotransformations(
+                        MAIT.object = table,
+                        adductAnnotation = TRUE,
+                        peakPrecision = 0.005,
+                        adductTable = NULL
+                )
+                importMAIT <- identifyMetabolites(
+                        MAIT.object = importMAIT,
+                        peakTolerance = 0.005,
+                        polarity = polarity,
+                        projectname = projectname
+                )
+                return(importMAIT)
+        }
