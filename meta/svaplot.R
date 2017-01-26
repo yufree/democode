@@ -1192,16 +1192,32 @@ svaanno <-
                  lv,
                  polarity = "positive",
                  projectname = "test") {
-                table <- MAITbuilder(
-                        data = raw$dataCorrected,
-                        spectraID = NULL,
-                        masses = raw$mz,
-                        rt = raw$rt,
-                        spectraEstimation = TRUE,
-                        classes = lv,
-                        rtRange = 0.2,
-                        corThresh = 0.7
-                )
+                if (is.null(raw$dataCorrected)) {
+                        table <- MAITbuilder(
+                                data = raw$data,
+                                spectraID = NULL,
+                                masses = raw$mz,
+                                rt = raw$rt,
+                                spectraEstimation = TRUE,
+                                significantFeatures = T,
+                                classes = lv,
+                                rtRange = 0.2,
+                                corThresh = 0.7
+                        )
+                } else{
+                        table <- MAITbuilder(
+                                data = raw$dataCorrected,
+                                spectraID = NULL,
+                                masses = raw$mz,
+                                rt = raw$rt,
+                                spectraEstimation = TRUE,
+                                significantFeatures = T,
+                                classes = lv,
+                                rtRange = 0.2,
+                                corThresh = 0.7
+                        )
+                }
+                
                 importMAIT <- Biotransformations(
                         MAIT.object = table,
                         adductAnnotation = TRUE,
