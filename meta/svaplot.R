@@ -8,11 +8,16 @@ library(qvalue)
 
 svacor <-
         function(xset,
-                 lv,
-                 annotation = F,
+                 lv = NULL,
+                 annotation = T,
                  polarity = "positive",
                  nSlaves = 12) {
                 data <- groupval(xset, "maxint", value = 'into')
+                if(is.null(lv)){
+                        lv <- xset@phenoData[,1]
+                }
+                mz <- xset@groups[,1]
+                rt <- xset@groups[,4]
                 mod <- model.matrix(~ lv)
                 mod0 <- as.matrix(c(rep(1, ncol(data))))
                 svafit <- sva(data, mod)
@@ -45,7 +50,9 @@ svacor <-
                                              error,
                                              pValues,
                                              qValues,
-                                             dreport)
+                                             dreport,
+                                             mz,
+                                             rt)
                                 names(li) <-
                                         c(
                                                 'data',
@@ -53,16 +60,18 @@ svacor <-
                                                 'error',
                                                 'p-values',
                                                 'q-values',
-                                                'diffreport'
+                                                'diffreport',
+                                                'mz',
+                                                'rt'
                                         )
                         } else{
-                                li <- list(data, signal, error, pValues, qValues)
+                                li <- list(data, signal, error, pValues, qValues,mz,rt)
                                 names(li) <-
                                         c('data',
                                           'signal',
                                           'error',
                                           'p-values',
-                                          'q-values')
+                                          'q-values','mz','rt')
                         }
                 }
                 else{
@@ -128,7 +137,9 @@ svacor <-
                                                 qValuesSv,
                                                 dreport,
                                                 svafit$pprob.gam,
-                                                svafit$pprob.b
+                                                svafit$pprob.b,
+                                                mz,
+                                                rt
                                         )
                                 names(li) <-
                                         c(
@@ -145,7 +156,9 @@ svacor <-
                                                 'q-valuesCorrected',
                                                 'diffreport',
                                                 'PosteriorProbabilitiesSurrogate',
-                                                'PosteriorProbabilitiesMod'
+                                                'PosteriorProbabilitiesMod',
+                                                'mz',
+                                                'rt'
                                         )
                         }
                         else{
@@ -163,7 +176,9 @@ svacor <-
                                                 pValuesSv,
                                                 qValuesSv,
                                                 svafit$pprob.gam,
-                                                svafit$pprob.b
+                                                svafit$pprob.b,
+                                                mz,
+                                                rt
                                         )
                                 names(li) <-
                                         c(
@@ -179,7 +194,9 @@ svacor <-
                                                 'p-valuesCorrected',
                                                 'q-valuesCorrected',
                                                 'PosteriorProbabilitiesSurrogate',
-                                                'PosteriorProbabilitiesMod'
+                                                'PosteriorProbabilitiesMod',
+                                                'mz',
+                                                'rt'
                                         )
                         }
                         message('Done!')
