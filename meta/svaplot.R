@@ -302,6 +302,68 @@ svapca <- function(list,
         )
 }
 
+svadata <- function(list,
+                    pqvalues = "sv",
+                    pt = 0.05,
+                    qt = 0.05){
+        data <- list$data
+        signal2 <- list$signal2
+        datacor <- list$dataCorrected
+        pValues <- list$'p-values'
+        qValues <- list$'q-values'
+        pValuesSv <- list$'p-valuesCorrected'
+        qValuesSv <- list$'q-valuesCorrected'
+        if (is.null(signal2)) {
+                if (pqvalues == "anova" & sum(pValues < pt & qValues < qt) != 0) {
+                        message('No SV while p-values and q-values have results')
+                        data <- data[pValues < pt & qValues < qt, ]
+                        li <-
+                                list(data, pValues < pt &
+                                             qValues < qt)
+                        names(li) <- c('data', 'pqvalues')
+                        return(li)
+                }
+                else{
+                        message('No SV while p-values and q-values have no results')
+                }
+        } else{
+                if (pqvalues == "anova" & sum(pValues < pt & qValues < qt) != 0) {
+                        message('Have SVs while p-values and q-values have results')
+                        data <- data[pValues < pt & qValues < qt, ]
+                        li <-
+                                list(data, pValues < pt &
+                                             qValues < qt)
+                        names(li) <- c('data', 'pqvalues')
+                        return(li)
+                }
+                else if (pqvalues == "anova") {
+                        message('Have SVs while p-values and q-values have no results')
+                }
+                else if (pqvalues == "sv" &
+                         sum(pValuesSv < pt &
+                             qValuesSv < qt) != 0) {
+                        message('SVs corrected while p-values and q-values have results')
+                        data <-
+                                data[pValuesSv < pt &
+                                             qValuesSv < qt, ]
+                        datacor <-
+                                datacor[pValuesSv < pt &
+                                                qValuesSv < qt, ]
+                        li <-
+                                list(datacor,
+                                     data,
+                                     pValuesSv < pt &
+                                             qValuesSv < qt)
+                        names(li) <-
+                                c('dataCorrected', 'data', 'pqvalues')
+                        return(li)
+                }
+                else{
+                        message('SVs corrected while p-values and q-values have no results')
+                }
+        }
+}
+
 svaplot <- function(list,
                     pqvalues = "sv",
                     pt = 0.05,
@@ -1031,7 +1093,7 @@ svaplot <- function(list,
                                      pValuesSv < pt &
                                              qValuesSv < qt)
                         names(li) <-
-                                c('datacor', 'data', 'pqvalues')
+                                c('dataCorrected', 'data', 'pqvalues')
                         return(li)
                 }
                 else{
