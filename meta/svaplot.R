@@ -319,6 +319,10 @@ svadata <- function(list,
                 if (pqvalues == "anova" & sum(pValues < pt & qValues < qt) != 0) {
                         message('No SV while p-values and q-values have results')
                         data <- data[pValues < pt & qValues < qt, ]
+                        mz <- mz[pValues < pt &
+                                         qValues < qt]
+                        rt <- rt[pValues < pt &
+                                         qValues < qt]
                         li <-
                                 list(data, pValues < pt &
                                              qValues < qt,mz,rt)
@@ -332,10 +336,14 @@ svadata <- function(list,
                 if (pqvalues == "anova" & sum(pValues < pt & qValues < qt) != 0) {
                         message('Have SVs while p-values and q-values have results')
                         data <- data[pValues < pt & qValues < qt, ]
+                        mz <- mz[pValues < pt &
+                                         qValues < qt]
+                        rt <- rt[pValues < pt &
+                                         qValues < qt]
                         li <-
                                 list(data, pValues < pt &
-                                             qValues < qt)
-                        names(li) <- c('data', 'pqvalues')
+                                             qValues < qt,mz,rt)
+                        names(li) <- c('data', 'pqvalues',mz,rt)
                         return(li)
                 }
                 else if (pqvalues == "anova") {
@@ -351,6 +359,10 @@ svadata <- function(list,
                         datacor <-
                                 datacor[pValuesSv < pt &
                                                 qValuesSv < qt, ]
+                        mz <- mz[pValuesSv < pt &
+                                         qValuesSv < qt]
+                        rt <- rt[pValuesSv < pt &
+                                         qValuesSv < qt]
                         li <-
                                 list(datacor,
                                      data,
