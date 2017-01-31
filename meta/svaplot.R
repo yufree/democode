@@ -1217,13 +1217,21 @@ svaanno <-
                                 corThresh = 0.7
                         )
                 }
+                if(polarity == 'positive'){
+                        importMAIT <- Biotransformations(
+                                MAIT.object = table,
+                                adductAnnotation = TRUE,
+                                peakPrecision = 0.005,
+                                adductTable = NULL
+                        )  
+                }else{
+                        importMAIT <- Biotransformations(
+                                MAIT.object = table,
+                                adductAnnotation = TRUE,
+                                peakPrecision = 0.005,
+                                adductTable = "negAdducts")
+                }
                 
-                importMAIT <- Biotransformations(
-                        MAIT.object = table,
-                        adductAnnotation = TRUE,
-                        peakPrecision = 0.005,
-                        adductTable = NULL
-                )
                 importMAIT <- identifyMetabolites(
                         MAIT.object = importMAIT,
                         peakTolerance = 0.005,
