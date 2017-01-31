@@ -305,7 +305,7 @@ svapca <- function(list,
 svadata <- function(list,
                     pqvalues = "sv",
                     pt = 0.05,
-                    qt = 0.05){
+                    qt = 0.05) {
         data <- list$data
         signal2 <- list$signal2
         datacor <- list$dataCorrected
@@ -1279,19 +1279,20 @@ svaanno <-
                                 corThresh = 0.7
                         )
                 }
-                if(polarity == 'positive'){
+                if (polarity == 'positive') {
                         importMAIT <- Biotransformations(
                                 MAIT.object = table,
                                 adductAnnotation = TRUE,
                                 peakPrecision = 0.005,
                                 adductTable = NULL
-                        )  
-                }else{
+                        )
+                } else{
                         importMAIT <- Biotransformations(
                                 MAIT.object = table,
                                 adductAnnotation = TRUE,
                                 peakPrecision = 0.005,
-                                adductTable = "negAdducts")
+                                adductTable = "negAdducts"
+                        )
                 }
                 
                 importMAIT <- identifyMetabolites(
