@@ -313,14 +313,16 @@ svadata <- function(list,
         qValues <- list$'q-values'
         pValuesSv <- list$'p-valuesCorrected'
         qValuesSv <- list$'q-valuesCorrected'
+        mz <- list$mz
+        rt <- list$rt
         if (is.null(signal2)) {
                 if (pqvalues == "anova" & sum(pValues < pt & qValues < qt) != 0) {
                         message('No SV while p-values and q-values have results')
                         data <- data[pValues < pt & qValues < qt, ]
                         li <-
                                 list(data, pValues < pt &
-                                             qValues < qt)
-                        names(li) <- c('data', 'pqvalues')
+                                             qValues < qt,mz,rt)
+                        names(li) <- c('data', 'pqvalues','mz','rt')
                         return(li)
                 }
                 else{
@@ -353,9 +355,9 @@ svadata <- function(list,
                                 list(datacor,
                                      data,
                                      pValuesSv < pt &
-                                             qValuesSv < qt)
+                                             qValuesSv < qt,mz,rt)
                         names(li) <-
-                                c('dataCorrected', 'data', 'pqvalues')
+                                c('dataCorrected', 'data', 'pqvalues','mz','rt')
                         return(li)
                 }
                 else{
