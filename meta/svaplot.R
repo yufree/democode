@@ -217,12 +217,18 @@ svacor <-
 
 svapca <- function(list,
                    center = T,
-                   scale = T) {
+                   scale = T,
+                   lv = NULL) {
         data <- list$data
         Signal <- list$signal
         Batch <- list$batch
         error <- list$error
         datacor <- list$dataCorrected
+        if(is.null(lv)){
+                pch = colnames(data)
+        }else{
+                pch = lv
+        }
         
         par(mfrow = c(2, 5), mar = c(4, 4, 2.6, 1))
         
@@ -256,7 +262,7 @@ svapca <- function(list,
                 pcao$x[, 2],
                 xlab = paste("PC1:", pcaoVars[1], "% of Variance Explained"),
                 ylab = paste("PC2:", pcaoVars[2], "% of Variance Explained"),
-                pch = colnames(data),
+                pch = pch,
                 cex = 2,
                 main = "PCA"
         )
@@ -266,7 +272,7 @@ svapca <- function(list,
                 pca$x[, 2],
                 xlab = paste("PC1:", pcaVars[1], "% of Variance Explained"),
                 ylab = paste("PC2:", pcaVars[2], "% of Variance Explained"),
-                pch = colnames(Signal),
+                pch = pch,
                 cex = 2,
                 main = "PCA-signal"
         )
@@ -276,7 +282,7 @@ svapca <- function(list,
                 pcab$x[, 2],
                 xlab = paste("PC1:", pcabVars[1], "% of Variance Explained"),
                 ylab = paste("PC2:", pcabVars[2], "% of Variance Explained"),
-                pch = colnames(Batch),
+                pch = pch,
                 cex = 2,
                 main = "PCA-batch"
         )
@@ -286,7 +292,7 @@ svapca <- function(list,
                 pcae$x[, 2],
                 xlab = paste("PC1:", pcaeVars[1], "% of Variance Explained"),
                 ylab = paste("PC2:", pcaeVars[2], "% of Variance Explained"),
-                pch = colnames(error),
+                pch = pch,
                 cex = 2,
                 main = "PCA-error"
         )
@@ -296,7 +302,7 @@ svapca <- function(list,
                 pcac$x[, 2],
                 xlab = paste("PC1:", pcacVars[1], "% of Variance Explained"),
                 ylab = paste("PC2:", pcacVars[2], "% of Variance Explained"),
-                pch = colnames(datacor),
+                pch = pch,
                 cex = 2,
                 main = "PCA-corrected"
         )
