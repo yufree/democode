@@ -58,7 +58,7 @@ xset2 <- group(xset2, bw = 10)
 进行了保留时间矫正后会出现某些时间点的数据缺失，这样需要从原始数据中读入这些缺失值。
 
 ```{r}
-xset3 <- fillPeaks(xset2) 
+xset3 <- fillPeaks(xset2,BPPARAM=SnowParam(workers = 4)) 
 ```
 
 ## 生成报告
