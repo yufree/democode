@@ -280,3 +280,13 @@ getopqedata <- function(path,
         xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
         return(xset3)
 }
+
+getupload <- function(xset,method = "medret", value = 'inio'){
+        peakIntensities <- groupval(xset, method = method, value = value)
+        if (value == "intb"){
+                peakIntensities[is.na(peakIntensities)] = 0
+        }
+        data <- rbind(group = as.character(phenoData(xset)$class), peakIntensities)
+        write.csv(data, file='Peaklist.csv') 
+        return(data)
+}

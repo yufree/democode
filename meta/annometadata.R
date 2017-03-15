@@ -1,3 +1,4 @@
+# devtools::install_github('yufree/MAIT')
 # install.packages("WGCNA",repos="http://cran.r-project.org",dependencies=TRUE)
 # install.packages("snow",repos="http://cran.r-project.org")
 # install.packages("doSNOW",repos="http://cran.r-project.org")
@@ -15,6 +16,7 @@
 # install.packages("plyr",repos="http://cran.r-project.org")
 # install.packages("png",repos="http://cran.r-project.org")
 # install.packages("rjson",repos="http://cran.r-project.org")
+
 source('https://raw.githubusercontent.com/yufree/democode/master/meta/getmetadata.R')
 suppressPackageStartupMessages(library(MAIT))
 suppressPackageStartupMessages(library(xMSannotator))

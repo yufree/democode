@@ -1,4 +1,5 @@
 # devtools::install_github('yufree/sva-devel')
+# devtools::install_github('yufree/MAIT')
 suppressWarnings(suppressPackageStartupMessages(library(xcms)))
 library(RColorBrewer)
 suppressPackageStartupMessages(library(sva))
@@ -13,8 +14,12 @@ svacor <-
                  lv = NULL,
                  annotation = F,
                  polarity = "positive",
+                 value = 'into',
                  nSlaves = 12) {
-                data <- groupval(xset, "maxint", value = 'into')
+                data <- groupval(xset, "maxint", value = value)
+                if(value == "intb"){
+                        data[is.na(data)] = 0
+                }
                 if (is.null(lv)) {
                         lv <- xset@phenoData[, 1]
                 }
@@ -1399,4 +1404,26 @@ svafanno <- function(raw,
                         mass_defect_mode = mode
                 )
         return(annotres)
+}
+
+svaupload <- function(xset,
+                      lv = NULL,
+                      polarity = "positive",
+                      value = 'into',
+                      nSlaves = 12){
+        raw <- svacor(xset,lv=lv,annotation = F,polarity = polarity, value = value,nSlaves = nSlaves)
+        if (is.null(raw$dataCorrected)) {
+                data <- raw$data
+                data <- rbind(group = as.character(xset@phenoData[, 1]), data)
+                write.csv(data, file='Peaklist.csv')
+                return(data)
+        }
+        else{
+                datacor <- raw$dataCorrected
+                data <- raw$data
+                data <- rbind(group = as.character(xset@phenoData[, 1]), data)
+                write.csv(datacor, file='Peaklistcor.csv')
+                write.csv(data, file='Peaklist.csv')
+                return(list(data,datacor))
+        }
 }
