@@ -4,6 +4,7 @@ library(RColorBrewer)
 suppressPackageStartupMessages(library(sva))
 suppressPackageStartupMessages(library(limma))
 suppressPackageStartupMessages(library(MAIT))
+suppressPackageStartupMessages(library(xMSannotator))
 library(CAMERA)
 library(qvalue)
 
@@ -19,11 +20,11 @@ svacor <-
                 }
                 mz <- xset@groups[, 1]
                 rt <- xset@groups[, 4]
-                mod <- model.matrix( ~ lv)
+                mod <- model.matrix(~ lv)
                 mod0 <- as.matrix(c(rep(1, ncol(data))))
                 svafit <- sva(data, mod)
                 if (svafit$n.sv == 0) {
-                        svaX <- model.matrix( ~ lv)
+                        svaX <- model.matrix(~ lv)
                         lmfit <- lmFit(data, svaX)
                         signal <-
                                 lmfit$coef[, 1:nlevels(lv)] %*% t(svaX[, 1:nlevels(lv)])
@@ -44,7 +45,7 @@ svacor <-
                                                 nSlaves = nSlaves
                                         )
                                 dreport <-
-                                        dreport[order(as.numeric(rownames(dreport))), ]
+                                        dreport[order(as.numeric(rownames(dreport))),]
                                 li <-
                                         list(data,
                                              signal,
@@ -87,7 +88,7 @@ svacor <-
                 }
                 else{
                         message('Data is correcting ...')
-                        svaX <- model.matrix( ~ lv + svafit$sv)
+                        svaX <- model.matrix(~ lv + svafit$sv)
                         lmfit <- lmFit(data, svaX)
                         batch <-
                                 lmfit$coef[, (nlevels(lv) + 1):(nlevels(lv) + svafit$n.sv)] %*% t(svaX[, (nlevels(lv) +
@@ -96,7 +97,7 @@ svacor <-
                                 lmfit$coef[, 1:nlevels(lv)] %*% t(svaX[, 1:nlevels(lv)])
                         error <- data - signal - batch
                         datacor <- signal + error
-                        svaX2 <- model.matrix( ~ lv)
+                        svaX2 <- model.matrix(~ lv)
                         lmfit2 <- lmFit(data, svaX2)
                         signal2 <-
                                 lmfit2$coef[, 1:nlevels(lv)] %*% t(svaX2[, 1:nlevels(lv)])
@@ -132,7 +133,7 @@ svacor <-
                                                 nSlaves = nSlaves
                                         )
                                 dreport <-
-                                        dreport[order(as.numeric(rownames(dreport))), ]
+                                        dreport[order(as.numeric(rownames(dreport))),]
                                 li <-
                                         list(
                                                 data,
@@ -224,9 +225,9 @@ svapca <- function(list,
         Batch <- list$batch
         error <- list$error
         datacor <- list$dataCorrected
-        if(is.null(lv)){
+        if (is.null(lv)) {
                 pch = colnames(data)
-        }else{
+        } else{
                 pch = lv
         }
         
@@ -324,15 +325,15 @@ svadata <- function(list,
         if (is.null(signal2)) {
                 if (pqvalues == "anova" & sum(pValues < pt & qValues < qt) != 0) {
                         message('No SV while p-values and q-values have results')
-                        data <- data[pValues < pt & qValues < qt, ]
+                        data <- data[pValues < pt & qValues < qt,]
                         mz <- mz[pValues < pt &
                                          qValues < qt]
                         rt <- rt[pValues < pt &
                                          qValues < qt]
                         li <-
                                 list(data, pValues < pt &
-                                             qValues < qt,mz,rt)
-                        names(li) <- c('data', 'pqvalues','mz','rt')
+                                             qValues < qt, mz, rt)
+                        names(li) <- c('data', 'pqvalues', 'mz', 'rt')
                         return(li)
                 }
                 else{
@@ -341,15 +342,15 @@ svadata <- function(list,
         } else{
                 if (pqvalues == "anova" & sum(pValues < pt & qValues < qt) != 0) {
                         message('Have SVs while p-values and q-values have results')
-                        data <- data[pValues < pt & qValues < qt, ]
+                        data <- data[pValues < pt & qValues < qt,]
                         mz <- mz[pValues < pt &
                                          qValues < qt]
                         rt <- rt[pValues < pt &
                                          qValues < qt]
                         li <-
                                 list(data, pValues < pt &
-                                             qValues < qt,mz,rt)
-                        names(li) <- c('data', 'pqvalues',mz,rt)
+                                             qValues < qt, mz, rt)
+                        names(li) <- c('data', 'pqvalues', mz, rt)
                         return(li)
                 }
                 else if (pqvalues == "anova") {
@@ -361,10 +362,10 @@ svadata <- function(list,
                         message('SVs corrected while p-values and q-values have results')
                         data <-
                                 data[pValuesSv < pt &
-                                             qValuesSv < qt, ]
+                                             qValuesSv < qt,]
                         datacor <-
                                 datacor[pValuesSv < pt &
-                                                qValuesSv < qt, ]
+                                                qValuesSv < qt,]
                         mz <- mz[pValuesSv < pt &
                                          qValuesSv < qt]
                         rt <- rt[pValuesSv < pt &
@@ -373,9 +374,15 @@ svadata <- function(list,
                                 list(datacor,
                                      data,
                                      pValuesSv < pt &
-                                             qValuesSv < qt,mz,rt)
+                                             qValuesSv < qt,
+                                     mz,
+                                     rt)
                         names(li) <-
-                                c('dataCorrected', 'data', 'pqvalues','mz','rt')
+                                c('dataCorrected',
+                                  'data',
+                                  'pqvalues',
+                                  'mz',
+                                  'rt')
                         return(li)
                 }
                 else{
@@ -410,12 +417,12 @@ svaplot <- function(list,
                                 c(1, 1, 2, 2, 3, 3, 4, 4, 5), 9
                         ), 9, 9, byrow = TRUE))
                         par(mar = c(3, 5, 1, 1))
-                        data <- data[pValues < pt & qValues < qt, ]
+                        data <- data[pValues < pt & qValues < qt,]
                         signal <-
                                 signal[pValues < pt &
-                                               qValues < qt, ]
+                                               qValues < qt,]
                         error <-
-                                error[pValues < pt & qValues < qt, ]
+                                error[pValues < pt & qValues < qt,]
                         zlim <- range(c(data, signal, error))
                         
                         image(
@@ -661,13 +668,13 @@ svaplot <- function(list,
                                 c(1, 1, 2, 2, 3, 3, 4, 4, 5), 9
                         ), 9, 9, byrow = TRUE))
                         par(mar = c(3, 5, 1, 1))
-                        data <- data[pValues < pt & qValues < qt, ]
+                        data <- data[pValues < pt & qValues < qt,]
                         signal <-
                                 signal2[pValues < pt &
-                                                qValues < qt, ]
+                                                qValues < qt,]
                         error <-
                                 error2[pValues < pt &
-                                               qValues < qt, ]
+                                               qValues < qt,]
                         zlim <- range(c(data, signal, error))
                         
                         image(
@@ -916,18 +923,18 @@ svaplot <- function(list,
                         par(mar = c(3, 4, 2, 1))
                         data <-
                                 data[pValuesSv < pt &
-                                             qValuesSv < qt, ]
+                                             qValuesSv < qt,]
                         signal <- signal[pValuesSv < pt &
-                                                 qValuesSv < qt, ]
+                                                 qValuesSv < qt,]
                         batch <-
                                 batch[pValuesSv < pt &
-                                              qValuesSv < qt, ]
+                                              qValuesSv < qt,]
                         error <-
                                 error[pValuesSv < pt &
-                                              qValuesSv < qt, ]
+                                              qValuesSv < qt,]
                         datacor <-
                                 datacor[pValuesSv < pt &
-                                                qValuesSv < qt, ]
+                                                qValuesSv < qt,]
                         zlim <-
                                 range(c(data, signal, batch, error, datacor))
                         
@@ -1323,3 +1330,72 @@ svaanno <-
                 )
                 return(importMAIT)
         }
+
+svaanno2 <- function(raw,
+                     lv,
+                     outloc = "./result/",
+                     mode = 'pos',
+                     db_name = 'HMDB') {
+        data(adduct_weights)
+        if (is.null(raw$dataCorrected)) {
+                data <- raw$data
+        }
+        else{
+                data <- raw$dataCorrected
+        }
+        mz <- raw$mz
+        time <- raw$rt
+        data <- as.data.frame(cbind(mz, time, data))
+        annotres <-
+                multilevelannotation(
+                        dataA = data,
+                        max.mz.diff = 5,
+                        max.rt.diff = 10,
+                        cormethod = "pearson",
+                        num_nodes = 12,
+                        queryadductlist = c(
+                                "M+2H",
+                                "M+H+NH4",
+                                "M+ACN+2H",
+                                "M+2ACN+2H",
+                                "M+H",
+                                "M+NH4",
+                                "M+Na",
+                                "M+ACN+H",
+                                "M+ACN+Na",
+                                "M+2ACN+H",
+                                "2M+H",
+                                "2M+Na",
+                                "2M+ACN+H",
+                                "M+2Na-H",
+                                "M+H-H2O",
+                                "M+H-2H2O"
+                        ),
+                        mode = mode,
+                        outloc = outloc,
+                        db_name = db_name,
+                        adduct_weights = adduct_weights,
+                        num_sets = 1000,
+                        allsteps = TRUE,
+                        corthresh = 0.7,
+                        NOPS_check = TRUE,
+                        customIDs = NA,
+                        missing.value = NA,
+                        hclustmethod = "complete",
+                        deepsplit = 2,
+                        networktype = "unsigned",
+                        minclustsize = 10,
+                        module.merge.dissimilarity = 0.2,
+                        filter.by = c("M+H"),
+                        biofluid.location = NA,
+                        origin = NA,
+                        status = "Detected and Quantified",
+                        boostIDs = NA,
+                        max_isp = 5,
+                        HMDBselect = "union",
+                        mass_defect_window = 0.01,
+                        pathwaycheckmode = "pm",
+                        mass_defect_mode = mode
+                )
+        return(annotres)
+}
