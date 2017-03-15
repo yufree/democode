@@ -15,16 +15,16 @@
 # install.packages("plyr",repos="http://cran.r-project.org")
 # install.packages("png",repos="http://cran.r-project.org")
 # install.packages("rjson",repos="http://cran.r-project.org")
+source('https://raw.githubusercontent.com/yufree/democode/master/meta/getmetadata.R')
 suppressPackageStartupMessages(library(MAIT))
 suppressPackageStartupMessages(library(xMSannotator))
-library(BiocParallel)
 # use MAIT package
 # Demo
 # path <- "./data/"
 # name <- "fishriver"
-# procseedata(path,name)
+# anno(path,name)
 
-procseedata <- function(path, name) {
+anno <- function(path, name) {
         MAIT <- sampleProcessing(dataDir = path, project = name)
         MAIT <-
                 peakAnnotation(
@@ -47,6 +47,7 @@ procseedata <- function(path, name) {
                 identifyMetabolites(MAIT.object = MAIT, peakTolerance = 0.005)
         metTable <- metaboliteTable(MAIT)
         head(metTable)
+        return(list(signTable,metTable))
 }
 # use xMSannotator package
 # Demo

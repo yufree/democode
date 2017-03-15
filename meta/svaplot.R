@@ -1330,9 +1330,10 @@ svaanno <-
                 )
                 return(importMAIT)
         }
-
-svaanno2 <- function(raw,
-                     lv,
+# other database options: KEGG, LipidMaps, T3DB
+# queryadductlist=c("M+2H","M+H+NH4","M+ACN+2H","M+2ACN+2H","M+H","M+NH4","M+Na","M+ACN+H","M+ACN+Na","M+2ACN+H","2M+H","2M+Na","2M+ACN+H","M+2Na-H","M+H-H2O","M+H-2H2O") 
+# other options: c("M-H","M-H2O-H","M+Na-2H","M+Cl","M+FA-H"); c("positive"); c("negative"); c("all");see data(adduct_table) for complete list
+svafanno <- function(raw,
                      outloc = "./result/",
                      mode = 'pos',
                      db_name = 'HMDB') {
