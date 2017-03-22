@@ -22,11 +22,15 @@ getdata <-
                                         prefilter = c(3, 5000),
                                         ...
                                 )
-                        xset <- group(xset, bw = 5, mzwid = 0.015)
-                        xset2 <- retcor(xset)
-                        # you need group the peaks again for this corrected data
-                        xset2 <- group(xset2, bw = 5, mzwid = 0.015)
-                        xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                        if (index & length(index) == 1) {
+                                xset3 <- xset
+                        }else{
+                                xset <- group(xset, bw = 5, mzwid = 0.015)
+                                xset2 <- retcor(xset)
+                                # you need group the peaks again for this corrected data
+                                xset2 <- group(xset2, bw = 5, mzwid = 0.015)
+                                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                        }
                 } else if (pmethod == 'uplcorbitrap') {
                         xset <-
                                 xcmsSet(
@@ -54,11 +58,15 @@ getdata <-
                                         prefilter = c(0, 0),
                                         ...
                                 )
-                        xset <- group(xset, bw = 5, mzwid = 0.025)
-                        xset2 <- retcor(xset)
-                        # you need group the peaks again for this corrected data
-                        xset2 <- group(xset2, bw = 5, mzwid = 0.025)
-                        xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                        if (index & length(index) == 1) {
+                                xset3 <- xset
+                        }else{
+                                xset <- group(xset, bw = 5, mzwid = 0.025)
+                                xset2 <- retcor(xset)
+                                # you need group the peaks again for this corrected data
+                                xset2 <- group(xset2, bw = 5, mzwid = 0.025)
+                                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                        }
                 } else if (pmethod == 'hplchqtof') {
                         xset <-
                                 xcmsSet(
@@ -70,11 +78,15 @@ getdata <-
                                         prefilter = c(0, 0),
                                         ...
                                 )
-                        xset <- group(xset, bw = 5, mzwid = 0.015)
-                        xset2 <- retcor(xset)
-                        # you need group the peaks again for this corrected data
-                        xset2 <- group(xset2, bw = 5, mzwid = 0.015)
-                        xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                        if (index & length(index) == 1) {
+                                xset3 <- xset
+                        }else{
+                                xset <- group(xset, bw = 5, mzwid = 0.015)
+                                xset2 <- retcor(xset)
+                                # you need group the peaks again for this corrected data
+                                xset2 <- group(xset2, bw = 5, mzwid = 0.015)
+                                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                        }
                 } else if (pmethod == 'uplcqtof') {
                         xset <-
                                 xcmsSet(
@@ -86,11 +98,15 @@ getdata <-
                                         prefilter = c(0, 0),
                                         ...
                                 )
-                        xset <- group(xset, bw = 2, mzwid = 0.025)
-                        xset2 <- retcor(xset)
-                        # you need group the peaks again for this corrected data
-                        xset2 <- group(xset2, bw = 2, mzwid = 0.025)
-                        xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                        if (index & length(index) == 1) {
+                                xset3 <- xset
+                        }else{
+                                xset <- group(xset, bw = 2, mzwid = 0.025)
+                                xset2 <- retcor(xset)
+                                # you need group the peaks again for this corrected data
+                                xset2 <- group(xset2, bw = 2, mzwid = 0.025)
+                                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                        }
                 } else if (pmethod == 'uplchqtof') {
                         xset <-
                                 xcmsSet(
@@ -102,18 +118,26 @@ getdata <-
                                         prefilter = c(0, 0),
                                         ...
                                 )
-                        xset <- group(xset, bw = 2, mzwid = 0.015)
-                        xset2 <- retcor(xset)
-                        # you need group the peaks again for this corrected data
-                        xset2 <- group(xset2, bw = 2, mzwid = 0.015)
-                        xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                        if (index & length(index) == 1) {
+                                xset3 <- xset
+                        }else{
+                                xset <- group(xset, bw = 2, mzwid = 0.015)
+                                xset2 <- retcor(xset)
+                                # you need group the peaks again for this corrected data
+                                xset2 <- group(xset2, bw = 2, mzwid = 0.015)
+                                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                        }
                 } else{
                         xset <- xcmsSet(cdffiles, BPPARAM = BPPARAM, ...)
-                        xset <- group(xset)
-                        xset2 <- retcor(xset)
-                        # you need group the peaks again for this corrected data
-                        xset2 <- group(xset2)
-                        xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                        if (index & length(index) == 1) {
+                                xset3 <- xset
+                        }else{
+                                xset <- group(xset)
+                                xset2 <- retcor(xset)
+                                # you need group the peaks again for this corrected data
+                                xset2 <- group(xset2)
+                                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                        }
                 }
                 return(xset3)
         }
@@ -225,7 +249,8 @@ getopqedata <- function(path,
                         gmax = 50,
                         ...) {
         cdffiles <- list.files(path, recursive = TRUE, full.names = TRUE)
-        if (index) {
+        
+        if(index){
                 cdffiles <- cdffiles[index]
         }
         xset <- xcmsSet(
@@ -244,40 +269,44 @@ getopqedata <- function(path,
                 verbose.columns = verbose.columns,
                 ...
         )
-        xset <- group(
-                xset,
-                method = gmethod,
-                bw = bw,
-                mzwid = mzwid,
-                minfrac = minfrac,
-                minsamp = minsamp,
-                max = gmax
-        )
-        xset2 <- retcor(
-                xset,
-                method = rmethod,
-                plottype = plottype,
-                distFunc = distFunc,
-                profStep = profStep,
-                center = center,
-                response = response,
-                gapInit = gapInit,
-                gapExtend = gapExtend,
-                factorDiag = factorDiag,
-                factorGap = factorGap,
-                localAlignment = localAlignment
-        )
-        # you need group the peaks again for this corrected data
-        xset2 <- group(
-                xset2,
-                method = gmethod,
-                bw = bw,
-                mzwid = mzwid,
-                minfrac = minfrac,
-                minsamp = minsamp,
-                max = gmax
-        )
-        xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+        if (index & length(index) == 1) {
+                xset3 <- xset
+        }else{
+                xset <- group(
+                        xset,
+                        method = gmethod,
+                        bw = bw,
+                        mzwid = mzwid,
+                        minfrac = minfrac,
+                        minsamp = minsamp,
+                        max = gmax
+                )
+                xset2 <- retcor(
+                        xset,
+                        method = rmethod,
+                        plottype = plottype,
+                        distFunc = distFunc,
+                        profStep = profStep,
+                        center = center,
+                        response = response,
+                        gapInit = gapInit,
+                        gapExtend = gapExtend,
+                        factorDiag = factorDiag,
+                        factorGap = factorGap,
+                        localAlignment = localAlignment
+                )
+                # you need group the peaks again for this corrected data
+                xset2 <- group(
+                        xset2,
+                        method = gmethod,
+                        bw = bw,
+                        mzwid = mzwid,
+                        minfrac = minfrac,
+                        minsamp = minsamp,
+                        max = gmax
+                )
+                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM) 
+        }
         return(xset3)
 }
 
