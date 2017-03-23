@@ -310,9 +310,9 @@ getopqedata <- function(path,
         return(xset3)
 }
 
-getupload <- function(xset,method = "medret", value = 'inio'){
-        peakIntensities <- groupval(xset, method = method, value = value)
-        if (value == "intb"){
+getupload <- function(xset,method = "maxint", intensity = 'inio'){
+        peakIntensities <- groupval(xset, method = method, intensity = intensity)
+        if (intensity == "intb"){
                 peakIntensities[is.na(peakIntensities)] = 0
         }
         data <- rbind(group = as.character(phenoData(xset)$class), peakIntensities)

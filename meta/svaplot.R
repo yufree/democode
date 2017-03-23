@@ -14,10 +14,11 @@ svacor <-
                  lv = NULL,
                  annotation = F,
                  polarity = "positive",
-                 value = 'into',
+                 method  = "maxint",
+                 intensity = 'into',
                  nSlaves = 12) {
-                data <- groupval(xset, "maxint", value = value)
-                if(value == "intb"){
+                data <- groupval(xset, method = method, intensity = intensity)
+                if(intensity == "intb"){
                         data[is.na(data)] = 0
                 }
                 if (is.null(lv)) {

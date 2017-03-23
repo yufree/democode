@@ -65,7 +65,7 @@ fanno <-
                  mode = 'pos',
                  db_name = 'HMDB') {
                 data(adduct_weights)
-                data <- groupval(xset, method = 'medret', intensity = "into")
+                data <- groupval(xset, method = 'maxint', intensity = "into")
                 mz <- groups(xset)[, 1]
                 time <- groups(xset)[, 4]
                 data <- as.data.frame(cbind(mz, time, data))
@@ -123,3 +123,24 @@ fanno <-
                         )
                 return(annotres)
         }
+mumdata <- function(xset, lv = NULL, name = 'test', method = "maxint", intensity = 'inio'){
+        data <- groupval(xset, method = method, intensity = intensity)
+        if(intensity == "intb"){
+                data[is.na(data)] = 0
+        }
+        if (is.null(lv)) {
+                lv <- xset@phenoData[, 1]
+        }
+        mz <- xset@groups[, 1]
+        rt <- xset@groups[, 4]
+        mod <- model.matrix(~ lv)
+        mod0 <- as.matrix(c(rep(1, ncol(data))))
+        fstats <- sva::fstats(data,mod,mod0)
+        pvalue <- sva::f.pvalue(data,mod,mod0)
+        df <- cbind.data.frame(mz,rt,pvalue,fstats)
+        filename <- paste0(name,'.txt')
+        write.table(df, file = filename, sep = "\t",row.names = F)
+        return(df)
+}
+
+# python2 main.py -c 0.05 -f test.txt -p 100 -m negative -o myoutput 
