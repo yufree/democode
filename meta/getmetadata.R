@@ -310,12 +310,13 @@ getopqedata <- function(path,
         return(xset3)
 }
 
-getupload <- function(xset,method = "maxint", intensity = 'inio'){
+getupload <- function(xset,method = "maxint", intensity = 'inio', name = 'Peaklist'){
         peakIntensities <- groupval(xset, method = method, intensity = intensity)
         if (intensity == "intb"){
                 peakIntensities[is.na(peakIntensities)] = 0
         }
         data <- rbind(group = as.character(phenoData(xset)$class), peakIntensities)
-        write.csv(data, file='Peaklist.csv') 
+        filename <- paste0(name,'.csv')
+        write.csv(data, file = filename) 
         return(data)
 }
