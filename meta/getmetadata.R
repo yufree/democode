@@ -320,3 +320,29 @@ getupload <- function(xset,method = "maxint", intensity = 'inio', name = 'Peakli
         write.csv(data, file = filename) 
         return(data)
 }
+
+gettechrep <- function(xset,anno = F,peaklist = F,file = NULL...){
+        data <- t(groupval(xset,...))
+        lv <- paste0(xset@phenoData[,1],xset@phenoData[,2])
+        lv <- xset@phenoData[,1]
+        lv2 <- xset@phenoData[,2]
+        mean <- aggregate(data,list(lv,lv2),mean)
+        sd <- aggregate(data,list(lv,lv2),sd)
+        suppressWarnings(rsd <- sd/mean*100)
+        result <- data.frame(cbind(t(mean[,-c(1:2)]),t(sd[,-c(1:2)]),t(rsd[,-c(1:2)])))
+        name <- unique(c(paste0(lv,lv2)))
+        colnames(result) <- c(paste0(name,'mean'),paste0(name,'sd'),paste0(name,'rsd%'))
+        datap <- groups(xset)
+        report <- cbind.data.frame(datap,result)
+        if(anno){
+                anno <- as.data.frame(cbind(xset@groups[, 1],xset@groups[, 4],cbind(t(mean[,-c(1:2)]))))
+                colnames(anno) <- c('mz','time',name)
+                return(anno)
+        }else if(peaklist){
+                result <- data.frame(t(mean[,-c(1:2)]))
+                data <- rbind(group = name, result)
+                write.csv(data, file = file) 
+        }else{
+                return(report)
+        }
+}
