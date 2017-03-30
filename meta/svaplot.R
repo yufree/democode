@@ -8,6 +8,8 @@ suppressPackageStartupMessages(library(MAIT))
 suppressPackageStartupMessages(library(xMSannotator))
 library(CAMERA)
 library(qvalue)
+library(tsne)
+library(Rtsne)
 
 svacor <-
         function(xset,
@@ -1412,7 +1414,7 @@ svaupload <- function(xset,
                       polarity = "positive",
                       value = 'into',
                       nSlaves = 12){
-        raw <- svacor(xset,lv=lv,annotation = F,polarity = polarity, value = value,nSlaves = nSlaves)
+        raw <- svacor(xset,lv=lv,annotation = F,polarity = polarity,nSlaves = nSlaves)
         if (is.null(raw$dataCorrected)) {
                 data <- raw$data
                 data <- rbind(group = as.character(xset@phenoData[, 1]), data)
@@ -1427,4 +1429,22 @@ svaupload <- function(xset,
                 write.csv(data, file='Peaklist.csv')
                 return(list(data,datacor))
         }
+}
+
+svatsne <- function(df,cor=F){
+        if(cor){
+                rtsne_out <- tsne(t(df$datacor))
+        }else{
+                rtsne_out <- tsne(t(df$data))
+        }
+        plot(rtsne_out,t='n')
+        text(rtsne_out,labels=colnames(df$data))
+}
+svatsne2 <- function(df,cor=F){
+        if(cor){
+                rtsne_out <- tsne(t(df$datacor))
+        }else{
+                rtsne_out <- tsne(t(df$data))
+        }
+        plot(rtsne_out$Y,col=as.factor(colnames(df$data)),main='BarnesHutSNE')
 }
