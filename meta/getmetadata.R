@@ -310,8 +310,8 @@ getopqedata <- function(path,
         return(xset3)
 }
 
-getupload <- function(xset,method = "maxint", intensity = 'inio', name = 'Peaklist'){
-        peakIntensities <- groupval(xset, method = method, intensity = intensity)
+getupload <- function(xset,method = "medret", intensity = 'inio', name = 'Peaklist'){
+        peakIntensities <- groupval(xset, method, intensity)
         if (intensity == "intb"){
                 peakIntensities[is.na(peakIntensities)] = 0
         }
@@ -321,8 +321,8 @@ getupload <- function(xset,method = "maxint", intensity = 'inio', name = 'Peakli
         return(data)
 }
 
-gettechrep <- function(xset,anno = F,peaklist = F,file = NULL...){
-        data <- t(groupval(xset,...))
+gettechrep <- function(xset,anno = F,peaklist = F,file = NULL,method =  'medret', intensity = 'into',...){
+        data <- t(groupval(xset,method,intensity,...))
         lv <- paste0(xset@phenoData[,1],xset@phenoData[,2])
         lv <- xset@phenoData[,1]
         lv2 <- xset@phenoData[,2]

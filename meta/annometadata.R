@@ -65,7 +65,7 @@ fanno <-
                  mode = 'pos',
                  db_name = 'HMDB') {
                 data(adduct_weights)
-                data <- groupval(xset, method = 'maxint', intensity = "into")
+                data <- groupval(xset, 'medret', "into")
                 mz <- groups(xset)[, 1]
                 time <- groups(xset)[, 4]
                 data <- as.data.frame(cbind(mz, time, data))
@@ -123,8 +123,8 @@ fanno <-
                         )
                 return(annotres)
         }
-mumdata <- function(xset, lv = NULL, name = 'test', method = "maxint", intensity = 'inio'){
-        data <- groupval(xset, method = method, intensity = intensity)
+mumdata <- function(xset, lv = NULL, name = 'test', method = "medret", intensity = 'inio'){
+        data <- groupval(xset, method, intensity)
         if(intensity == "intb"){
                 data[is.na(data)] = 0
         }

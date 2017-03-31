@@ -9,17 +9,16 @@ suppressPackageStartupMessages(library(xMSannotator))
 library(CAMERA)
 library(qvalue)
 library(tsne)
-library(Rtsne)
 
 svacor <-
         function(xset,
                  lv = NULL,
                  annotation = F,
                  polarity = "positive",
-                 method  = "maxint",
+                 method  = "medret",
                  intensity = 'into',
                  nSlaves = 12) {
-                data <- groupval(xset, method = method, intensity = intensity)
+                data <- groupval(xset, method, intensity)
                 if(intensity == "intb"){
                         data[is.na(data)] = 0
                 }
@@ -1439,12 +1438,4 @@ svatsne <- function(df,cor=F){
         }
         plot(rtsne_out,t='n')
         text(rtsne_out,labels=colnames(df$data))
-}
-svatsne2 <- function(df,cor=F){
-        if(cor){
-                rtsne_out <- tsne(t(df$datacor))
-        }else{
-                rtsne_out <- tsne(t(df$data))
-        }
-        plot(rtsne_out$Y,col=as.factor(colnames(df$data)),main='BarnesHutSNE')
 }
