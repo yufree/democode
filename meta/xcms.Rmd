@@ -161,3 +161,66 @@ abline(h=2,v=c(-.2,.2), lty=2)
 - 错误发现率（FDR）的控制
 - 不同组学的耦合
 
+## 原始算法 
+
+```{r tidyvers}
+library(tidyverse)
+p = ggplot(a,aes(x=a$KOmean,y=a$`KOrsd%`)) +
+        ggtitle("Mean vs. RSD%") +
+        xlab("log10(Mean)") +
+        ylab("rsd%")
+p1 = p + 
+  geom_point(alpha = 0.5, colour="orange")+
+        geom_density2d()
+p1
+
+p2 = p +
+  geom_density2d()
+p2
+
+p3 = p + geom_point(alpha = 0.5, colour="purple") 
+p3
+
+p4 = p +
+  stat_bin_hex(colour="white", na.rm=TRUE) +
+  scale_fill_gradientn(colours=c("red","orange"), name = "Frequency", na.value=NA)
+p4
+
+smoothScatter(x=a$KOmean,y=a$`KOrsd%`)
+```
+
+
+
+```{r}
+# get data from xcmsxset object
+getRAW <- function(xset,lv){
+        lsa <- list()
+        index <- 0
+        m <- length(table(lv))
+        for(i in 1:m){
+                if(i == 1){
+                        index <- index
+                }else{
+                        index <- index+table(lv)[i-1]
+                }
+                ls <- list()
+                for(j in 1:table(lv)[i]){
+                        RAW <- getXcmsRaw(xset,sampleidx=j+index)
+                        RAWdata <- RAW@env$profile
+                        colnames(RAWdata) <- RAW@scantime
+                        rownames(RAWdata) <- seq(RAW@mzrange[1],RAW@mzrange[2],0.1)
+                        ls[[j]] <- RAWdata
+                }
+                lsa[[i]] <- ls
+        }
+        return(lsa)
+}
+# align data from some xcmsxset object
+getalign <- function(list){
+        a <- lapply(list,rownames)
+        c <- Reduce(intersect,a)
+        e <- lapply(list,function(x){x[c,]})
+        return(e)
+}
+```
+

@@ -24,12 +24,18 @@ getdata <-
                                 )
                         if (index & length(index) == 1) {
                                 xset3 <- xset
-                        }else{
-                                xset <- group(xset, bw = 5, mzwid = 0.015)
+                        } else{
+                                xset <- group(xset,
+                                              bw = 5,
+                                              mzwid = 0.015)
                                 xset2 <- retcor(xset)
                                 # you need group the peaks again for this corrected data
-                                xset2 <- group(xset2, bw = 5, mzwid = 0.015)
-                                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                                xset2 <-
+                                        group(xset2,
+                                              bw = 5,
+                                              mzwid = 0.015)
+                                xset3 <-
+                                        fillPeaks(xset2, BPPARAM = BPPARAM)
                         }
                 } else if (pmethod == 'uplcorbitrap') {
                         xset <-
@@ -60,12 +66,18 @@ getdata <-
                                 )
                         if (index & length(index) == 1) {
                                 xset3 <- xset
-                        }else{
-                                xset <- group(xset, bw = 5, mzwid = 0.025)
+                        } else{
+                                xset <- group(xset,
+                                              bw = 5,
+                                              mzwid = 0.025)
                                 xset2 <- retcor(xset)
                                 # you need group the peaks again for this corrected data
-                                xset2 <- group(xset2, bw = 5, mzwid = 0.025)
-                                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                                xset2 <-
+                                        group(xset2,
+                                              bw = 5,
+                                              mzwid = 0.025)
+                                xset3 <-
+                                        fillPeaks(xset2, BPPARAM = BPPARAM)
                         }
                 } else if (pmethod == 'hplchqtof') {
                         xset <-
@@ -80,12 +92,18 @@ getdata <-
                                 )
                         if (index & length(index) == 1) {
                                 xset3 <- xset
-                        }else{
-                                xset <- group(xset, bw = 5, mzwid = 0.015)
+                        } else{
+                                xset <- group(xset,
+                                              bw = 5,
+                                              mzwid = 0.015)
                                 xset2 <- retcor(xset)
                                 # you need group the peaks again for this corrected data
-                                xset2 <- group(xset2, bw = 5, mzwid = 0.015)
-                                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                                xset2 <-
+                                        group(xset2,
+                                              bw = 5,
+                                              mzwid = 0.015)
+                                xset3 <-
+                                        fillPeaks(xset2, BPPARAM = BPPARAM)
                         }
                 } else if (pmethod == 'uplcqtof') {
                         xset <-
@@ -100,12 +118,18 @@ getdata <-
                                 )
                         if (index & length(index) == 1) {
                                 xset3 <- xset
-                        }else{
-                                xset <- group(xset, bw = 2, mzwid = 0.025)
+                        } else{
+                                xset <- group(xset,
+                                              bw = 2,
+                                              mzwid = 0.025)
                                 xset2 <- retcor(xset)
                                 # you need group the peaks again for this corrected data
-                                xset2 <- group(xset2, bw = 2, mzwid = 0.025)
-                                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                                xset2 <-
+                                        group(xset2,
+                                              bw = 2,
+                                              mzwid = 0.025)
+                                xset3 <-
+                                        fillPeaks(xset2, BPPARAM = BPPARAM)
                         }
                 } else if (pmethod == 'uplchqtof') {
                         xset <-
@@ -120,23 +144,30 @@ getdata <-
                                 )
                         if (index & length(index) == 1) {
                                 xset3 <- xset
-                        }else{
-                                xset <- group(xset, bw = 2, mzwid = 0.015)
+                        } else{
+                                xset <- group(xset,
+                                              bw = 2,
+                                              mzwid = 0.015)
                                 xset2 <- retcor(xset)
                                 # you need group the peaks again for this corrected data
-                                xset2 <- group(xset2, bw = 2, mzwid = 0.015)
-                                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                                xset2 <-
+                                        group(xset2,
+                                              bw = 2,
+                                              mzwid = 0.015)
+                                xset3 <-
+                                        fillPeaks(xset2, BPPARAM = BPPARAM)
                         }
                 } else{
                         xset <- xcmsSet(cdffiles, BPPARAM = BPPARAM, ...)
                         if (index & length(index) == 1) {
                                 xset3 <- xset
-                        }else{
+                        } else{
                                 xset <- group(xset)
                                 xset2 <- retcor(xset)
                                 # you need group the peaks again for this corrected data
                                 xset2 <- group(xset2)
-                                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
+                                xset3 <-
+                                        fillPeaks(xset2, BPPARAM = BPPARAM)
                         }
                 }
                 return(xset3)
@@ -250,7 +281,7 @@ getopqedata <- function(path,
                         ...) {
         cdffiles <- list.files(path, recursive = TRUE, full.names = TRUE)
         
-        if(index){
+        if (index) {
                 cdffiles <- cdffiles[index]
         }
         xset <- xcmsSet(
@@ -271,7 +302,7 @@ getopqedata <- function(path,
         )
         if (index & length(index) == 1) {
                 xset3 <- xset
-        }else{
+        } else{
                 xset <- group(
                         xset,
                         method = gmethod,
@@ -305,44 +336,97 @@ getopqedata <- function(path,
                         minsamp = minsamp,
                         max = gmax
                 )
-                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM) 
+                xset3 <- fillPeaks(xset2, BPPARAM = BPPARAM)
         }
         return(xset3)
 }
 
-getupload <- function(xset,method = "medret", intensity = 'inio', name = 'Peaklist'){
-        peakIntensities <- groupval(xset, method, intensity)
-        if (intensity == "intb"){
-                peakIntensities[is.na(peakIntensities)] = 0
+getupload <-
+        function(xset,
+                 method = "medret",
+                 intensity = 'inio',
+                 name = 'Peaklist') {
+                peakIntensities <- groupval(xset, method, intensity)
+                if (intensity == "intb") {
+                        peakIntensities[is.na(peakIntensities)] = 0
+                }
+                data <-
+                        rbind(group = as.character(phenoData(xset)$class), peakIntensities)
+                filename <- paste0(name, '.csv')
+                write.csv(data, file = filename)
+                return(data)
         }
-        data <- rbind(group = as.character(phenoData(xset)$class), peakIntensities)
-        filename <- paste0(name,'.csv')
-        write.csv(data, file = filename) 
-        return(data)
+
+gettechrep <- function(xset,
+                         method =  'medret',
+                         intensity = 'into', ...){
+        data <- t(groupval(xset, method, intensity, ...))
+        lv <- xset@phenoData[, 1]
+        mean <- aggregate(data, list(lv), mean)
+        sd <- aggregate(data, list(lv), sd)
+        suppressWarnings(rsd <- sd / mean * 100)
+        result <-
+                data.frame(cbind(t(mean[, -1]), t(sd[, -1]), t(rsd[, -1])))
+        name <- unique(lv)
+        colnames(result) <-
+                c(paste0(name, 'mean'),
+                  paste0(name, 'sd'),
+                  paste0(name, 'rsd%'))
+        datap <- groups(xset)
+        report <- cbind.data.frame(datap, result)
+        return(report)
 }
 
-gettechrep <- function(xset,anno = F,peaklist = F,file = NULL,method =  'medret', intensity = 'into',...){
-        data <- t(groupval(xset,method,intensity,...))
-        lv <- paste0(xset@phenoData[,1],xset@phenoData[,2])
-        lv <- xset@phenoData[,1]
-        lv2 <- xset@phenoData[,2]
-        mean <- aggregate(data,list(lv,lv2),mean)
-        sd <- aggregate(data,list(lv,lv2),sd)
-        suppressWarnings(rsd <- sd/mean*100)
-        result <- data.frame(cbind(t(mean[,-c(1:2)]),t(sd[,-c(1:2)]),t(rsd[,-c(1:2)])))
-        name <- unique(c(paste0(lv,lv2)))
-        colnames(result) <- c(paste0(name,'mean'),paste0(name,'sd'),paste0(name,'rsd%'))
-        datap <- groups(xset)
-        report <- cbind.data.frame(datap,result)
-        if(anno){
-                anno <- as.data.frame(cbind(xset@groups[, 1],xset@groups[, 4],cbind(t(mean[,-c(1:2)]))))
-                colnames(anno) <- c('mz','time',name)
-                return(anno)
-        }else if(peaklist){
-                result <- data.frame(t(mean[,-c(1:2)]))
-                data <- rbind(group = name, result)
-                write.csv(data, file = file) 
-        }else{
-                return(report)
+gettechbiorep <-
+        function(xset,
+                 anno = F,
+                 peaklist = F,
+                 file = NULL,
+                 method =  'medret',
+                 intensity = 'into',
+                 ...) {
+                data <- t(groupval(xset, method, intensity, ...))
+                lv <- xset@phenoData[, 1]
+                lv2 <- xset@phenoData[, 2]
+                mean <- aggregate(data, list(lv, lv2), mean)
+                sd <- aggregate(data, list(lv, lv2), sd)
+                suppressWarnings(rsd <- sd / mean * 100)
+                result <-
+                        data.frame(cbind(t(mean[, -c(1:2)]), t(sd[, -c(1:2)]), t(rsd[, -c(1:2)])))
+                name <- unique(c(paste0(lv, lv2)))
+                colnames(result) <-
+                        c(paste0(name, 'mean'),
+                          paste0(name, 'sd'),
+                          paste0(name, 'rsd%'))
+                datap <- groups(xset)
+                report <- cbind.data.frame(datap, result)
+                if (anno) {
+                        anno <-
+                                as.data.frame(cbind(xset@groups[, 1], xset@groups[, 4], cbind(t(
+                                        mean[, -c(1:2)]
+                                ))))
+                        colnames(anno) <- c('mz', 'time', name)
+                        return(anno)
+                } else if (peaklist) {
+                        result <- data.frame(t(mean[, -c(1:2)]))
+                        data <- rbind(group = name, result)
+                        write.csv(data, file = file)
+                } else{
+                        return(report)
+                }
         }
+
+getQCraw <- function(path, mzrange, rtrange, index = NULL) {
+        cdffiles <- list.files(path, recursive = TRUE, full.names = TRUE)
+        if (index) {
+                cdffiles <- cdffiles[index]
+        }
+        nsamples <- length(cdffiles)
+        area <- numeric()
+        for (i in 1:nsamples) {
+                RAW <- xcmsRaw(cdffiles[i])
+                peak <- rawEIC(RAW, mzrange, rtrange)
+                area[i] <- sum(peak$intensity)
+        }
+        return(area)
 }
