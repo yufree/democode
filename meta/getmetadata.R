@@ -340,7 +340,6 @@ getopqedata <- function(path,
         }
         return(xset3)
 }
-
 getupload <-
         function(xset,
                  method = "medret",
@@ -358,8 +357,8 @@ getupload <-
         }
 
 gettechrep <- function(xset,
-                         method =  'medret',
-                         intensity = 'into', ...){
+                       method =  'medret',
+                       intensity = 'into', ...){
         data <- t(groupval(xset, method, intensity, ...))
         lv <- xset@phenoData[, 1]
         mean <- aggregate(data, list(lv), mean)
