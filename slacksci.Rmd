@@ -1,0 +1,103 @@
+---
+title: "Slack 指南"
+subtitle: "科研版"
+author: "于淼"
+date: "2017/05/03"
+output:
+  xaringan::moon_reader:
+    css: zh-CN.css
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+# Slack
+
+- 官方网站：https://slack.com/
+- 讨论组，IRC加强版
+- 邀请加入，被邀请人可继续邀请
+- 所有人初始都在 #general 讨论组里
+- 分主题讨论
+- 桌面版、网页版、APP多平台支持
+- 免费版会保存最新的10,000条消息
+
+---
+# 微信（左）vs Slack（右）
+
+- 红包 -> 木有
+- 群500人上限 -> 无限制
+- 群人数超100需要实名验证 -> 无实名验证
+- 附赠查水表功能 -> 无水表
+- 无法关注关键词 -> 可关注关键词
+- 被@后时间长了无法追溯 -> @ Activity 里可追溯被@的内容
+- 不可针对某句进行讨论 -> 可针对某句新建thread进行讨论，减少刷屏，也对某句加表情或投票
+- 不可直接聊天 -> 可直接聊天，无需好友验证
+- 第三方依赖有限 -> 可集成rss等第三方服务
+- 不可直接置顶 -> 可置顶到顶端
+- 不可编辑发言，只可以撤回 -> 可编辑发言，可撤回，群主也可撤回
+
+---
+class: inverse, center, middle
+# 出发！
+---
+# 个人配置
+
+- notification - notification settings - only direct messages and highlight words 这样提醒会少一些
+- notification - highlight words 设定关注的关键词，如果讨论中出现会发出提醒
+
+---
+# 群组讨论
+
+- channels 用来界定讨论主题
+        - 可建立公开，也可以建立私密讨论
+        - 默认公开，任何群组中的人都可以看到并加入
+        - 建立方法：https://get.slack.help/hc/en-us/articles/201402297
+- threads 用来表示针对某句话的讨论
+- add action 对某句添加表情，类似点赞
+- direct message 用来表示私聊
+- search 可搜索聊天中关键词
+
+---
+# 应用
+
+- 输入 `/` 可以看到 slack 内置功能
+- `/remind` 可以用来设定科研任务，例如我打算在下午三点参加组会，对自己发私聊`／remind group meeting at 3:00pm` 会有 slackbot 到时提醒你
+- `/apps` 可以搜索第三方应用的名字，免费版可安装10个
+- 如果你安装了 skype ，可以直接 `/skype 姓名` 给人打电话，前提是那个人在群组里输入了电话。不过更方便的是用google hangout
+- 如果你安装了 google calender ，可以链接到一个工作日历中，可以设置如果有日历项目出现就在你设定的channel里进行提醒
+- 如果你安装了 google drive，可以直接在 slack 里发布共享文档，带有预览，也可以是 dropbox
+- 可以绑定 twitter ，自动在 slack 里收微博
+- 可以绑定 github ，将代码更新推送到某个频道
+
+---
+
+# RSS 订阅
+
+- 安装 rss 应用
+- 在 pubmed 上订阅一个关键词生成rss链接
+- 将该链接配置到 rss 应用里
+- 如果有相关关键词更新，在群聊里会直接推送
+
+---
+
+# 其他
+
+- 可用来进行实验室管理，组织活动，发布通知
+- 可用来面试新人
+- 可用来围绕项目进行进度追踪
+- 可用来远程控制实验室仪器（需要自己开发脚本）
+- 可用来讨论论文细节，新开一个 channel 可以让讨论有备份互动
+
+---
+
+# 欢迎加入
+
+- yufree.slack.com 是我建立的一个实验群组，可随意加入
+- 发送邮件到 slack@yufree.cn ，我会邀请发件人加入
+- 尽早建立自己课题组的讨论组！！！
+
+

@@ -70,6 +70,17 @@ reporttab <- diffreport(xset3, "WT", "KO", "example", 10,metlin = 0.15, h=480, w
 reporttab[1:3,]
 ```
 
+## 画图
+
+```{r}
+gt <- groups(xset3)
+eics <- getEIC(xset3, mzrange=gt, rtrange = 200, groupidx = 1:nrow(gt))
+pdf(file.path("/tmp/%003d.pdf"), onefile = FALSE)
+plot(eics, xset3)
+dev.off()
+```
+
+
 ## 批次效应
 
 ```{r}
