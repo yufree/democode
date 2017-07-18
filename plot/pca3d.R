@@ -44,3 +44,22 @@ pca3d(pca,groups = gr)
 
 # 3
 scatter3d(x=pca$x[,1],y=pca$x[,2],z = pca$x[,3],xlab = 'PC 1',ylab = 'PC 2', zlab = 'PC 3', col = group.col,ellipsoid = T,level = 0.95,surface = F,groups = gr)
+
+## Final
+library(pca3d)
+library(rgl)
+data_processed <- read_csv("C:/Users/SPMESUPERCPU/Downloads/data_processed.csv", col_types = cols(X1 = col_skip()))
+col = c(rep("#FCB712",8),rep("#F37022",11),rep("#CD004D",9),rep("#6460AA",6),rep("#0089D1",5),rep("#0CB14B",8))
+legend = 
+        gr <- factor(t(data_processed[,1]))
+pca <- prcomp(data_processed[,-1],scale. = T,center = T)
+pca3d(pca, col = col,group=gr,show.ellipses = T,ellipse.ci = .75,show.plane = F,legend = 'topright')
+snapshotPCA3d(file="fancy75.png")
+rgl.postscript("graph.svg", fmt="svg")
+pca3d(pca, col = col,group=gr,show.ellipses = T,axes.color = "black",show.group.labels = T,ellipse.ci = .95,show.plane = T
+      , legend = 'topright')
+snapshotPCA3d(file="fancy95.png")
+pca3d(pca, group=gr,show.ellipses = T,show.group.labels = T,ellipse.ci = .50,show.plane = F, legend = 'topright')
+snapshotPCA3d(file="fancy50.png")
+rgl.postscript("graph.svg", fmt="svg")
+
