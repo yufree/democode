@@ -235,3 +235,35 @@ getalign <- function(list){
 }
 ```
 
+```{r}
+dmx <- result[,-c(1,2)]
+mean <- apply(dmx,1,mean)
+png('allneg.png')
+graphics::plot(
+                        result$mz ~ result$time,
+                        xlab = "Retention Time(s)",
+                        ylab = "m/z",
+                        pch = 19,
+                        cex = log10(mean + 1)-4,
+                        col = rgb(0,0,1,0.2),
+                        main = 'All peaks'
+                )
+dev.off()
+library(animation)
+saveGIF({
+for(i in 1:dim(dmx)[2]){
+        name <- colnames(dmx)[i]
+        value <- as.numeric(t(dmx)[i,])
+        graphics::plot(
+                        result$mz ~ result$time,
+                        xlab = "Retention Time(s)",
+                        ylab = "m/z",
+                        pch = 19,
+                        cex = log10(value +1) - 4,
+                        col = rgb(0,0,1,0.2),
+                        main = name
+                )
+}
+}, movie.name = "groupneg.gif", ani.width = 800, ani.height = 500)
+
+```
