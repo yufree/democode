@@ -110,3 +110,27 @@ This is a hint
 *** .explanation
 
 This is an explanation
+
+---
+
+测试 10.1109/5.771173 doi 读取。10.1109/5.771073 10.1126/science.169.3946.635
+
+```{r}
+library(stringr)
+library(readr)
+library('rcrossref')
+
+doiref <- function(path, style = 'apa'){
+  mystring <- readr::read_file(path)
+  doi <- unlist(stringr::str_extract_all(mystring, "\\b10\\.(\\d+\\.*)+[\\/](([^\\s\\.])+\\.*)+\\b"))
+  doi <- unique(doi)
+  ref <- vector()
+  for (i in 1:length(doi)){
+        temp <- try(rcrossref::cr_cn(dois = doi[i], format = "text", style = style), T)
+        ref <- c(ref,temp)
+  }
+  return(ref)
+}
+doiref('index.Rmd')
+```
+
