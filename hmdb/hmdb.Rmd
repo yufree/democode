@@ -1,0 +1,144 @@
+---
+title: "HMDB cookbook"
+output: html_notebook
+---
+
+## Download the data
+
+## Convert the xml files into csv files
+
+### Bash
+
+```{bash}
+xmlstarlet sel -N hmdb=http://www.hmdb.ca -T -t -m //hmdb:metabolite -v "concat(//hmdb:metabolite//hmdb:accession,',',//hmdb:metabolite//hmdb:monisotopic_molecular_weight,',',//hmdb:metabolite//hmdb:iupac_name,',',//hmdb:metabolite//hmdb:name,',',//hmdb:metabolite//hmdb:chemical_formula,',',//hmdb:metabolite//hmdb:cas_registry_number,',',//hmdb:metabolite//hmdb:smiles,',',//hmdb:metabolite//hmdb:kingdom,',',//hmdb:metabolite//hmdb:direct_parent,',',//hmdb:metabolite//hmdb:taxonomy//hmdb:super_class,',',//hmdb:metabolite//hmdb:taxonomy//hmdb:class,',',//hmdb:metabolite//hmdb:taxonomy//hmdb:sub_class, ',',//hmdb:metabolite//hmdb:taxonomy//hmdb:molecular_framework)" -n hmdb_metabolites.xml > hmdb.csv
+```
+
+### python
+
+```{python}
+# from io import StringIO
+from lxml import etree
+import csv
+xml = 'data/hmdb.xml'
+
+context = etree.iterparse(xml, tag='metabolite')
+
+csvfile = open('hmdb.csv', 'w')
+fieldnames = ['accession', 'monisotopic_molecular_weight', 'iupac_name', 'name', 'chemical_formula', 'cas_registry_number', 'smiles', 'kingdom', 'direct_parent', 'super_class', 'class', 'sub_class', 'molecular_framework']
+writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+writer.writeheader()
+
+for event, elem in context:
+
+    accession = elem.xpath('accession/text()')[0]
+    try:
+        monisotopic_molecular_weight = elem.xpath('monisotopic_molecular_weight/text()')[0]
+    except:
+        monisotopic_molecular_weight = 'NA'
+    try:
+        iupac_name = elem.xpath('iupac_name/text()')[0].encode('utf-8')
+    except:
+        iupac_name = 'NA'
+    name = elem.xpath('name/text()')[0].encode('utf-8')
+    try:
+        chemical_formula = elem.xpath('chemical_formula/text()')[0]
+    except:
+        chemical_formula = 'NA'
+
+    try:
+        cas_registry_number = elem.xpath('cas_registry_number/text()')[0]
+    except:
+        cas_registry_number = 'NA'
+    try:
+        smiles = elem.xpath('smiles/text()')[0]
+    except:
+        smiles = 'NA'
+    try:
+        kingdom = elem.xpath('taxonomy/kingdom/text()')[0]
+    except:
+        kingdom = 'NA'
+    try:
+        direct_parent = elem.xpath('taxonomy/direct_parent/text()')[0]
+    except:
+        direct_parent = 'NA'
+    try:
+        super_class = elem.xpath('taxonomy/super_class/text()')[0]
+    except:
+        super_class = 'NA'
+    try:
+        classorg = elem.xpath('taxonomy/class/text()')[0]
+    except:
+        classorg = 'NA'
+    try:
+        sub_class = elem.xpath('taxonomy/sub_class/text()')[0]
+    except:
+        sub_class = 'NA'
+    try:
+        molecular_framework = elem.xpath('taxonomy/molecular_framework/text()')[0]
+    except:
+        molecular_framework = 'NA'
+
+    writer.writerow({'accession': accession, 'monisotopic_molecular_weight': monisotopic_molecular_weight, 'iupac_name': iupac_name, 'name': name, 'chemical_formula': chemical_formula, 'cas_registry_number': cas_registry_number, 'smiles': smiles, 'kingdom': kingdom, 'direct_parent': direct_parent, 'super_class': super_class, 'class': classorg, 'sub_class': sub_class, 'molecular_framework': molecular_framework})
+    # It's safe to call clear() here because no descendants will be
+    # accessed
+    elem.clear()
+# Also eliminate now-empty references from the root node to elem
+    for ancestor in elem.xpath('ancestor-or-self::*'):
+        while ancestor.getprevious() is not None:
+            del ancestor.getparent()[0]
+del context
+
+```
+
+## Import csv into R
+
+```{r}
+library(tidyverse)
+# pretreatment
+# hmdb <- read_csv('hmdb.csv')
+# hmdb$mds <- round(hmdb$monisotopic_molecular_weight)-hmdb$monisotopic_molecular_weight*0.9988834
+# hmdb$rmds <- round(hmdb$mds,3)
+# hmdb$iupac_name <- gsub( "b'", "", as.character(hmdb$iupac_name))
+# hmdb$name <- gsub( "b'", "", as.character(hmdb$name))
+# 
+# rmds <- as.numeric(names(table(hmdb$rmds)[order(table(hmdb$rmds))]))
+# dis <- stats::dist(rmds, method = "manhattan")
+# fit <- stats::hclust(dis)
+# mdcluster <- stats::cutree(fit, h=0.025)
+# 
+# mdc <- rep('NA',length(hmdb$rmds))
+# for (i in 1:length(rmds)){
+#         mdc[hmdb$rmds %in% rmds[i]] <- mdcluster[i]
+# }
+# hmdb$mdcluster <-  mdc
+# write.csv(hmdb,file = 'hmdbmd.csv')
+# read data
+hmdb <- read.csv('hmdbmd.csv')
+plotmds <- function(hmdb,i = 9){
+        n = length(unique(hmdb[,i]))
+        icolors <- (grDevices::colorRampPalette(rev(RColorBrewer::brewer.pal(12,"Set3"))))(n)
+        plot(hmdb$rmds~hmdb$monisotopic_molecular_weight,col = icolors[as.numeric(as.factor(hmdb[,i]))],pch = 19,xlim = c(0,2000),ylim = c(0,3),main = colnames(hmdb)[i])
+}
+
+plotmds(hmdb,i = 10)
+
+hmdb %>%
+        group_by(class) %>%
+  filter(n() > 100) %>%
+        ungroup %>%
+  ggplot(aes(monisotopic_molecular_weight, mds, fill = mdcluster)) +
+  geom_point(show.legend = FALSE) +
+  facet_wrap(~ class,ncol = 5,scales = 'free') 
+ggsave('class.png', plot = last_plot(), device = NULL, path = NULL,
+  scale = 1, width = 8, height = 10, units = c("in", "cm", "mm"),
+  dpi = 300, limitsize = F)
+
+hmdbsub <- hmdb[hmdb$class == 'Organooxygen compounds',]
+plot(hmdbsub$monisotopic_molecular_weight,hmdbsub$rmds,col = hmdbsub$mdcluster)
+
+
+# 质谱上要唯一的物质求 mass defect 分类
+# 加合物的mass defect过滤
+# hmdb的mass defect自组织聚类
+```
+
