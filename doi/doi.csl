@@ -38,7 +38,7 @@
   <bibliography>
     <layout delimiter="; ">
       <group delimiter=", ">
-        <text macro="doi"/>
+        <text macro="doi" prefix="https://doi.org/"/>
       </group>
     </layout>
   </bibliography>
