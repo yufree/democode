@@ -160,7 +160,7 @@ ui <- fluidPage(
                         p('Download data in the right panel and sent to the one you loved'),
                         p('She/He need to use regression analysis(Y~X) to find the plot in the residual plot'),
                         p('Credits should be given to Prof. Leonard A. Stefanski and Prof. John Staudenmayer and you could find more info', a('here',href = 'https://www4.stat.ncsu.edu/~stefanski/NSF_Supported/Hidden_Images/stat_res_plots.html'), 'and', a('here', href = 'https://yufree.cn/cn/2014/12/18/hide-in-date/')),
-                        p('You could also check this github', a('repo', href = 'https://github.com/yufree/realism'), 'for source code.' ),
+                        p('You could also check this github', a('repo', href = 'https://github.com/yufree/democode/tree/master/Residual%20Sur'), 'for source code.' ),
                         plotOutput("plot"),
                         h4("Data"),
                         # dataTableOutput("datatable"),
