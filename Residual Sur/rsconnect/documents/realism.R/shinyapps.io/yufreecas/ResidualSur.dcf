@@ -1,0 +1,13 @@
+name: ResidualSur
+title: ResidualSur
+username:
+account: yufreecas
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 281919
+bundleId: 1224240
+url: https://yufreecas.shinyapps.io/ResidualSur/
+when: 1518687827.99206
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: code/apptest.R|code/code.R|code/dataset.csv|code/decode.R|code/yufree.pbm|data

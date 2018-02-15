@@ -147,7 +147,6 @@ ui <- fluidPage(
    sidebarLayout(
       sidebarPanel(
               # add ga code
-              tags$head(includeScript("ga.js")),
               fileInput('image',
                         label = 'image files',
                         accept = c('.png','.jpg', '.bmp')),
