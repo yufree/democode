@@ -1,9 +1,8 @@
-# from io import StringIO
+from io import StringIO
 from lxml import etree
 import csv
-xml = 'data/hmdb.xml'
 
-context = etree.iterparse(xml, tag='metabolite')
+context = etree.iterparse('hmdb.xml', tag='metabolite')
 
 csvfile = open('hmdb.csv', 'w')
 fieldnames = ['accession', 'monisotopic_molecular_weight', 'iupac_name', 'name', 'chemical_formula', 'cas_registry_number', 'smiles', 'kingdom', 'direct_parent', 'super_class', 'class', 'sub_class', 'molecular_framework']
