@@ -25,14 +25,19 @@ getmassdefect <- function(mass,sf){
 }
 
 findbr <- function(xset,n=10,sf = 78/77.91051,step = 0.001,stepsd=0.003, cutoffint = 100, cutoffr=0.4){
-        data <- as.data.frame(groups(xset))
-        df <- peaks(xset)
-        ind <- groupidx(xset)
-        int <- NULL
-        for(i in 1:length(ind)){
-                int[i] <- mean(df[as.numeric(ind[[i]]),'into'])
-        }
-        data$int <- int
+        # data <- as.data.frame(groups(xset))
+        # z <- groupval(xset,'medret','into')
+        # c <- apply(z,1,mean)
+        # 
+        df <- xcms::featureValues(xset, value = "into")
+        c <- apply(df,1,mean)
+        peaks <- xcms::featureDefinitions(xset)
+        mz <- peaks$mzmed
+        rt <- peaks$rtmed
+        npeaks <- peaks$npeaks
+        data <- cbind.data.frame(mzmed = mz, rtmed = rt, npeaks = npeaks)
+        
+        data$int <- c
         data <- data[order(data$mzmed),]
         data <- data[data$npeaks >= n,]
         mz <- data$mzmed
