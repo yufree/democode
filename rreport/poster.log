@@ -1,11 +1,11 @@
-This is XeTeX, Version 3.14159265-2.6-0.99992 (TeX Live 2015) (preloaded format=xelatex 2015.7.1)  15 SEP 2015 11:10
+This is XeTeX, Version 3.14159265-2.6-0.99998 (TeX Live 2017) (preloaded format=xelatex 2018.1.20)  20 JAN 2018 23:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **poster.tex
 (./poster.tex
-LaTeX2e <2015/01/01>
-Babel <3.9l> and hyphenation patterns for 79 languages loaded.
+LaTeX2e <2017-04-15>
+Babel <3.16> and hyphenation patterns for 3 language(s) loaded.
 
 LaTeX Warning: You have requested package `',
                but the package provides `beamerthemeRJH'.
@@ -2357,11 +2357,11 @@ Overfull \hbox (20.0pt too wide) in paragraph at lines 92--98
 
  
 Here is how much of TeX's memory you used:
- 16 strings out of 493706
- 161 string characters out of 6145770
- 54323 words of memory out of 5000000
- 3457 multiletter control sequences out of 15000+600000
- 3948 words of font info for 15 fonts, out of 8000000 for 9000
- 1328 hyphenation exceptions out of 8191
- 19i,1n,12p,130b,84s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 17 strings out of 494986
+ 222 string characters out of 6175386
+ 54502 words of memory out of 5000000
+ 3958 multiletter control sequences out of 15000+600000
+ 3648 words of font info for 15 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 19i,1n,12p,130b,88s stack positions out of 5000i,500n,10000p,200000b,80000s
 No pages of output.
