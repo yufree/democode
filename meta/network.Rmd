@@ -1,0 +1,194 @@
+---
+title: "network"
+author: "Miao YU"
+date: '2018-10-08'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(WGCNA);
+#Read in the female liver data set
+femData = LiverFemale3600
+dim(femData)
+names(femData)
+
+datExpr0 = as.data.frame(t(femData[, -c(1:8)]))
+names(datExpr0) = femData$substanceBXH
+rownames(datExpr0) = names(femData)[-c(1:8)]
+
+gsg = goodSamplesGenes(datExpr0, verbose = 3);
+gsg$allOK
+
+if (!gsg$allOK)
+{
+  # Optionally, print the gene and sample names that were removed:
+  if (sum(!gsg$goodGenes)>0) 
+     printFlush(paste("Removing genes:", paste(names(datExpr0)[!gsg$goodGenes], collapse = ", ")));
+  if (sum(!gsg$goodSamples)>0) 
+     printFlush(paste("Removing samples:", paste(rownames(datExpr0)[!gsg$goodSamples], collapse = ", ")));
+  # Remove the offending genes and samples from the data:
+  datExpr0 = datExpr0[gsg$goodSamples, gsg$goodGenes]
+}
+
+sampleTree = hclust(dist(datExpr0), method = "average")
+
+plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="", cex.lab = 1.5, 
+     cex.axis = 1.5, cex.main = 2)
+clust = cutreeStatic(sampleTree, cutHeight = 15, minSize = 10)
+keepSamples = (clust==1)
+datExpr = datExpr0[keepSamples, ]
+nGenes = ncol(datExpr)
+nSamples = nrow(datExpr)
+```
+
+```{r}
+traitData = ClinicalTraits
+dim(traitData)
+names(traitData)
+
+# remove columns that hold information we do not need.
+allTraits = traitData[, -c(31, 16)];
+allTraits = allTraits[, c(2, 11:36) ];
+dim(allTraits)
+names(allTraits)
+
+# Form a data frame analogous to expression data that will hold the clinical traits.
+
+femaleSamples = rownames(datExpr);
+traitRows = match(femaleSamples, allTraits$Mice);
+datTraits = allTraits[traitRows,]
+tibble::column_to_rownames(datTraits, var = "Mice")
+collectGarbage()
+
+save(datExpr, datTraits, file = "FemaleLiver-01-dataInput.RData")
+```
+
+```{r}
+enableWGCNAThreads()
+lnames = load(file = "FemaleLiver-01-dataInput.RData");
+#The variable lnames contains the names of loaded variables.
+lnames
+
+powers = c(c(1:10), seq(from = 12, to=20, by=2))
+sft = pickSoftThreshold(datExpr, powerVector = powers, verbose = 5)
+
+net = blockwiseModules(datExpr, power = 6,
+TOMType = "unsigned", minModuleSize = 30,
+reassignThreshold = 0, mergeCutHeight = 0.25,
+numericLabels = TRUE, pamRespectsDendro = FALSE,
+saveTOMs = TRUE,
+saveTOMFileBase = "femaleMouseTOM",
+verbose = 3)
+
+moduleLabels = net$colors
+moduleColors = labels2colors(net$colors)
+MEs = net$MEs;
+geneTree = net$dendrograms[[1]];
+
+# Define numbers of genes and samples
+nGenes = ncol(datExpr);
+nSamples = nrow(datExpr);
+# Recalculate MEs with color labels
+MEs0 = moduleEigengenes(datExpr, moduleColors)$eigengenes
+MEs = orderMEs(MEs0)
+moduleTraitCor = cor(MEs, datTraits, use = "p");
+moduleTraitPvalue = corPvalueStudent(moduleTraitCor, nSamples);
+
+sizeGrWindow(10,6)
+# Will display correlations and their p-values
+textMatrix = paste(signif(moduleTraitCor, 2), "\n(",
+signif(moduleTraitPvalue, 1), ")", sep = "");
+dim(textMatrix) = dim(moduleTraitCor)
+par(mar = c(6, 8.5, 3, 3));
+# Display the correlation values within a heatmap plot
+labeledHeatmap(Matrix = moduleTraitCor,
+xLabels = names(datTraits),
+yLabels = names(MEs),
+ySymbols = names(MEs),
+colorLabels = FALSE,
+colors = greenWhiteRed(50),
+textMatrix = textMatrix,
+setStdMargins = FALSE,
+cex.text = 0.5,
+zlim = c(-1,1),
+main = paste("Module-trait relationships"))
+```
+
+```{r}
+no.obs=50
+# now we specify the true measures of eigengene significance
+# recall that ESturquoise=cor(y,MEturquoise)
+ESturquoise=0; ESbrown= -.6;
+ESgreen=.6;ESyellow=0
+# Note that we dont specify the eigengene significance of the blue module
+# since it is highly correlated with the turquoise module.
+ESvector=c(ESturquoise,ESbrown,ESgreen,ESyellow)
+# number of genes
+nGenes1=3000
+# proportion of genes in the turquoise, blue, brown, green, and yellow module #respectively.
+simulateProportions1=c(0.2,0.15, 0.08, 0.06, 0.04)
+# Note that the proportions dont add up to 1. The remaining genes will be colored grey,
+# ie the grey genes are non-module genes.
+# set the seed of the random number generator. As a homework exercise change this seed.
+set.seed(1)
+#Step 1: simulate a module eigengene network.
+# Training Data Set I
+MEgreen=rnorm(no.obs)
+scaledy=MEgreen*ESgreen+sqrt(1-ESgreen^2)*rnorm(no.obs)
+y=ifelse( scaledy>median(scaledy),2,1)
+MEturquoise= ESturquoise*scaledy+sqrt(1-ESturquoise^2)*rnorm(no.obs)
+# we simulate a strong dependence between MEblue and MEturquoise
+MEblue= .6*MEturquoise+ sqrt(1-.6^2) *rnorm(no.obs)
+MEbrown= ESbrown*scaledy+sqrt(1-ESbrown^2)*rnorm(no.obs)
+MEyellow= ESyellow*scaledy+sqrt(1-ESyellow^2)*rnorm(no.obs)
+ModuleEigengeneNetwork1=data.frame(y,MEturquoise,MEblue,MEbrown,MEgreen, MEyellow)
+```
+
+```{r}
+dat1=simulateDatExpr5Modules(MEturquoise=ModuleEigengeneNetwork1$MEturquoise,
+MEblue=ModuleEigengeneNetwork1$MEblue,
+MEbrown=ModuleEigengeneNetwork1$MEbrown,
+MEyellow=ModuleEigengeneNetwork1$MEyellow,
+MEgreen=ModuleEigengeneNetwork1$MEgreen,
+nGenes=nGenes1,
+simulateProportions=simulateProportions1)
+
+datExpr = dat1$datExpr;
+truemodule = dat1$truemodule;
+datME = dat1$datME;
+attach(ModuleEigengeneNetwork1)
+
+datExpr=data.frame(datExpr)
+ArrayName=paste("Sample",1:dim(datExpr)[[1]], sep="" )
+# The following code is useful for outputting the simulated data
+GeneName=paste("Gene",1:dim(datExpr)[[2]], sep="" )
+dimnames(datExpr)[[1]]=ArrayName
+dimnames(datExpr)[[2]]=GeneName
+```
+
+```{r}
+blockwiseModules(datExpr = (data_m), 
+            checkMissingData = FALSE, blocks = mycl_metabs, 
+            maxBlockSize = 5000, blockSizePenaltyPower = 100, 
+            randomSeed = 12345, loadTOM = FALSE, corType = "pearson", 
+            maxPOutliers = 1, quickCor = 0, pearsonFallback = "individual", 
+            cosineCorrelation = FALSE, power = power_val, 
+            networkType = "unsigned", TOMType = "signed", 
+            TOMDenom = "min", getTOMs = NULL, saveTOMs = FALSE, 
+            saveTOMFileBase = "blockwiseTOM", deepSplit = deepsplit, 
+            detectCutHeight = NULL, minModuleSize = minclustsize, 
+            maxCoreScatter = NULL, minGap = NULL, maxAbsCoreScatter = NULL, 
+            minAbsGap = NULL, minSplitHeight = NULL, minAbsSplitHeight = NULL, 
+            useBranchEigennodeDissim = FALSE, minBranchEigennodeDissim = mergeCutHeight, 
+            stabilityLabels = NULL, minStabilityDissim = NULL, 
+            pamStage = TRUE, pamRespectsDendro = FALSE, reassignThreshold = 1e-06, 
+            minCoreKME = 0.5, minCoreKMESize = minclustsize/3, 
+            minKMEtoStay = 0.3, mergeCutHeight = cutheight, 
+            impute = TRUE, trapErrors = FALSE, numericLabels = FALSE, 
+            nThreads = num_nodes, verbose = 0, indent = 0)
+```
+
