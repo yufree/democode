@@ -1,0 +1,13 @@
+install.packages('xfun')
+xfun::pkg_attach(c('tidyverse','rticles','xaringan','BiocManager','devtools','stringi'),install = T)
+tinytex::install_tinytex()
+BiocManager::install(c('xcms','CAMERA','KEGGREST','Rdisop','GO.db', 'globaltest', 'GlobalAncova', 'Rgraphviz', 'SSPA', 'sva', 'KEGGgraph', 'siggenes','IPO','BiocParallel','ChemmineR','ChemmineOB'))
+devtools::install_github('yufree/enviGCMS')
+devtools::install_github('omegahat/XMLSchema')
+devtools::install_github('cran/SSOAP')
+devtools::install_github('yufree/xMSannotator')
+devtools::install_github('cbroeckl/RAMClustR')
+devtools::install_github('xia-lab/MetaboAnalystR')
+devtools::install_github('yufree/xsetplus')
+xfun::pkg_attach(c('VennDiagram','webchem','huxtable','officer','flextable'),install = T)
+
