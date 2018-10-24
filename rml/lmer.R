@@ -26,3 +26,23 @@ apply(datan,1,visindividual2)
 
 i = 0
 apply(datan,1,visindividualall)
+
+# for multiple group nlme model and table output
+
+result <- ndf %>%
+        as.tibble() %>%
+        nest(-group) %>%
+        mutate(model = map(data,~ lme(values ~ factor1+factor2+factor3-1,random=~1|sample,data = .)),tidy = map(model,tidy,effects = 'fixed')) %>%
+        unnest(tidy)
+
+result <- ndf %>%
+        as.tibble() %>%
+        nest(-group) %>%
+        mutate(model = map(data,~ lme(values ~ factor1+factor2+factor3-1,random=~1|sample,data = .)))
+
+names(result$model) <- result$group
+
+table <- result$model %>%
+        huxreg(tidy_args = list(effects = 'fixed'))
+
+quick_docx(table,file = 'table.docx')
