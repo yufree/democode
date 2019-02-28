@@ -192,4 +192,19 @@ blockwiseModules(datExpr = (data_m),
             nThreads = num_nodes, verbose = 0, indent = 0)
 ```
 
+```{r}
+```{r eval = F}
+library(pmd)
+data("spmeinvivo")
+li <- globalstd(spmeinvivo)
+data <- li$data[li$stdmassindex,]
+library(qgraph)
+cormat <- cor_auto(t(data))
+Graph_pcor <- qgraph(cormat, graph = "pcor", layout = "spring")
+Graph_pcor <- qgraph(cormat, graph = "pcor", layout = "spring", threshold = "bonferroni",
+                     sampleSize = nrow(data), alpha = 0.05)
+Graph_lasso <- qgraph(cormat, graph = "glasso", layout = "spring", tuning = 0.25,
+                      sampleSize = nrow(data))
+```
+```
 
