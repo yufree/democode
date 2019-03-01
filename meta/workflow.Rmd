@@ -285,3 +285,10 @@ mod <- model.matrix(~ lv)
 svafit <- sva(df, mod)
 ```
 
+```{r}
+library(tsne)
+rtsne_out <- tsne(t(data))
+plot(rtsne_out,t='n')
+text(rtsne_out,labels=colnames(df$data))
+```
+
