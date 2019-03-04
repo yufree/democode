@@ -1,0 +1,15 @@
+"AutoPreferredExcludeMSMSTable","X2","X3","X4","X5","X6","X7","X8","X9"
+"On","Prec. m/z","Delta m/z (ppm)","Z","Prec. Type","Ret. Time (min)","Delta Ret. Time (min)","Iso. Width","Collision Energy"
+"TRUE","119.0363","20","1","Exclude","0",NA,"Narrow (~1.3 m/z)",NA
+"TRUE","955.9818","20","1","Exclude","0",NA,"Narrow (~1.3 m/z)",NA
+"TRUE","966.0007","20","1","Exclude","0",NA,"Narrow (~1.3 m/z)",NA
+"TRUE","982.9907","20","1","Exclude","0",NA,"Narrow (~1.3 m/z)",NA
+"TRUE","1033.988109","20","1","Exclude","0",NA,"Narrow (~1.3 m/z)",NA
+"TRUE","902.4528","20","1","Preferred","3.334","0.5","Narrow (~1.3 m/z)",NA
+"TRUE","201.1135","20","1","Preferred","4.708","0.5","Narrow (~1.3 m/z)",NA
+"TRUE","391.2853","20","1","Preferred","6.224","0.5","Narrow (~1.3 m/z)",NA
+"TRUE","432.3115","20","1","Preferred","6.956","0.5","Narrow (~1.3 m/z)",NA
+"TRUE","568.3615","20","1","Preferred","8.469","0.5","Narrow (~1.3 m/z)",NA
+"TRUE","596.3928","20","1","Preferred","9.013","0.5","Narrow (~1.3 m/z)",NA
+"TRUE","305.2482","20","1","Preferred","9.801","0.5","Narrow (~1.3 m/z)",NA
+"TRUE","810.5648","20","1","Preferred","11.488","0.5","Narrow (~1.3 m/z)",NA
