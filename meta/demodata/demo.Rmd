@@ -1,0 +1,868 @@
+---
+title: "demo"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Untarget metabolomics
+
+## MTBLS28
+
+```{r}
+library(tidyverse)
+library(igraph)
+library(vioplot)
+pos <- readr::read_tsv('demodata/m_mtbls28_POS_v2_maf.tsv')
+anno <- readr::read_tsv("demodata/s_mtbls28.txt")
+# find the pos data
+posdata <- pos %>%
+    dplyr::select(dplyr::contains('POS'))
+# find the mzrt
+posmzrt <- pos %>%
+    dplyr::select(dplyr::matches("mass|retention"))
+# find the pos sample class
+posanno <- anno %>%
+    dplyr::filter(grepl("POS",`Sample Name`)) 
+# check the order
+identical(colnames(posdata),posanno$`Sample Name`)
+# get the class
+posclass <- posanno %>%
+    dplyr::transmute(class = paste(`Factor Value[Smoking]`,`Factor Value[Race]`,`Factor Value[Gender]`,`Factor Value[Sample Type]`,sep = '_')) %>%
+    haven::as_factor() %>%
+    c() %>%
+    unlist()
+posgroup <- cbind.data.frame(sample_name=colnames(posdata),sample_group=posclass)
+test <- list(data = posdata,mz = posmzrt$mass_to_charge, rt = posmzrt$retention_time, group = posgroup)
+test2 <- enviGCMS::getfilter(test,rowindex = !(test$rt == max(test$rt)))
+# enviGCMS::getcsv(test2,'MTBLS28')
+library(tidyverse)
+library(igraph)
+library(vioplot)
+pos <- readr::read_tsv('demodata/m_mtbls28_NEG_v2_maf.tsv')
+anno <- readr::read_tsv("demodata/s_mtbls28.txt")
+# find the pos data
+posdata <- pos %>%
+    dplyr::select(dplyr::contains('NEG'))
+# find the mzrt
+posmzrt <- pos %>%
+    dplyr::select(dplyr::matches("mass|retention"))
+# find the pos sample class
+posanno <- anno %>%
+    dplyr::filter(grepl("NEG",`Sample Name`)) 
+# check the order
+identical(colnames(posdata),posanno$`Sample Name`)
+# get the class
+posclass <- posanno %>%
+    dplyr::transmute(class = paste(`Factor Value[Smoking]`,`Factor Value[Race]`,`Factor Value[Gender]`,`Factor Value[Sample Type]`,sep = '_')) %>%
+    haven::as_factor() %>%
+    c() %>%
+    unlist()
+posgroup <- cbind.data.frame(sample_name=colnames(posdata),sample_group=posclass)
+test <- list(data = posdata,mz = posmzrt$mass_to_charge, rt = posmzrt$retention_time, group = posgroup)
+test2 <- enviGCMS::getfilter(test,rowindex = !(test$rt == max(test$rt)))
+# enviGCMS::getcsv(test2,'MTBLS28neg')
+```
+
+## ST000560
+
+```{r}
+## ST000560 POS
+data <- read.table('demodata/ST000560_AN000860.txt',sep = '\t',header = T, nrows = 1918,na.strings = '\\N',row.names = 1)
+anno <- read.table('demodata/ST000560_AN000860.txt',sep = '\t',header = F, skip = 1921)
+mz <- stringr::str_split_fixed(rownames(data),'_',2)[,2]
+mz <- as.numeric(c(stringr::str_extract_all(mz,'[:digit:]+\\.+.{4}',2)))
+rt <- as.numeric(stringr::str_split_fixed(rownames(data),'_',2)[,1])*60
+
+group <- cbind.data.frame(sample_name=colnames(data),sample_group=c(rep('control',12),rep('IgAN',12),rep('QC',5)))
+list <- list(data=data,group = group,mz = mz, rt = rt)
+enviGCMS::getcsv(list,'ST000560')
+
+## ST000560 NEG
+
+data <- read.table('demodata/ST000560_AN000861.txt',sep = '\t',header = T, nrows = 1540,na.strings = '\\N',row.names = 1)
+anno <- read.table('demodata/ST000560_AN000861.txt',sep = '\t',header = F, skip = 1543)
+mz <- stringr::str_split_fixed(rownames(data),'_',2)[,2]
+mz <- as.numeric(c(stringr::str_extract_all(mz,'[:digit:]+\\.+.{4}',2)))
+rt <- as.numeric(stringr::str_split_fixed(rownames(data),'_',2)[,1])*60
+group <- cbind.data.frame(sample_name=colnames(data),sample_group=c(rep('control',12),rep('IgAN',12),rep('QC',5)))
+
+list <- list(data=data,group = group,mz = mz, rt = rt)
+enviGCMS::getcsv(list,'ST000560neg')
+```
+
+## ST000601
+
+```{r}
+data <- read.table('demodata/ST000601_AN000920_res.txt',sep = '\t',header = T)
+anno <- data$group
+anno <- stringr::str_split_fixed(anno,'\\|',2)[,1]
+data <- t(data[,-c(1,2)])
+mz <- stringr::str_split_fixed(rownames(data),'_',2)[,1]
+mz <- stringr::str_split_fixed(mz,'X',2)[,2]
+rt <- stringr::str_split_fixed(rownames(data),'_',2)[,2]
+rt <- gsub('\\.1$','',rt)
+group <- cbind.data.frame(sample_name=c(1:ncol(data)),sample_group= as.character(anno))
+
+list <- list(data=data,group = group,mz = as.numeric(mz), rt = as.numeric(rt)*60)
+enviGCMS::getcsv(list,'ST000601')
+
+data <- read.table('demodata/ST000601_AN000921_res.txt',sep = '\t',header = T)
+anno <- data$group
+anno <- stringr::str_split_fixed(anno,'\\|',2)[,1]
+data <- t(data[,-c(1,2)])
+mz <- stringr::str_split_fixed(rownames(data),'_',2)[,1]
+mz <- stringr::str_split_fixed(mz,'X',2)[,2]
+rt <- stringr::str_split_fixed(rownames(data),'_',2)[,2]
+rt <- gsub('\\.1$','',rt)
+group <- cbind.data.frame(sample_name=c(1:ncol(data)),sample_group= as.character(anno))
+
+list <- list(data=data,group = group,mz = as.numeric(mz), rt = as.numeric(rt)*60)
+enviGCMS::getcsv(list,'ST000601RP')
+
+```
+
+## DST000220
+
+```{r}
+data <- read.table('demodata/ST000220_AN000325.txt',sep = '\t',header = T)
+mz <- data$Quant.m.z
+rt <- data$Ret..Index*60
+data <- data[,-c(1:11)]
+group <- data.frame(stringsAsFactors=FALSE,
+                    mb_sample_id = c("SA010716", "SA010717", "SA010718",
+                                     "SA010719", "SA010720", "SA010721",
+                                     "SA010722", "SA010736", "SA010723", "SA010724",
+                                     "SA010725", "SA010726", "SA010727",
+                                     "SA010728", "SA010729", "SA010734", "SA010730",
+                                     "SA010731", "SA010732", "SA010733",
+                                     "SA010735"),
+                    local_sample_id = c("SF-100109-231142", "SF-100109-244079",
+                                        "SF-100109-227718", "SF-120831-00062",
+                                        "SF-100109-255622", "SF-100109-239012",
+                                        "SF-100109-259700", "SF-110121-00073",
+                                        "SF-100109-114720", "SF-100109-121711",
+                                        "SF-100109-130034", "SF-100109-124896",
+                                        "SF-100109-199550", "SF-100109-169058",
+                                        "SF-100109-124904", "SF-100109-146730", "SF-100109-199546",
+                                        "SF-100109-225118", "SF-100109-252159",
+                                        "SF-110908-00016", "SF-100109-142930"),
+                    Histology.Type.Conformed.CAP = c("Adenocarcinoma, NOS", "Adenocarcinoma, NOS", "Adenocarcinoma, NOS",                                      "Adenocarcinoma, NOS", "Adenocarcinoma, NOS",                                      "Adenocarcinoma, NOS", "Adenocarcinoma, NOS",                                      "Combined small cell carcinoma", "Normal", "Normal", "Normal", "Normal", "Normal", "Normal", "Normal", "Small cell carcinoma", "Small cell carcinoma, NOS", "Small cell carcinoma, NOS", "Small cell carcinoma, NOS", "Small cell carcinoma, NOS","Small cell carcinoma, NOS")
+)
+
+group <- cbind.data.frame(sample_name=colnames(data) ,sample_group=group$Histology.Type.Conformed.CAP[match(stringr::str_extract_all(colnames(data),'[:digit:]+$',T),stringr::str_extract_all(group$local_sample_id,pattern = '[:digit:]+$',T))])
+
+list <- list(data=data,group = group,mz = mz, rt = rt)
+enviGCMS::getcsv(list,'DST000220')
+
+data <- read.table('demodata/ST000220_AN000326.txt',sep = '\t',header = T)
+mz <- data$Quant.m.z
+rt <- data$Ret..Index*60
+data <- data[,-c(1:11)]
+group <- data.frame(stringsAsFactors=FALSE,
+                    mb_sample_id = c("SA010716", "SA010717", "SA010718",
+                                     "SA010719", "SA010720", "SA010721",
+                                     "SA010722", "SA010736", "SA010723", "SA010724",
+                                     "SA010725", "SA010726", "SA010727",
+                                     "SA010728", "SA010729", "SA010734", "SA010730",
+                                     "SA010731", "SA010732", "SA010733",
+                                     "SA010735"),
+                    local_sample_id = c("SF-100109-231142", "SF-100109-244079",
+                                        "SF-100109-227718", "SF-120831-00062",
+                                        "SF-100109-255622", "SF-100109-239012",
+                                        "SF-100109-259700", "SF-110121-00073",
+                                        "SF-100109-114720", "SF-100109-121711",
+                                        "SF-100109-130034", "SF-100109-124896",
+                                        "SF-100109-199550", "SF-100109-169058",
+                                        "SF-100109-124904", "SF-100109-146730", "SF-100109-199546",
+                                        "SF-100109-225118", "SF-100109-252159",
+                                        "SF-110908-00016", "SF-100109-142930"),
+                    Histology.Type.Conformed.CAP = c("Adenocarcinoma, NOS", "Adenocarcinoma, NOS", "Adenocarcinoma, NOS",                                      "Adenocarcinoma, NOS", "Adenocarcinoma, NOS",                                      "Adenocarcinoma, NOS", "Adenocarcinoma, NOS",                                      "Combined small cell carcinoma", "Normal", "Normal", "Normal", "Normal", "Normal", "Normal", "Normal", "Small cell carcinoma", "Small cell carcinoma, NOS", "Small cell carcinoma, NOS", "Small cell carcinoma, NOS", "Small cell carcinoma, NOS","Small cell carcinoma, NOS")
+)
+
+group <- cbind.data.frame(sample_name=colnames(data) ,sample_group=group$Histology.Type.Conformed.CAP[match(stringr::str_extract_all(colnames(data),'[:digit:]+$',T),stringr::str_extract_all(group$local_sample_id,pattern = '[:digit:]+$',T))])
+
+list <- list(data=data,group = group,mz = mz, rt = rt)
+enviGCMS::getcsv(list,'DST000220neg')
+```
+
+## DST001120
+
+```{r}
+data <- read.table('demodata/ST001120_AN001832_res.txt',sep = '\t',header = T)
+group <- data$group
+name <- colnames(data)[-c(1,2)]
+mz <- stringr::str_split_fixed(name,'_',2)[,1]
+mz <- as.numeric(gsub('X','',mz))
+rt <- as.numeric(stringr::str_split_fixed(name,'_',2)[,2])*60
+data <- t(data[,-c(1:2)])
+group <- cbind.data.frame(sample_name=1:length(ncol(data)),sample_group=group)
+
+list <- list(data=data,group = group,mz = mz, rt = rt)
+enviGCMS::getcsv(list,'DST001120')
+
+data <- read.table('demodata/ST001120_AN001833_res.txt',sep = '\t',header = T)
+group <- data$group
+name <- colnames(data)[-c(1,2)]
+mz <- stringr::str_split_fixed(name,'_',2)[,1]
+mz <- as.numeric(gsub('X','',mz))
+rt <- as.numeric(stringr::str_split_fixed(name,'_',2)[,2])*60
+data <- t(data[,-c(1:2)])
+group <- cbind.data.frame(sample_name=1:length(ncol(data)),sample_group=group)
+
+list <- list(data=data,group = group,mz = mz, rt = rt)
+enviGCMS::getcsv(list,'DST001120pos')
+```
+
+## DST000918
+
+```{r}
+data <- read.table('demodata/ST000918_AN001503.txt',sep = '\t',header = T,nrows=77)
+group <- c(rep('cancer',29),rep('control',29))
+data2 <- read.table('demodata/ST000918_AN001503.txt',sep = '\t',header = F,skip=80)
+mz <- as.numeric(data2$V3)
+rt <- as.numeric(data2$V2)
+data <- data[,-1]
+group <- cbind.data.frame(sample_name=colnames(data),sample_group=group)
+
+list <- list(data=data,group = group,mz = mz, rt = rt*60)
+enviGCMS::getcsv(list,'DST000918gc')
+
+data <- read.table('demodata/ST000918_AN001504_res.txt',sep = '\t',header = T)
+group <- data$group
+name <- colnames(data)[-c(1,2)]
+mz <- stringr::str_split_fixed(name,'_',2)[,1]
+mz <- as.numeric(gsub('X','',mz))
+rt <- as.numeric(stringr::str_split_fixed(name,'_',2)[,2])*60
+data <- t(data[,-c(1:2)])
+group <- cbind.data.frame(sample_name=c(1:ncol(data)),sample_group=group)
+
+list <- list(data=data,group = group,mz = mz, rt = rt)
+enviGCMS::getcsv(list,'DST000918neg')
+
+data <- read.table('demodata/ST000918_AN001505_res.txt',sep = '\t',header = T)
+group <- data$group
+name <- colnames(data)[-c(1,2)]
+mz <- stringr::str_split_fixed(name,'_',2)[,1]
+mz <- as.numeric(gsub('X','',mz))
+rt <- as.numeric(stringr::str_split_fixed(name,'_',2)[,2])*60
+data <- t(data[,-c(1:2)])
+group <- cbind.data.frame(sample_name=c(1:ncol(data)),sample_group=group)
+
+list <- list(data=data,group = group,mz = mz, rt = rt)
+enviGCMS::getcsv(list,'DST000918pos')
+```
+
+## ST000388
+
+```{r}
+data <- read.table('demodata/ST000388_AN000624.txt',sep = '\t',header = T, nrows = 988,na.strings = '\\N',row.names = 1)
+anno <- read.table('demodata/ST000388_AN000624.txt',sep = '\t',header = F, skip = 991)
+mz <- anno$V2
+rt <- anno$V3*60
+
+group <- data.frame(stringsAsFactors=FALSE,
+                    mb_sample_id = c("SA018129", "SA018130", "SA018131", "SA018132",
+                                     "SA018133", "SA018134", "SA018135", "SA018136",
+                                     "SA018137", "SA018138", "SA018139", "SA018140",
+                                     "SA018141", "SA018142", "SA018143", "SA018144",
+                                     "SA018145", "SA018146", "SA018147", "SA018148",
+                                     "SA018149", "SA018150", "SA018151", "SA018152",
+                                     "SA018153", "SA018154", "SA018155", "SA018156",
+                                     "SA018157", "SA018158", "SA018159", "SA018160",
+                                     "SA018161", "SA018162", "SA018163", "SA018164",
+                                     "SA018165", "SA018166", "SA018167", "SA018168",
+                                     "SA018169", "SA018170", "SA018171", "SA018172",
+                                     "SA018173", "SA018174", "SA018175", "SA018176",
+                                     "SA018177", "SA018178", "SA018179", "SA018180",
+                                     "SA018181", "SA018182", "SA018183", "SA018184", "SA018185",
+                                     "SA018186", "SA018187", "SA018188", "SA018189",
+                                     "SA018190", "SA018191", "SA018192", "SA018193",
+                                     "SA018194", "SA018195", "SA018196", "SA018197",
+                                     "SA018198", "SA018199", "SA018200", "SA018201",
+                                     "SA018202", "SA018203", "SA018204", "SA018205",
+                                     "SA018206", "SA018207", "SA018208", "SA018209",
+                                     "SA018210", "SA018211", "SA018212", "SA018213",
+                                     "SA018214", "SA018215", "SA018216", "SA018217",
+                                     "SA018218", "SA018219", "SA018220", "SA018221",
+                                     "SA018222", "SA018223"),
+                    local_sample_id = c("LungNodule_23", "LungNodule_74", "LungNodule_14",
+                                        "LungNodule_76", "LungNodule_46",
+                                        "LungNodule_113", "LungNodule_10", "LungNodule_9",
+                                        "LungNodule_13", "LungNodule_20", "LungNodule_21",
+                                        "LungNodule_29", "LungNodule_4", "LungNodule_107",
+                                        "LungNodule_124", "LungNodule_86", "LungNodule_2",
+                                        "LungNodule_66", "LungNodule_73", "LungNodule_93",
+                                        "LungNodule_65", "LungNodule_117", "LungNodule_34",
+                                        "LungNodule_68", "LungNodule_52",
+                                        "LungNodule_87", "LungNodule_15", "LungNodule_3",
+                                        "LungNodule_108", "LungNodule_45", "LungNodule_89",
+                                        "LungNodule_49", "LungNodule_11", "LungNodule_5",
+                                        "LungNodule_47", "LungNodule_77", "LungNodule_1",
+                                        "LungNodule_57", "LungNodule_116", "LungNodule_109_2",
+                                        "LungNodule_27", "LungNodule_17", "LungNodule_25",
+                                        "LungNodule_101", "LungNodule_16",
+                                        "LungNodule_81", "LungNodule_58", "LungNodule_22",
+                                        "LungNodule_92", "LungNodule_91", "LungNodule_110",
+                                        "LungNodule_103", "LungNodule_19", "LungNodule_53",
+                                        "LungNodule_105", "LungNodule_18", "LungNodule_36",
+                                        "LungNodule_26", "LungNodule_50", "LungNodule_115",
+                                        "LungNodule_119", "LungNodule_122",
+                                        "LungNodule_75", "LungNodule_97", "LungNodule_99",
+                                        "LungNodule_106", "LungNodule_38", "LungNodule_55",
+                                        "LungNodule_64", "LungNodule_102", "LungNodule_8",
+                                        "LungNodule_41", "LungNodule_114", "LungNodule_112",
+                                        "LungNodule_37", "LungNodule_118", "LungNodule_24",
+                                        "LungNodule_44", "LungNodule_6", "LungNodule_72",
+                                        "LungNodule_78", "LungNodule_83",
+                                        "LungNodule_42", "LungNodule_121", "LungNodule_82",
+                                        "LungNodule_28", "LungNodule_56", "LungNodule_33",
+                                        "LungNodule_63", "LungNodule_111", "LungNodule_12",
+                                        "LungNodule_125", "LungNodule_80", "LungNodule_85",
+                                        "LungNodule_100"),
+                    Smoking.Status = c("Current", "Current", "Current", "Current", "Current",
+                                       "Current", "Current", "Current", "Current",
+                                       "Current", "Current", "Current", "Current",
+                                       "Current", "Current", "Current", "Current", "Current",
+                                       "Current", "Current", "Current", "Current",
+                                       "Current", "Current", "Current", "Current", "Current",
+                                       "Current", "Current", "Current", "Current",
+                                       "Current", "Current", "Current", "Current", "Current",
+                                       "Former", "Former", "Former", "Former", "Former",
+                                       "Former", "Former", "Former", "Former",
+                                       "Former", "Former", "Former", "Former", "Former",
+                                       "Former", "Former", "Former", "Former", "Former",
+                                       "Former", "Former", "Former", "Former", "Former",
+                                       "Former", "Former", "Former", "Former", "Former",
+                                       "Former", "Former", "Former", "Former", "Former",
+                                       "Former", "Former", "Former", "Former", "Former",
+                                       "Former", "Former", "Former", "Former", "Former",
+                                       "Former", "Former", "Former", "Former", "Former",
+                                       "Former", "Former", "Former", "Former", "Former",
+                                       "Former", "Former", "Former", "Former",
+                                       "Former"),
+                    Gender = c("Female", "Female", "Female", "Female", "Female",
+                               "Female", "Female", "Female", "Female",
+                               "Female", "Female", "Female", "Female", "Female",
+                               "Female", "Female", "Female", "Female", "Female",
+                               "Female", "Female", "Female", "Male", "Male", "Male",
+                               "Male", "Male", "Male", "Male", "Male", "Male",
+                               "Male", "Male", "Male", "Male", "Male", "Female",
+                               "Female", "Female", "Female", "Female", "Female",
+                               "Female", "Female", "Female", "Female",
+                               "Female", "Female", "Female", "Female", "Female",
+                               "Female", "Female", "Female", "Female", "Female",
+                               "Female", "Female", "Female", "Female", "Female",
+                               "Female", "Female", "Female", "Female", "Female",
+                               "Female", "Female", "Female", "Female", "Female",
+                               "Female", "Female", "Female", "Female", "Female",
+                               "Male", "Male", "Male", "Male", "Male", "Male",
+                               "Male", "Male", "Male", "Male", "Male", "Male",
+                               "Male", "Male", "Male", "Male", "Male", "Male",
+                               "Male"),
+                    Emphysema_COPD = c("No", "No", "No", "No", "No", "No", "Yes", "Yes", "Yes",
+                                       "Yes", "Yes", "Yes", "Yes", "Yes", "Yes",
+                                       "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "No",
+                                       "No", "No", "No", "Yes", "Yes", "Yes", "Yes",
+                                       "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "No",
+                                       "No", "No", "No", "No", "No", "No", "No", "No",
+                                       "No", "No", "No", "No", "No", "No", "No", "No", "No",
+                                       "No", "No", "No", "No", "No", "Yes", "Yes",
+                                       "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes",
+                                       "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes",
+                                       "Yes", "No", "No", "No", "No", "No", "No", "No",
+                                       "No", "No", "No", "Yes", "Yes", "Yes", "Yes", "Yes",
+                                       "Yes", "Yes", "Yes", "Yes"),
+                    Group = c("Benign", "Benign", "Cancer", "Cancer", "Cancer",
+                              "Cancer", "Benign", "Benign", "Benign",
+                              "Benign", "Benign", "Benign", "Benign", "Cancer",
+                              "Cancer", "Cancer", "Cancer", "Cancer", "Cancer",
+                              "Cancer", "Cancer", "Cancer", "Benign", "Benign",
+                              "Cancer", "Cancer", "Benign", "Benign", "Cancer",
+                              "Cancer", "Cancer", "Cancer", "Cancer", "Cancer",
+                              "Cancer", "Cancer", "Benign", "Benign", "Benign",
+                              "Benign", "Benign", "Cancer", "Cancer", "Cancer",
+                              "Cancer", "Cancer", "Cancer", "Cancer", "Cancer",
+                              "Cancer", "Cancer", "Cancer", "Cancer",
+                              "Cancer", "Cancer", "Cancer", "Cancer", "Cancer",
+                              "Cancer", "Benign", "Benign", "Benign", "Benign",
+                              "Benign", "Benign", "Cancer", "Cancer", "Cancer",
+                              "Cancer", "Cancer", "Cancer", "Cancer", "Cancer",
+                              "Cancer", "Cancer", "Cancer", "Benign", "Benign",
+                              "Cancer", "Cancer", "Cancer", "Cancer", "Cancer",
+                              "Cancer", "Cancer", "Cancer", "Benign", "Benign",
+                              "Benign", "Benign", "Cancer", "Cancer", "Cancer",
+                              "Cancer", "Cancer")
+)
+group <- cbind.data.frame(sample_name=colnames(data),sample_group=group$Group[match(colnames(data),group$local_sample_id)])
+list <- list(data=data[,-1],group = group[-1,],mz = mz, rt = rt)
+enviGCMS::getcsv(list,'DST000388pos')
+```
+
+## DST001169
+
+```{r}
+data <- read.table('demodata/ST001169_AN001933_Results.txt',sep = '\t',header = T)
+
+mz <- stringr::str_split_fixed(as.character(data$features),'_',2)[,1]
+rt <- stringr::str_split_fixed(as.character(data$features),'_',2)[,2]
+data <- data[,-1]
+
+group <- data.frame(stringsAsFactors=FALSE,
+                    mb_sample_id = c("SA080793", "SA080794", "SA080795", "SA080796",
+                                     "SA080797", "SA080798", "SA080799", "SA080800",
+                                     "SA080801", "SA080802", "SA080803", "SA080804",
+                                     "SA080805", "SA080806", "SA080807", "SA080808",
+                                     "SA080809", "SA080810", "SA080811", "SA080812",
+                                     "SA080813", "SA080814", "SA080815", "SA080816",
+                                     "SA080817", "SA080818", "SA080819", "SA080820",
+                                     "SA080821", "SA080822", "SA080823", "SA080824",
+                                     "SA080825", "SA080826", "SA080827", "SA080828",
+                                     "SA080829", "SA080830", "SA080831", "SA080832",
+                                     "SA080833", "SA080834", "SA080835", "SA080836",
+                                     "SA080837", "SA080838", "SA080839", "SA080840",
+                                     "SA080841", "SA080842", "SA080843", "SA080844",
+                                     "SA080845", "SA080846", "SA080847", "SA080848", "SA080849",
+                                     "SA080850", "SA080851", "SA080852", "SA080853",
+                                     "SA080854", "SA080855", "SA080856", "SA080857"),
+                    local_sample_id = c("afb-34", "afb-35", "afb-33", "afb-31", "afb-30",
+                                        "afb-36", "afb-32", "afb-38", "afb-42",
+                                        "afb-13", "afb-41", "afb-40", "afb-39", "afb-29",
+                                        "afb-37", "afb-17", "afb-19", "afb-16", "afb-15",
+                                        "afb-14", "afb-28", "afb-20", "afb-18", "afb-26",
+                                        "afb-27", "afb-24", "afb-23", "afb-21", "afb-22",
+                                        "B55", "A50", "B63", "B30", "B37", "B24", "B21",
+                                        "B40", "B4", "B13", "B57", "B11", "B17", "A5",
+                                        "B49", "B14", "A20", "A19", "A30", "A31", "A49",
+                                        "A23", "A22", "A9", "A10", "A13", "A6", "A54", "A18",
+                                        "B60", "B23", "B8", "A33", "A47", "A34", "B9"),
+                    Group = c("A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A",
+                              "A", "A", "A", "A", "A", "A", "A", "A", "A",
+                              "A", "A", "A", "A", "A", "A", "A", "A", "A", "C",
+                              "C", "C", "C", "C", "C", "C", "C", "C", "C", "C",
+                              "C", "C", "C", "C", "C", "C", "C", "C", "C", "C",
+                              "C", "C", "C", "C", "C", "C", "C", "C", "C",
+                              "C", "C", "C", "C", "C", "C")
+)
+group$id <- gsub('\\-','\\.',group$local_sample_id)
+group <- group$Group[match(colnames(data),group$id)]
+group <- cbind.data.frame(sample_name=colnames(data),sample_group=group)
+list <- list(data = data, mz=as.numeric(mz),rt = as.numeric(rt)*60, group = group)
+enviGCMS::getcsv(list,'DST001169neg')
+
+data <- read.table('demodata/ST001169_AN001934_results.txt',sep = '\t',header = T)
+
+mz <- stringr::str_split_fixed(as.character(data$features),'_',2)[,1]
+rt <- stringr::str_split_fixed(as.character(data$features),'_',2)[,2]
+data <- data[,-1]
+
+group <- data.frame(stringsAsFactors=FALSE,
+                    mb_sample_id = c("SA080793", "SA080794", "SA080795", "SA080796",
+                                     "SA080797", "SA080798", "SA080799", "SA080800",
+                                     "SA080801", "SA080802", "SA080803", "SA080804",
+                                     "SA080805", "SA080806", "SA080807", "SA080808",
+                                     "SA080809", "SA080810", "SA080811", "SA080812",
+                                     "SA080813", "SA080814", "SA080815", "SA080816",
+                                     "SA080817", "SA080818", "SA080819", "SA080820",
+                                     "SA080821", "SA080822", "SA080823", "SA080824",
+                                     "SA080825", "SA080826", "SA080827", "SA080828",
+                                     "SA080829", "SA080830", "SA080831", "SA080832",
+                                     "SA080833", "SA080834", "SA080835", "SA080836",
+                                     "SA080837", "SA080838", "SA080839", "SA080840",
+                                     "SA080841", "SA080842", "SA080843", "SA080844",
+                                     "SA080845", "SA080846", "SA080847", "SA080848", "SA080849",
+                                     "SA080850", "SA080851", "SA080852", "SA080853",
+                                     "SA080854", "SA080855", "SA080856", "SA080857"),
+                    local_sample_id = c("afb-34", "afb-35", "afb-33", "afb-31", "afb-30",
+                                        "afb-36", "afb-32", "afb-38", "afb-42",
+                                        "afb-13", "afb-41", "afb-40", "afb-39", "afb-29",
+                                        "afb-37", "afb-17", "afb-19", "afb-16", "afb-15",
+                                        "afb-14", "afb-28", "afb-20", "afb-18", "afb-26",
+                                        "afb-27", "afb-24", "afb-23", "afb-21", "afb-22",
+                                        "B55", "A50", "B63", "B30", "B37", "B24", "B21",
+                                        "B40", "B4", "B13", "B57", "B11", "B17", "A5",
+                                        "B49", "B14", "A20", "A19", "A30", "A31", "A49",
+                                        "A23", "A22", "A9", "A10", "A13", "A6", "A54", "A18",
+                                        "B60", "B23", "B8", "A33", "A47", "A34", "B9"),
+                    Group = c("A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A",
+                              "A", "A", "A", "A", "A", "A", "A", "A", "A",
+                              "A", "A", "A", "A", "A", "A", "A", "A", "A", "C",
+                              "C", "C", "C", "C", "C", "C", "C", "C", "C", "C",
+                              "C", "C", "C", "C", "C", "C", "C", "C", "C", "C",
+                              "C", "C", "C", "C", "C", "C", "C", "C", "C",
+                              "C", "C", "C", "C", "C", "C")
+)
+group$id <- gsub('\\-','\\.',group$local_sample_id)
+group <- cbind.data.frame(sample_name=colnames(data),sample_group=group$Group[match(colnames(data),group$id)])
+
+list <- list(data = data, mz=as.numeric(mz),rt = as.numeric(rt)*60, group = group)
+enviGCMS::getcsv(list,'DST001169pos')
+```
+
+## DST001168
+
+```{r}
+data <- read.table('demodata/ST001168_AN001931_Results.txt',sep = '\t',header = T)
+
+mz <- stringr::str_split_fixed(as.character(data$features),'_',2)[,1]
+rt <- stringr::str_split_fixed(as.character(data$features),'_',2)[,2]
+data <- data[,-1]
+
+group <- data.frame(stringsAsFactors=FALSE,
+                    mb_sample_id = c("SA080734", "SA080735", "SA080736", "SA080737",
+                                     "SA080738", "SA080739", "SA080740", "SA080741",
+                                     "SA080742", "SA080743", "SA080744", "SA080745",
+                                     "SA080746", "SA080747", "SA080748", "SA080749",
+                                     "SA080750", "SA080751", "SA080752", "SA080753",
+                                     "SA080754", "SA080755", "SA080756", "SA080757",
+                                     "SA080758", "SA080759", "SA080760", "SA080761",
+                                     "SA080762", "SA080763", "SA080764", "SA080765",
+                                     "SA080766", "SA080767", "SA080768", "SA080769",
+                                     "SA080770", "SA080771", "SA080772", "SA080773",
+                                     "SA080774", "SA080775", "SA080776", "SA080777",
+                                     "SA080778", "SA080779", "SA080780", "SA080781",
+                                     "SA080782", "SA080783", "SA080784", "SA080785",
+                                     "SA080786", "SA080787", "SA080788", "SA080789", "SA080790",
+                                     "SA080791", "SA080792"),
+                    local_sample_id = c("af37", "af9", "af40", "af36", "af39", "af35", "af32",
+                                        "af33", "af34", "af41", "af42", "af48", "af49",
+                                        "af50", "af47", "af46", "af43", "af44", "af45",
+                                        "af31", "af38", "af15", "af16", "af17", "af18",
+                                        "af14", "af13", "af10", "af11", "af30", "af19",
+                                        "af12", "af26", "af27", "af29", "af20", "af25",
+                                        "af28", "af21", "af24", "af22", "af23", "FC29",
+                                        "FC2", "FC17", "FC14", "FC13", "FC12", "FC9", "FC16",
+                                        "FA4", "FA9", "FA7", "FA6", "FA13", "FA2",
+                                        "FA3", "FA12", "FC10"),
+                    Group = c("A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A",
+                              "A", "A", "A", "A", "A", "A", "A", "A", "A",
+                              "A", "A", "A", "A", "A", "A", "A", "A", "A", "A",
+                              "A", "A", "A", "A", "A", "A", "A", "A", "A", "A",
+                              "A", "A", "C", "C", "C", "C", "C", "C", "C", "C",
+                              "C", "C", "C", "C", "C", "C", "C", "C", "C")
+)
+group <- group$Group[match(colnames(data),group$local_sample_id)]
+group <- cbind.data.frame(sample_name=colnames(data),sample_group=group)
+list <- list(data = data, mz=as.numeric(mz),rt = as.numeric(rt)*60, group = group)
+enviGCMS::getcsv(list,'DST001168pos')
+
+data <- read.table('demodata/ST001168_AN001932_Results.txt',sep = '\t',header = T)
+
+mz <- stringr::str_split_fixed(as.character(data$features),'_',2)[,1]
+rt <- stringr::str_split_fixed(as.character(data$features),'_',2)[,2]
+data <- data[,-1]
+
+group <- data.frame(stringsAsFactors=FALSE,
+                    mb_sample_id = c("SA080734", "SA080735", "SA080736", "SA080737",
+                                     "SA080738", "SA080739", "SA080740", "SA080741",
+                                     "SA080742", "SA080743", "SA080744", "SA080745",
+                                     "SA080746", "SA080747", "SA080748", "SA080749",
+                                     "SA080750", "SA080751", "SA080752", "SA080753",
+                                     "SA080754", "SA080755", "SA080756", "SA080757",
+                                     "SA080758", "SA080759", "SA080760", "SA080761",
+                                     "SA080762", "SA080763", "SA080764", "SA080765",
+                                     "SA080766", "SA080767", "SA080768", "SA080769",
+                                     "SA080770", "SA080771", "SA080772", "SA080773",
+                                     "SA080774", "SA080775", "SA080776", "SA080777",
+                                     "SA080778", "SA080779", "SA080780", "SA080781",
+                                     "SA080782", "SA080783", "SA080784", "SA080785",
+                                     "SA080786", "SA080787", "SA080788", "SA080789", "SA080790",
+                                     "SA080791", "SA080792"),
+                    local_sample_id = c("af37", "af9", "af40", "af36", "af39", "af35", "af32",
+                                        "af33", "af34", "af41", "af42", "af48", "af49",
+                                        "af50", "af47", "af46", "af43", "af44", "af45",
+                                        "af31", "af38", "af15", "af16", "af17", "af18",
+                                        "af14", "af13", "af10", "af11", "af30", "af19",
+                                        "af12", "af26", "af27", "af29", "af20", "af25",
+                                        "af28", "af21", "af24", "af22", "af23", "FC29",
+                                        "FC2", "FC17", "FC14", "FC13", "FC12", "FC9", "FC16",
+                                        "FA4", "FA9", "FA7", "FA6", "FA13", "FA2",
+                                        "FA3", "FA12", "FC10"),
+                    Group = c("A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A",
+                              "A", "A", "A", "A", "A", "A", "A", "A", "A",
+                              "A", "A", "A", "A", "A", "A", "A", "A", "A", "A",
+                              "A", "A", "A", "A", "A", "A", "A", "A", "A", "A",
+                              "A", "A", "C", "C", "C", "C", "C", "C", "C", "C",
+                              "C", "C", "C", "C", "C", "C", "C", "C", "C")
+)
+group <- group$Group[match(colnames(data),group$local_sample_id)]
+group <- cbind.data.frame(sample_name=colnames(data),sample_group=group)
+list <- list(data = data, mz=as.numeric(mz),rt = as.numeric(rt)*60, group = group)
+enviGCMS::getcsv(list,'DST001168neg')
+```
+
+## MTBLS59
+
+```{r}
+library(BioMark)
+# import data
+data(SpikePos)
+data(SpikeNeg)
+
+posdata <- t(SpikePos$data)
+negdata <- t(SpikeNeg$data)
+# find the sample class
+anno <- SpikePos$classes
+
+posmzrt <- SpikePos$annotation
+negmzrt <- SpikeNeg$annotation
+
+list <- NULL
+list$mz <- posmzrt$mz
+list$rt <- posmzrt$rt
+list$data <- posdata
+list$group <- cbind.data.frame(sample_name=colnames(posdata),sample_group=as.character(anno))
+enviGCMS::getcsv(list,'MTBLS59pos')
+
+list <- NULL
+list$mz <- negmzrt$mz
+list$rt <- negmzrt$rt
+list$data <- negdata
+list$group <- as.character(anno)
+list$group <- cbind.data.frame(sample_name=colnames(negdata),sample_group=as.character(anno))
+enviGCMS::getcsv(list,'MTBLS59neg')
+```
+
+## MTBLS341
+
+```{r}
+# import data
+root <- read_tsv('demodata/MTBLS341/m_mtbls341_metabolite_profiling_lcms-root_pos_v2_maf.tsv')
+rootneg <- read_tsv('demodata/MTBLS341/m_mtbls341_metabolite_profiling_lcms-root_neg_v2_maf.tsv')
+leaf <- read_tsv('demodata/MTBLS341/m_mtbls341_metabolite_profiling_lcms-leaf_pos_v2_maf.tsv')
+leafneg <- read_tsv('demodata/MTBLS341/m_mtbls341_metabolite_profiling_lcms-leaf_neg_v2_maf.tsv')
+exudate <- read_tsv('demodata/MTBLS341/m_mtbls341_metabolite_profiling_lcms-exudate_pos_v2_maf.tsv')
+exudateneg <- read_tsv('demodata/MTBLS341/m_mtbls341_metabolite_profiling_lcms-exudate_neg_v2_maf.tsv')
+anno <- read_tsv("demodata/MTBLS341/s_MTBLS341.txt")
+pos <- root
+# find the pos data
+posdata <- pos %>%
+        dplyr::select(contains('pos'))
+# find the mzrt
+posmzrt <- pos %>%
+        dplyr::select(matches("mass|retention"))
+# find the pos sample class
+posanno <- anno %>%
+     filter(grepl("root",`Characteristics[Organism part]`)) 
+# find the class
+posclass <- posanno %>%
+     transmute(class = paste(`Factor Value[Treatment]`,`Factor Value[Replicate]`,sep = '_')) %>%
+        as_factor() %>%
+        c() %>%
+        unlist()
+# hack to add
+posclass <- cbind.data.frame(sample_name=colnames(posdata),sample_group=c(posclass[1:13],'control_Exp2','control_Exp2',posclass[14:18]))
+list <- list(data=posdata,mz=posmzrt$mass_to_charge,rt=posmzrt$retention_time,group=posclass)
+enviGCMS::getcsv(list,'MTBLS341rootpos')
+
+pos <- rootneg
+# find the pos data
+posdata <- pos %>%
+        dplyr::select(contains('neg'))
+# find the mzrt
+posmzrt <- pos %>%
+        dplyr::select(matches("mass|retention"))
+# find the pos sample class
+posanno <- anno %>%
+     filter(grepl("root",`Characteristics[Organism part]`)) 
+# find the class
+posclass <- posanno %>%
+     transmute(class = paste(`Factor Value[Treatment]`,`Factor Value[Replicate]`,sep = '_')) %>%
+        as_factor() %>%
+        c() %>%
+        unlist()
+# hack to add
+posclass <- cbind.data.frame(sample_name=colnames(posdata),sample_group=c(posclass[1:13],'control_Exp2','control_Exp2',posclass[14:18]))
+list <- list(data=posdata,mz=posmzrt$mass_to_charge,rt=posmzrt$retention_time,group=posclass)
+enviGCMS::getcsv(list,'MTBLSrootneg')
+
+pos <- leaf
+# find the pos data
+posdata <- pos %>%
+        dplyr::select(contains('pos'))
+# find the mzrt
+posmzrt <- pos %>%
+        dplyr::select(matches("mass|retention"))
+# find the pos sample class
+posanno <- anno %>%
+     filter(grepl("leaf",`Characteristics[Organism part]`)) 
+# find the class
+posclass <- posanno %>%
+     transmute(class = paste(`Factor Value[Treatment]`,`Factor Value[Replicate]`,sep = '_')) %>%
+        as_factor() %>%
+        c() %>%
+        unlist()
+
+posclass <- cbind.data.frame(sample_name=colnames(posdata),sample_group=posclass)
+list <- list(data=posdata,mz=posmzrt$mass_to_charge,rt=posmzrt$retention_time,group=posclass)
+enviGCMS::getcsv(list,'MTBLS341leafpos')
+
+pos <- leafneg
+# find the pos data
+posdata <- pos %>%
+        dplyr::select(contains('neg'))
+# find the mzrt
+posmzrt <- pos %>%
+        dplyr::select(matches("mass|retention"))
+# find the pos sample class
+posanno <- anno %>%
+     filter(grepl("leaf",`Characteristics[Organism part]`)) 
+# find the class
+posclass <- posanno %>%
+     transmute(class = paste(`Factor Value[Treatment]`,`Factor Value[Replicate]`,sep = '_')) %>%
+        as_factor() %>%
+        c() %>%
+        unlist()
+posclass <- cbind.data.frame(sample_name=colnames(posdata),sample_group=posclass)
+list <- list(data=posdata,mz=posmzrt$mass_to_charge,rt=posmzrt$retention_time,group=posclass)
+enviGCMS::getcsv(list,'MTBLS341leafneg')
+
+pos <- exudate
+# find the pos data
+posdata <- pos %>%
+        dplyr::select(contains('pos'))
+# find the mzrt
+posmzrt <- pos %>%
+        dplyr::select(matches("mass|retention"))
+# find the pos sample class
+posanno <- anno %>%
+     filter(grepl("Exudate",`Characteristics[Organism part]`)) 
+# find the class
+posclass <- posanno %>%
+     transmute(class = paste(`Factor Value[Treatment]`,`Factor Value[Replicate]`,sep = '_')) %>%
+        as_factor() %>%
+        c() %>%
+        unlist()
+posclass <- cbind.data.frame(sample_name=colnames(posdata),sample_group=posclass)
+list <- list(data=posdata,mz=posmzrt$mass_to_charge,rt=posmzrt$retention_time,group=posclass)
+enviGCMS::getcsv(list,'MTBLS341exudatepos')
+
+pos <- exudateneg
+# find the pos data
+posdata <- pos %>%
+        dplyr::select(contains('neg'))
+# find the mzrt
+posmzrt <- pos %>%
+        dplyr::select(matches("mass|retention"))
+# find the pos sample class
+posanno <- anno %>%
+     filter(grepl("Exudate",`Characteristics[Organism part]`)) 
+# find the class
+posclass <- posanno %>%
+     transmute(class = paste(`Factor Value[Treatment]`,`Factor Value[Replicate]`,sep = '_')) %>%
+        as_factor() %>%
+        c() %>%
+        unlist()
+posclass <- cbind.data.frame(sample_name=colnames(posdata),sample_group=posclass)
+list <- list(data=posdata,mz=posmzrt$mass_to_charge,rt=posmzrt$retention_time,group=posclass)
+enviGCMS::getcsv(list,'MTBLS341exudateneg')
+```
+
+# Target metabolomics
+
+## MTBLS404
+
+```{r}
+# import data
+pos <- read_tsv('demodata/MTBLS404/m_sacurine_v2_maf.tsv')
+anno <- read_tsv("demodata/MTBLS404/s_sacurine.txt")
+# find the pos data
+posdata <- pos %>%
+        dplyr::select(contains('[(M-H)]-'))
+# find the pos sample class
+class <- anno %>%
+     transmute(class = `Factor Value[Gender]`) %>%
+        as_factor() %>%
+        c() %>%
+        unlist()
+# check the order
+identical(colnames(posdata),anno$`Sample Name`)
+posdata <- pos[,46:229]
+class <- cbind.data.frame(sample_name=colnames(posdata),sample_class=class[c(14:197)])
+mz <- pos$mass_to_charge
+rt <- pos$retention_time*60
+rownames(posdata) <- pos$metabolite_identification
+li <- list(data=as.data.frame(posdata),mz=mz,rt=rt,group=class)
+
+enviGCMS::getcsv(li,'MTBLS404neg',target = T)
+
+meta <- pos[,c(1:21)]
+write.csv(meta,'MTBLS404negmeta.csv')
+```
+
+## MTBLS351
+
+```{r}
+# import data
+pos <- read_tsv('demodata/MTBLS351/m_GCxGC_mass_spectrometry_v2_maf.tsv')
+pos2 <- read_tsv("demodata/MTBLS351/m_UPLC_mass_spectrometry_v2_maf.tsv")
+anno <- read_tsv("demodata/MTBLS351/s_MTBLS351.txt")
+# find the pos data
+posdata <- pos %>%
+    distinct(metabolite_identification,.keep_all = TRUE) %>%
+        dplyr::select(contains('MH'))
+    
+# find the pos sample class
+class <- anno %>%
+     transmute(class = paste(`Factor Value[Gender]`,`Factor Value[T2D status]`,`Factor Value[Metabolic Syndrome]`,sep = '_')) %>%
+        as_factor() %>%
+        c() %>%
+        unlist()
+class <- cbind.data.frame(sample_name=colnames(posdata),sample_class=class)
+# check the order
+identical(colnames(posdata),anno$`Sample Name`)
+mz <- pos$mass_to_charge[!duplicated(pos$metabolite_identification)]
+rt <- pos$retention_time[!duplicated(pos$metabolite_identification)]*60
+rownames(posdata) <- pos$metabolite_identification[!duplicated(pos$metabolite_identification)]
+li <- list(data=as.data.frame(posdata),mz=mz,rt=rt,group=class)
+enviGCMS::getcsv(li,'MTBLS351GCxGC',target = T)
+meta <- pos[!duplicated(pos$metabolite_identification),c(1:21)]
+write.csv(meta,'MTBLS351GCxGCmeta.csv')
+
+# find the pos data
+posdata <- pos2 %>%
+    distinct(metabolite_identification,.keep_all = TRUE) %>%
+        dplyr::select(contains('MH'))
+# check the order
+identical(colnames(posdata),anno$`Sample Name`)
+posdata <- posdata[,match(anno$`Sample Name`,colnames(posdata))]
+mz <- pos2$mass_to_charge[!duplicated(pos2$metabolite_identification)]
+rt <- pos2$retention_time[!duplicated(pos2$metabolite_identification)]*60
+rownames(posdata) <- pos2$metabolite_identification[!duplicated(pos2$metabolite_identification)]
+li <- list(data=as.data.frame(posdata),mz=mz,rt=rt,group=class)
+enviGCMS::getcsv(li,'MTBLS351UPLC',target = T)
+meta <- pos2[!duplicated(pos2$metabolite_identification),c(1:21)]
+write.csv(meta,'MTBLS351UPLCmeta.csv')
+```
+
+## MTBLS393
+
+```{r}
+# import data
+pos <- read_tsv('demodata/MTBLS393/m_mtbls393_metabolite_profiling_mass_spectrometry_v2_maf.tsv')
+anno <- read_tsv("demodata/MTBLS393/s_mtbls393.txt")
+# find the pos data
+posdata <- pos[,22:103]
+# find the pos sample class
+class <- anno %>%
+     transmute(class = paste(`Factor Value[Genotype]`,`Factor Value[Inducer conditions]`,sep = '_')) %>%
+        as_factor() %>%
+        c() %>%
+        unlist()
+class <- cbind.data.frame(sample_name=colnames(posdata),sample_class=class)
+# check the order
+identical(colnames(posdata),anno$`Sample Name`)
+# change the order
+posdata <- posdata[,match(anno$`Sample Name`,colnames(posdata))]
+identical(colnames(posdata),anno$`Sample Name`)
+mz <- pos$mass_to_charge[!duplicated(pos$metabolite_identification)]
+rt <- pos$retention_time[!duplicated(pos$metabolite_identification)]*60
+rownames(posdata) <- pos$metabolite_identification[!duplicated(pos$metabolite_identification)]
+li <- list(data=as.data.frame(posdata),mz=mz,rt=rt,group=class)
+enviGCMS::getcsv(li,'MTBLS393',target = T)
+meta <- pos[!duplicated(pos$metabolite_identification),c(1:21)]
+write.csv(meta,'MTBLS393meta.csv')
+```
+
