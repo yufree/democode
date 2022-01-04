@@ -192,7 +192,7 @@ blockwiseModules(datExpr = (data_m),
             nThreads = num_nodes, verbose = 0, indent = 0)
 ```
 
-```{r}
+
 ```{r eval = F}
 library(pmd)
 data("spmeinvivo")
@@ -206,5 +206,5 @@ Graph_pcor <- qgraph(cormat, graph = "pcor", layout = "spring", threshold = "bon
 Graph_lasso <- qgraph(cormat, graph = "glasso", layout = "spring", tuning = 0.25,
                       sampleSize = nrow(data))
 ```
-```
+
 

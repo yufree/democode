@@ -1,8 +1,202 @@
-# XCMS
+# 代谢组学笔记
 
 ```{r include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, cache = T,warning = F,message = F)
 ```
+
+## 质谱仪器分析
+
+### 进样口
+
+- 直接进样：探针或进样板
+- 直接混合：用毛细管或毛细管柱混合空气或溶剂，进样量小，仪器友好
+
+### 离子源
+    
+- 质子化：分子获得质子带正电，例如MALDI、ESI及APCI，有些物质不容易质子化
+- 去质子化：分子丢失质子得负电，适合酸性物质，例如MALDI、ESI及APCI
+- 阳离子化：分子获得阳离子得正电，比质子化更稳定（K、Na），适合糖类，例如MALDI、ESI及APCI，不容易产生二级碎片
+- 带电粒子挥发：将溶剂中带电离子从液相变成气相，需要事先离子化，例如MALDI、ESI
+- 去电子化：分子丢失电子得正电，适合非极性与低分子量物质，产生碎片离子，例如EI，碎片离子太多，不好确定分子离子峰
+- 电子捕获：分子获得电子得负电，同EI
+- APCI／APPI比ESI更抗基质效应
+- 得质子用阳离子模式，丢质子用阴离子模式
+-  ESI 液相离子化，发生库伦爆炸，可产生多电荷离子，因此可以测的质量范围大
+        - ESI可以通过多电荷离子的质谱来计算电荷数与分子量
+        - 找到同一物质的质谱上连续两个荷质比，联立解方程
+        - 如果流速快，离子化不充分，灵敏度降低，nanoESI降低液滴大小，加快挥发，从而提高灵敏度，耐盐耐脏
+        - 电喷雾溶剂如果是阳离子，50/50甲醇水或乙腈水，水多了不容易挥发，加入少量挥发性有机物可以提高灵敏度
+        - 缓冲盐会降低蒸气压，可以考虑挥发性醋酸胺来缓冲pH
+        - 0.1%甲酸可以提高离子化效率，但通过降低蒸气压影响灵敏度
+        - 调节进样针位置角度会有效降低干扰并提高流速
+- APCI 电晕大气压放电，空气电离水跟氮气，然后气相离子化目标物，能量比ESI大，只产生单电荷离子，适合非极性具有热稳定性的小分子（相比ESI），需要流速大，电离离子多，灵敏度提高，可以用与ESI不兼容的非极性溶剂如正己烷、DCM，含氯溶剂有助于负离子化
+- APPI APCI的电晕放电改成氪灯，离子势能10ev或10.6ev，溶剂电势一般高，所以不电离，背景干扰小，对非极性有效，需要光离子化掺杂剂（丙酮9.7ev或甲苯8.82ev）来传递电子进行化学电离
+- MALDI 难于用液相或气相分离的物质，例如溶解性低、分子量过大，直接激光激发，通过基质传导能量实现离子化，抗盐与复杂基质，但存在基质辅助降解与光降解问题，软电离或硬电离
+- DIOS 硅片解吸离子化，不用基质辅助或使用无机基质，软电离
+- 快原子离子轰击，用原子离子束，灵敏度低，一般用Xe或Cs，基质用液态
+- EI 电子束轰击带电，硬电离
+- CI 化学电离，反应气传递电荷
+
+### 质量分析器
+- 精确质量指单同位素质量
+- 高分辨质谱需要矫正
+- 分子量大于500Da要考虑电子质量影响
+- 准确性：百分比或ppm表示，随质量数变化 FT-ICR-MS(0.1-1ppm)>Obitrap(0.5-1ppm)>Magnetic Sector(1-2ppm)>Q-ToF(1-5ppm)>QqQ(3-5ppm)>Iontrap(50-200ppm)
+
+$ppm = \frac{m_{exp}-m_{calc}}{m_{exp}}*1000000$
+
+- 分辨率：质量比质量差（半峰宽，profile模式），区分两个相邻峰
+- 质量范围：四极杆最多m/z3000，磁谱m/z10000，Tof无限制，看飞行管长度
+- 串联质谱：二级或多级
+- 扫描速度：全扫时间
+- 四极杆或三重四极杆
+- 四极离子阱或线性离子阱：限制在于不能进行前体离子扫描与中性丢失扫描，只能扫描母离子与大于1/3质量的碎片离子，动态线性范围低
+- 双聚焦磁谱：低分辩磁谱加电场二次聚焦，高分辨
+- ToF：飞行时间，加反射会提高分辨率
+- DE-MALDI-ToF：通过加入激发后的冷却时间降低刚形成离子的动能，tof的分辨率大大提高，推迟萃取技术
+- Q-ToF：串联四极杆可以提高准确性（10ppm）分辨率（10000）
+- FTMS：可进行多级质谱，需要超真空来保证轨道频率，进而转化成质量，可以加Q来进行不同种类实验
+- Obitrap：FT用磁场，此处用电场，体积小，可与其他检测器耦合进行不同种类实验
+
+### 离子检测器
+
+- 电子倍增管
+- 法拉第杯：通过表面电子缺失产生电流信号，可接受大量离子束
+- 光电倍增器：寿命更长，可以适应真空系统
+- 阵列检测器：磁谱用，不用扫描，灵敏度高
+- 电荷检测器：ToF用
+
+- 真空系统：源跟分析系统存在气压差，通过封闭或小孔等方法可解决
+- 数据分析
+
+### 开放电离质谱
+
+- DART 气体带电喷到样品上
+- DESI 电喷雾到样品上
+- SPME OPP 前端解析
+- CBS 高压样品萃取后用解析溶液浸润
+
+### 联用技术 Hyphenated techniques
+
+- GCMS
+    - 分子量小于500Da
+    - 挥发性或衍生挥发性
+    - 自动找峰
+    - 解卷积
+    - AMDIS工具
+    - 特殊种类物质
+    - NIST 专用目的性库例如 NISTEPA、NISTDRUG、NISTFF、NISTTOX、NISTFDA、NISTCW
+    
+- LCMS
+    - 选峰与解卷积
+    - 多级质谱验证
+
+## 质谱数据分析
+
+### 计算机知识要求
+
+- 并行计算／多线程
+- 固态硬盘
+- 学习编程语言
+- 学习正则表达式
+- 收集程序与数据库
+
+### 质谱鉴定原理
+
+- 电荷状态 电荷解卷积
+- 多稳定同位素分布
+- 加合物
+- [判断七要素](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-8-105)
+    - (1) restrictions for the number of elements
+    - (2) LEWIS and SENIOR chemical rules 
+    - (3) isotopic patterns 
+    - (4) hydrogen/carbon ratios
+    - (5) element ratio of nitrogen, oxygen, phosphor, and sulphur versus carbon
+    - (6) element ratio probabilities 
+    - (7) presence of trimethylsilylated compounds
+- 分子结构生成器 Molecular Isomer Generators
+- Accurate Mass -> Molecular Formula -> Structural Isomers -> MS/MS
+
+
+### 质谱数据格式
+
+- mzxml
+- cdf
+- MGF ms/ms数据
+- 峰对齐
+- 异构体
+    - 同分异构体
+    - 立体异构体
+    - SDF／CML 
+    - SMILES 
+- 数据库ID
+
+#### 常见质谱数据库
+
+- GC-MS
+
+    - [NIST17](https://www.nist.gov/srd/nist-standard-reference-database-1a-v17)
+    - [Wiley Registry](https://www.wiley.com/en-us/Wiley+Registry+of+Mass+Spectral+Data%2C+11th+Edition-p-9781119171010)
+    - [MassBank](https://massbank.eu/MassBank/)
+
+- LC-MS
+
+    - [NIST17](https://www.nist.gov/srd/nist-standard-reference-database-1a-v17)
+    - [Metlin](https://metlin.scripps.edu/landing_page.php?pgcontent=mainPage)
+    - [MassBank](https://massbank.eu/MassBank/)
+    - [GNPS](https://gnps.ucsd.edu/ProteoSAFe/static/gnps-splash.jsp)
+
+- [RIKEN summary](http://prime.psc.riken.jp/Metabolomics_Software/MS-DIAL/)
+
+#### 物质数据库
+
+- [HPV list](https://iaspub.epa.gov/oppthpv/hpv_hc_characterization.get_report?doctype=2)
+
+- ACS 物质
+
+        - [2009, 50M](https://www.acs.org/content/acs/en/pressroom/newsreleases/2009/september/50-millionth-unique-chemical-substance-recorded-in-cas-registry.html) 
+
+        - [2015,100M](https://www.cas.org/support/documentation/chemical-substances/cas-registry-100-millionth-fun-facts)
+    
+### 谱库搜索
+
+- 背景干净
+    - LCMS 峰选择
+    - GCMS 解卷积
+- 限制种类
+- 使用同位素
+- 使用保留时间 GC
+- 使用logP或logD相关 LC
+- 不同电压的碎片离子
+- 只有特定种类物质的质谱可以预测，例如肽段、脂肪及碳水化合物
+
+#### 搜索匹配算法
+
+- PBM Probability Based Matching (McLafferty & Stauffer) since 1976 
+- Dot Product (Finnigan/INCOS) since 1978 
+- Weighted Dot Product (Stein) since 1993 
+- Mass Spectral Tree Search (Mistrik) since 21st century 
+- 本质是点积核函数
+- NIST 谱库是金标
+- 相似性、反向、中性丢失、MS／MS搜索
+- 先导离子 离子阱 0.4Da ToF 0.005Da
+
+
+
+    
+### 质谱预测与仿真
+
+- 1960s 斯坦福大学的Dendral 计划 人工智能从质谱预测异构体结构（失败）
+- 预测：质谱 -> 结构
+    - EI 预测 http://www.ionspectra.org/static/aristo/about.html
+    - 数据库 预测 https://msbi.ipb-halle.de/MetFrag/
+- 仿真：结构 -> 质谱
+    - 从头计算 QCEIMS
+    - 经验规则 LipidBlast
+    - 多级质谱
+- 亚结构算法
+
+# XCMS 实战
 
 ## XCMS安装
 
@@ -161,109 +355,228 @@ abline(h=2,v=c(-.2,.2), lty=2)
 
 注释面临的问题包括但不限于同位素峰、共流出、源内裂解、加合峰。目前的注释思路有两种，一种基于数据库，在消除掉同位素与加合峰影响后选取最大的分子离子峰然后进行特定数据库如HMDB进行质量数检索，例如MAIT，也可以通过多级质谱解卷积后进行谱库相似度比对，例如GNPS。另一种思路则是基于聚类或相似度分析，然后再结合质量亏损、同位素等信息由数据驱动去进行注释并评价可信度，这里面xMSannotator、Ramcluster（多级质谱）都可以做到，此外也有基于多级质谱碎裂规律预测分析结构的方法如csi-fingerid（http://www.csi-fingerid.org/）进行结构预测。
 
+### CAMERA
+
+- 保留时间（单离子峰的60%峰宽范围）
+- 质量亏损1.0033得到同位素 计算碳数最小1*0.011 最大碳数mz/12*0.011 分子簇响应在此范围可看作含有碳
+- 用峰形相关性（最大的样品与其他的叠加）、同位素关系，得到时间窗口内的相关得分，用得分矩阵估计峰分组 geteic得到色谱图
+s(x,y) = 最大峰相关+同位素关系（1）+其他峰相关的平均
+- 加合物标注 寻找质量差
+
+### ramcluster
+
+- 标注方法用的是二级质谱
+
+
 ## 通路分析
 
 两种思路，一种基于标注数据与KEGG等已有代谢网络进行映射，观察差异物质对哪些代谢网络有影响，这个metaboanalyst上提供了接口；另一种则基于峰数据直接映射，然后挖掘潜在网络结构，这个功能mummichog提供，不过是基于python的。
 
-## 进一步
+# ENTACT
 
-如果要进行进一步的数据分析，需要考虑下面几个影响因素：
+2005年Christopher Wild提出暴露组 Wild CP. Complementing the genome with an “Exposome”: the outstanding challenge of environmental exposure measurement in molecular epidemiology. Cancer Epidemiol Biomark Prev.
 
-- 错误发现率（FDR）的控制
-- 不同组学的耦合
+2015 US EPA workshop Advancing non-targeted analyses of xenobiotic chemicals in environmental and biological media https://sites.google.com/site/nontargetedanalysisworkshop/
 
-## 原始算法 
+- 定义NTA方法评价标准
+- 对应标准的制备
+- 交流方法
+- 开发谱数据库
 
-```{r tidyvers}
-library(tidyverse)
-p = ggplot(a,aes(x=a$KOmean,y=a$`KOrsd%`)) +
-        ggtitle("Mean vs. RSD%") +
-        xlab("log10(Mean)") +
-        ylab("rsd%")
-p1 = p + 
-  geom_point(alpha = 0.5, colour="orange")+
-        geom_density2d()
-p1
+30家实验室，来自学术界、政府、公司
 
-p2 = p +
-  geom_density2d()
-p2
+Institutions in five countries (Canada, Czech Republic, Switzerland, UK, and USA),  representing eight government (California Dept. of Public Health, California Dept. of Toxic Substances Control, Eawag, EPA, NIST, Pacific Northwest National Laboratory, Research Centre for Toxic Compounds in the Environment, US Geological Survey); 
 
-p3 = p + geom_point(alpha = 0.5, colour="purple") 
-p3
+five industry (AB Sciex, Agilent, Leco, Thermo, Waters); 
 
-p4 = p +
-  stat_bin_hex(colour="white", na.rm=TRUE) +
-  scale_fill_gradientn(colours=c("red","orange"), name = "Frequency", na.value=NA)
-p4
+15 academic (Colorado School of Mines, Cornell Univ., Duke Univ., Emory Univ., Florida International Univ., Icahn School of Medicine at Mt. Sinai, North Carolina State Univ., San Diego State Univ., Scripps Research Institute, Univ. of Alberta, Univ. of Birmingham, Univ. of California at Davis, Univ. of Florida, Univ. of Washington, WI State Laboratory of Hygiene) 
 
-smoothScatter(x=a$KOmean,y=a$`KOrsd%`)
-```
+ENTACT 样品有10种合成混合标，每种里有95-365种化合物，共约1200种，来自 ToxCast 项目
 
+ToxCast 项目是体外高通量测定多种化合物毒性的项目，有约4700化合物的毒性数据
 
+另外EPA建立了DSSTox数据库，含有超过72万种化合物
+
+SRM 2585 SRM 1957
+
+PCDL Massbank Metlin mzCloud
 
 ```{r}
-# get data from xcmsxset object
-getRAW <- function(xset,lv){
-        lsa <- list()
-        index <- 0
-        m <- length(table(lv))
-        for(i in 1:m){
-                if(i == 1){
-                        index <- index
-                }else{
-                        index <- index+table(lv)[i-1]
+getsda <-
+        function(list,
+                 rtcutoff = 10,
+                 freqcutoff = 10,
+                 top = 50,
+                 corcutoff = NULL,
+                 digits = 2,
+                 accuracy = 4,
+                 ppm = 5) {
+                if (is.null(list$stdmass) & is.null(list$paired)) {
+                        mz <- list$mz
+                        rt <- list$rt
+                        data <- list$data
+                        dis <- stats::dist(rt, method = "manhattan")
+                        fit <- stats::hclust(dis)
+                        rtg <- stats::cutree(fit, h = rtcutoff)
+                } else if (is.null(list$stdmass)) {
+                        mz <- list$mz[list$pairedindex]
+                        rt <- list$rt[list$pairedindex]
+                        data <- list$data[list$pairedindex, ]
+                        rtg <- list$rtcluster[list$stdmassindex]
+                } else {
+                        mz <- list$mz[list$stdmassindex]
+                        rt <- list$rt[list$stdmassindex]
+                        data <- list$data[list$stdmassindex, ]
+                        rtg <- list$rtcluster[list$stdmassindex]
                 }
-                ls <- list()
-                for(j in 1:table(lv)[i]){
-                        RAW <- getXcmsRaw(xset,sampleidx=j+index)
-                        RAWdata <- RAW@env$profile
-                        colnames(RAWdata) <- RAW@scantime
-                        rownames(RAWdata) <- seq(RAW@mzrange[1],RAW@mzrange[2],0.1)
-                        ls[[j]] <- RAWdata
+                # PMD analysis
+                # remove isomers
+                dis <- stats::dist(mz, method = "manhattan")
+                disrt <- stats::dist(rt, method = "manhattan")
+                disrtg <- stats::dist(rtg, method = "manhattan")
+
+                if (!is.null(data)) {
+                        cor <- stats::cor(t(data))
+                        df <-
+                                data.frame(
+                                        ms1 = mz[which(lower.tri(dis), arr.ind = T)[,
+                                                                                    1]],
+                                        ms2 = mz[which(lower.tri(dis), arr.ind = T)[,
+                                                                                    2]],
+                                        diff = as.numeric(dis),
+                                        rt1 = rt[which(lower.tri(disrt),
+                                                       arr.ind = T)[, 1]],
+                                        rt2 = rt[which(lower.tri(disrt),
+                                                       arr.ind = T)[, 2]],
+                                        diffrt = as.numeric(disrt),
+                                        rtg1 = rtg[which(lower.tri(disrtg),
+                                                         arr.ind = T)[, 1]],
+                                        rtg2 = rtg[which(lower.tri(disrtg),
+                                                         arr.ind = T)[, 2]],
+                                        rtgdiff = as.numeric(disrtg),
+                                        cor = cor[lower.tri(cor)]
+                                )
+                        df <- df[df$rtgdiff > 0, ]
+                        df$diff2 <- round(df$diff, digits)
+                        df$massmedian <- df$ms1
+                        df$range <- df$massmedian*ppm*1e-6
+
+                        # use unique isomers
+                        index <-
+                                !duplicated(paste0(round(df$ms1, accuracy), round(df$ms2, accuracy)))
+                        diff <- df$diff2[index]
+                        diff <- diff[order(diff)]
+                        range <- df$range[index]
+                        range <- range[order(diff)]
+
+                        diffmass <- cumsum((abs(c(0,diff(diff))) < range) == F)
+                        diff3name <- by(diff, diffmass, median)
+                        diff3 <- by(diff, diffmass, length)
+                        names(diff3) <- diff3name
+                        freq <- diff3
+                        if (!is.null(top)) {
+                                freq <- utils::head(freq, top)
+                                message(
+                                        paste(
+                                                "Top",
+                                                top,
+                                                "high frequency PMD groups were remained.",
+                                                "\n"
+                                        )
+                                )
+                        }
+
+                        if (sum(df$diff2 == 0) > freqcutoff) {
+                                list$sda <- df[(df$diff2 %in% c(0, as.numeric(names(
+                                        freq[freq >=
+                                                     freqcutoff]
+                                )))), ]
+                        } else{
+                                list$sda <- df[(df$diff2 %in% c(as.numeric(names(
+                                        freq[freq >=
+                                                     freqcutoff]
+                                )))), ]
+                        }
+                        if (!is.null(corcutoff)) {
+                                list$sda <- list$sda[list$sda$cor > corcutoff,]
+                        }
+
+                } else{
+                        df <- data.frame(
+                                ms1 = mz[which(lower.tri(dis), arr.ind = T)[,
+                                                                            1]],
+                                ms2 = mz[which(lower.tri(dis), arr.ind = T)[,
+                                                                            2]],
+                                diff = as.numeric(dis),
+                                rt1 = rt[which(lower.tri(disrt),
+                                               arr.ind = T)[, 1]],
+                                rt2 = rt[which(lower.tri(disrt),
+                                               arr.ind = T)[, 2]],
+                                diffrt = as.numeric(disrt),
+                                rtg1 = rtg[which(lower.tri(disrtg),
+                                                 arr.ind = T)[, 1]],
+                                rtg2 = rtg[which(lower.tri(disrtg),
+                                                 arr.ind = T)[, 2]],
+                                rtgdiff = as.numeric(disrtg)
+                        )
+
+                        df$diff2 <- round(df$diff, digits)
+
+                        df <- df[df$rtgdiff > 0, ]
+                        df <- df[df$rtgdiff > 0, ]
+                        df$diff2 <- round(df$diff, digits)
+                        df$massmedian <- df$ms1
+                        df$range <- df$massmedian*ppm*1e-6
+
+                        # use unique isomers
+                        index <-
+                                !duplicated(paste0(round(df$ms1, accuracy), round(df$ms2, accuracy)))
+                        diff <- df$diff2[index]
+                        diff <- diff[order(diff)]
+                        range <- df$range[index]
+                        range <- range[order(diff)]
+
+                        diffmass <- cumsum((abs(c(0,diff(diff))) < range) == F)
+                        diff3name <- by(diff, diffmass, median)
+                        diff3 <- by(diff, diffmass, length)
+                        names(diff3) <- diff3name
+                        freq <- diff3
+
+                        if (!is.null(top)) {
+                                freq <- utils::head(freq, top)
+                                message(
+                                        paste(
+                                                "Top",
+                                                top,
+                                                "high frequency PMD groups were remained.",
+                                                "\n"
+                                        )
+                                )
+                        }
+
+                        if (sum(df$diff2 == 0) > freqcutoff) {
+                                list$sda <- df[(df$diff2 %in% c(0, as.numeric(names(
+                                        freq[freq >=
+                                                     freqcutoff]
+                                )))), ]
+                        } else{
+                                list$sda <- df[(df$diff2 %in% c(as.numeric(names(
+                                        freq[freq >=
+                                                     freqcutoff]
+                                )))), ]
+                        }
                 }
-                lsa[[i]] <- ls
+
+
+                # show message about std mass
+                sub <- names(table(list$sda$diff2))
+                n <- length(sub)
+                message(paste(n, "groups were found as high frequency PMD group.",
+                              "\n"))
+                message(paste(sub, "were found as high frequency PMD.",
+                              "\n"))
+                return(list)
         }
-        return(lsa)
-}
-# align data from some xcmsxset object
-getalign <- function(list){
-        a <- lapply(list,rownames)
-        c <- Reduce(intersect,a)
-        e <- lapply(list,function(x){x[c,]})
-        return(e)
-}
-```
-
-```{r}
-dmx <- result[,-c(1,2)]
-mean <- apply(dmx,1,mean)
-png('allneg.png')
-graphics::plot(
-                        result$mz ~ result$time,
-                        xlab = "Retention Time(s)",
-                        ylab = "m/z",
-                        pch = 19,
-                        cex = log10(mean + 1)-4,
-                        col = rgb(0,0,1,0.2),
-                        main = 'All peaks'
-                )
-dev.off()
-library(animation)
-saveGIF({
-for(i in 1:dim(dmx)[2]){
-        name <- colnames(dmx)[i]
-        value <- as.numeric(t(dmx)[i,])
-        graphics::plot(
-                        result$mz ~ result$time,
-                        xlab = "Retention Time(s)",
-                        ylab = "m/z",
-                        pch = 19,
-                        cex = log10(value +1) - 4,
-                        col = rgb(0,0,1,0.2),
-                        main = name
-                )
-}
-}, movie.name = "groupneg.gif", ani.width = 800, ani.height = 500)
 
 ```
+
