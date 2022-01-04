@@ -1,0 +1,15 @@
+---
+title: "test"
+output:
+  html_document
+---
+
+# Demo data
+
+```{r download}
+options(timeout=600)
+# Download demo data from figshare
+name <- c('1.mzML','2.mzML')
+url <- c("https://ndownloader.figshare.com/files/25521071","https://ndownloader.figshare.com/files/25521074")
+download.file(url, name)
+```
