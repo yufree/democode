@@ -1,33 +1,43 @@
-## ----setup, include=FALSE-----------------------------------------------------------------------------
+## ----setup, include=FALSE----------------------------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 
 
-## -----------------------------------------------------------------------------------------------------
+## ----------------------------------------------------------------------------------------------------------------
 library(mzrtsim)
+# load the high resolution MS1 database from MoNA
 data(monahrms1)
+# Set peak width
 pw1 <- c(rep(5,30),rep(10,40),rep(15,30))
 pw2 <- c(rep(5,20),rep(10,30),rep(15,50))
+# Set retention time
 rt <- seq(10,590,length.out=100)
-rt[c(21:30,51:70)]
+# rt[c(21:30,51:70)]
+# display peaks profile
 plot(pw1~rt,cex=0.5,col='blue')
 points(pw2~rt,col='red')
+# for reproducible purpose
 set.seed(1)
+# select compounds
 compound <- sample(c(1:1114),100)
 set.seed(2)
+# sample s/n for each compounds
 sn <- sample(c(100:10000),100)
 
 # 30% changed
 for(i in c(1:10)){
+  # with unique, only one spectra will be used for simulated compound and no duplicated spectra for the same compound as database will contain multiple spectra for the same compound
   simmzml(name=paste0('sim/case/case',i),db=monahrms1,pwidth = pw1,compound=compound,rtime = rt, sn=sn,unique = T)
 }
 
 for(i in c(1:10)){
+  # set different peak width
   simmzml(name=paste0('sim/control/control',i),db=monahrms1,pwidth = pw2,compound=compound,rtime = rt, sn=sn,unique = T)
 }
 
 
-## -----------------------------------------------------------------------------------------------------
+## ----------------------------------------------------------------------------------------------------------------
 library(mzrtsim)
+# the following part is the same with previous simulation
 data(monahrms1)
 pw1 <- c(rep(5,30),rep(10,40),rep(15,30))
 pw2 <- c(rep(5,20),rep(10,30),rep(15,50))
@@ -42,10 +52,12 @@ sn <- sample(c(100:10000),100)
 
 # 30% changed
 for(i in c(1:10)){
+  # set intenisty cutoff as 0
   simmzml(name=paste0('sim4/case/case',i),db=monahrms1,pwidth = pw1,compound=compound,rtime = rt, sn=sn,unique = T,inscutoff = 0)
 }
 
 for(i in c(1:10)){
+  # set intenisty cutoff as 0
   simmzml(name=paste0('sim4/control/control',i),db=monahrms1,pwidth = pw2,compound=compound,rtime = rt, sn=sn,unique = T,inscutoff = 0)
 }
 
@@ -54,8 +66,9 @@ name <- basename(files)
 file.rename(files,paste0('simcsv4/',name))
 
 
-## -----------------------------------------------------------------------------------------------------
+## ----------------------------------------------------------------------------------------------------------------
 library(mzrtsim)
+# the following part is the same with previous simulation
 data(monahrms1)
 pw1 <- c(rep(5,30),rep(10,40),rep(15,30))
 pw2 <- c(rep(5,30),rep(10,40),rep(15,30))
@@ -69,14 +82,17 @@ set.seed(2)
 sn <- sample(c(100:10000),100)
 
 for(i in c(1:10)){
+  # change tailing factor to 1.5 to simulate tailing peaks, add matrix effect
   simmzml(name=paste0('sim5/tailing/tailing',i),db=monahrms1,pwidth = pw1,compound=compound,rtime = rt, sn=sn,unique = T,tailingfactor = 1.5,matrix = T)
 }
 
 for(i in c(1:10)){
+  # change tailing factor to 1 to simulate normal peaks, add matrix effect
   simmzml(name=paste0('sim5/normal/normal',i),db=monahrms1,pwidth = pw2,compound=compound,rtime = rt, sn=sn,unique = T,tailingfactor = 1,matrix = T)
 }
 
 for(i in c(1:10)){
+  # change tailing factor to 0.8 to simulate leading peaks, add matrix effect
   simmzml(name=paste0('sim5/leading/leading',i),db=monahrms1,pwidth = pw2,compound=compound,rtime = rt, sn=sn,unique = T,tailingfactor = 0.8,matrix = T)
 }
 
@@ -85,9 +101,11 @@ name <- basename(files)
 file.rename(files,paste0('simcsv5/',name))
 
 
-## -----------------------------------------------------------------------------------------------------
+## ----------------------------------------------------------------------------------------------------------------
 library(xcms)
+# add this for mac os
 setMSnbaseFastLoad(opt = F)
+# peak picking for simulated peaks
 path <- 'sim'
 files <- list.files(path,pattern = ".CDF|.mzXML|.mzML",full.names = T,recursive = T)
 group <- xcms:::phenoDataFromPaths(files)
@@ -101,21 +119,25 @@ group <- xcms:::phenoDataFromPaths(files)
   pd <- cbind.data.frame(sample_name, sample_group)
 raw_data <- readMSData(files = files,pdata = new("NAnnotatedDataFrame", pd),
                        mode = "onDisk")
+# change peak width to [5,15] to cover simulated compound
 cwp <- CentWaveParam(ppm=5,peakwidth = c(5,15))
 xdata <- findChromPeaks(raw_data, param = cwp)
 xdata <- groupChromPeaks(xdata, param = PeakDensityParam(pd$sample_group))
-
+# extract peaks profile as csv file
 re <- enviGCMS::getmzrt(xdata,name='sim1')
-
+# save peaks profile with name
 compound <- read.csv('simcsv/case1.csv')
 # 593 peaks
+# simulate mass range [100,1000] for MS1 scan
 compoundsub <- compound[compound$mz>100&compound$mz<1000,]
 # 533 peaks
+# align simulated peaks with detected peaks
 align2 <- enviGCMS::getalign(compoundsub$mz,re$mz,compoundsub$rt,re$rt)
 length(unique(compound$name[align2$xid]))
 # 88
 # 510 peaks
 library(genefilter)
+# check changed peaks
 rda <- rowttests(as.matrix(re$data),fac=as.factor(re$group$sample_group))
 p.value <- p.adjust(rda$p.value,'BH')
 
@@ -124,7 +146,8 @@ name <- basename(files)
 file.rename(files,paste0('simcsv/',name))
 
 
-## -----------------------------------------------------------------------------------------------------
+## ----------------------------------------------------------------------------------------------------------------
+# you might need to install python and pyopenms to run the following code
 reticulate::use_python('/opt/homebrew/Caskroom/miniconda/base/bin/python')
 
 
@@ -391,18 +414,22 @@ reticulate::use_python('/opt/homebrew/Caskroom/miniconda/base/bin/python')
 ## df = consensus_map.get_df()
 ## df.to_csv('sim5openmstailing.csv')
 
-## -----------------------------------------------------------------------------------------------------
+## ----------------------------------------------------------------------------------------------------------------
 library(mzrtsim)
+# the following code will show database in mzrtsim
+# MoNA MS1 peaks
 data("monams1")
 name <- sapply(monams1,function(x) x$name)
 length(unique(name))
+# MoNA MS1 peaks collected from high resolution mass spectrometry
 data("monahrms1")
 name <- sapply(monahrms1,function(x) x$name)
 length(unique(name))
+# HMDB experiment data from GCMS
 data("hmdbcms")
 name <- sapply(hmdbcms,function(x) x$name)
 length(unique(name))
-# peak number
+# peak number for different database
 pn <- sapply(monams1,function(x) x$np)
 mean(as.numeric(pn))
 median(as.numeric(pn))
@@ -411,17 +438,18 @@ mean(as.numeric(pn))
 median(as.numeric(pn))
 
 
-## -----------------------------------------------------------------------------------------------------
+## ----------------------------------------------------------------------------------------------------------------
+# load detected peaks from xcms, openms, and mzmine
 xcms <- enviGCMS::getmzrtcsv('sim5normalmzrt.csv')
 openms <- read.csv('sim5openmsnormal.csv')
 mzmine <- read.csv('sim5mzmingnormal.csv')
-
+# load simulated peaks
 real <- read.csv('simcsv5/normal1.csv')
-
+# check overlap
 xcmsalign <- enviGCMS::getalign(real$mz,xcms$mz,real$rt,xcms$rt)
 openmsalign <- enviGCMS::getalign(real$mz,openms$mz,real$rt,openms$RT)
 mzminealign <- enviGCMS::getalign(real$mz,mzmine$mz,real$rt,mzmine$rt*60)
-
+# check unique peaks
 xcmsname <- paste(xcmsalign$mz2,xcmsalign$rt2)
 openmsname <- paste(openmsalign$mz2,openmsalign$rt2)
 mzminename <- paste(mzminealign$mz2,mzminealign$rt2)
@@ -431,6 +459,7 @@ length(unique(openmsname))
 length(unique(mzminename))
 
 library(ggvenn)
+# display overlap
 cvenn <- ggvenn(list(XCMS=real$name[unique(xcmsalign$xid)],OpenMS=real$name[unique(openmsalign$xid)],MZmine3=real$name[unique(mzminealign$xid)]))+ggtitle('B')
 name <- paste(real$mz,real$rt)
 pvenn <- ggvenn(list(XCMS=name[unique(xcmsalign$xid)],OpenMS=name[unique(openmsalign$xid)],MZmine3=name[unique(mzminealign$xid)]))+ggtitle('A')
@@ -445,7 +474,7 @@ missing <- unique(real$name)[!unique(real$name)%in%allfind]
 rm <- real[real$name%in%missing,]
 
 
-## -----------------------------------------------------------------------------------------------------
+## ----------------------------------------------------------------------------------------------------------------
 xcms <- enviGCMS::getmzrtcsv('sim5leadingmzrt.csv')
 openms <- read.csv('sim5openmsleading.csv')
 mzmine <- read.csv('sim5mzmingleading.csv')
@@ -468,7 +497,7 @@ ggvenn(list(XCMS=real$name[unique(xcmsalign$xid)],OpenMS=real$name[unique(openms
 
 
 
-## -----------------------------------------------------------------------------------------------------
+## ----------------------------------------------------------------------------------------------------------------
 xcms <- enviGCMS::getmzrtcsv('sim5tailingmzrt.csv')
 openms <- read.csv('sim5openmstailing.csv')
 mzmine <- read.csv('sim5mzminetailing.csv')
@@ -491,7 +520,7 @@ ggvenn(list(XCMS=real$name[unique(xcmsalign$xid)],OpenMS=real$name[unique(openms
 
 
 
-## -----------------------------------------------------------------------------------------------------
+## ----------------------------------------------------------------------------------------------------------------
 full <- enviGCMS::getmzrtcsv('sim4mzrt.csv')
 cutoff <- enviGCMS::getmzrtcsv('sim1mzrt.csv')
 
@@ -545,4 +574,3 @@ length(unique(real$name[unique(alignchange$xid)]))
 # 27
 sum(unique(real$name[unique(alignc$xid)]) %in% unique(real$name[unique(alignchange$xid)]))
 # 35-27 = 8
-
