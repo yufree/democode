@@ -26,12 +26,12 @@ SNR <- sample(c(100:10000),100)
 # 30% changed
 for(i in c(1:10)){
   # with unique, only one spectra will be used for simulated compound and no duplicated spectra for the same compound as database will contain multiple spectra for the same compound
-  simmzml(name=paste0('sim/case/case',i),db=monahrms1,pwidth = pw1,compound=compound,rtime = rt, SNR=SNR,unique = T)
+  simmzml(name=paste0('sim/case/case',i),db=monahrms1,pwidth = pw1,compound=compound,rtime = rt, SNR=SNR,unique = T,matrix = T)
 }
 
 for(i in c(1:10)){
   # set different peak width
-  simmzml(name=paste0('sim/control/control',i),db=monahrms1,pwidth = pw2,compound=compound,rtime = rt, SNR=SNR,unique = T)
+  simmzml(name=paste0('sim/control/control',i),db=monahrms1,pwidth = pw2,compound=compound,rtime = rt, SNR=SNR,unique = T,matrix = T)
 }
 
 
@@ -53,12 +53,12 @@ SNR <- sample(c(100:10000),100)
 # 30% changed
 for(i in c(1:10)){
   # set intenisty cutoff as 0
-  simmzml(name=paste0('sim4/case/case',i),db=monahrms1,pwidth = pw1,compound=compound,rtime = rt, SNR=SNR,unique = T,inscutoff = 0)
+  simmzml(name=paste0('sim4/case/case',i),db=monahrms1,pwidth = pw1,compound=compound,rtime = rt, SNR=SNR,unique = T,inscutoff = 0,matrix = T)
 }
 
 for(i in c(1:10)){
   # set intenisty cutoff as 0
-  simmzml(name=paste0('sim4/control/control',i),db=monahrms1,pwidth = pw2,compound=compound,rtime = rt, SNR=SNR,unique = T,inscutoff = 0)
+  simmzml(name=paste0('sim4/control/control',i),db=monahrms1,pwidth = pw2,compound=compound,rtime = rt, SNR=SNR,unique = T,inscutoff = 0,matrix = T)
 }
 
 files <- list.files('sim4',full.names = T,recursive = T,pattern = '*.csv')
