@@ -101,6 +101,8 @@ files <- list.files('sim3',full.names = T,recursive = T,pattern = '*.csv')
 name <- basename(files)
 file.rename(files,paste0('simcsv3/',name))
 
+## ----mzmine------------------------------------------------------------------------------------------
+# GUI mzMine 4.5 is used to extract peaks. Raw data is imported as mzML files and then mass detection with default setting is performed. Feature detection used chromatogram builder in LC-MS with default setting. When feature detection is done for each file, alignment was perfomred with join aligner with weights of m/z 0.5 and retention time 0.5. The aligned feature list is exported for further comparison.
 
 ## ----------------------------------------------------------------------------------------------------
 library(xcms)
