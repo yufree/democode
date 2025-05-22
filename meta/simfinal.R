@@ -1,8 +1,8 @@
-## ----setup, include=FALSE----------------------------------------------------------------------------
+## ----setup, include=FALSE---------------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
 library(mzrtsim)
 # load the high resolution MS1 database from MoNA
 data(monahrms1)
@@ -11,6 +11,8 @@ ph1 <- c(rep(5,30),rep(10,40),rep(15,30))
 ph2 <- c(rep(5,20),rep(10,30),rep(15,50))
 # Set retention time
 rt <- seq(10,590,length.out=100)
+rtx <- seq(10,590,length.out=10)
+rtxall <- rnorm(n = 100, mean = rtx, sd = 3)
 # rt[c(21:30,51:70)]
 # display peaks profile
 plot(ph1~rt,cex=0.5,col='blue')
@@ -19,6 +21,8 @@ points(ph2~rt,col='red')
 set.seed(1)
 # select compounds
 compound <- sample(c(1:1114),100)
+compoundx <- sample(c(1:1114),10)
+compoundxall <- rep(compoundx,10)
 set.seed(2)
 # sample response factors for each compounds
 rf <- sample(c(100:10000),100)
@@ -38,7 +42,8 @@ name <- basename(files)
 file.rename(files,paste0('simcsv/',name))
 
 
-## ----------------------------------------------------------------------------------------------------
+
+## ---------------------------------------------------------------------------------------------------
 library(mzrtsim)
 # the following part is the same with previous simulation
 data(monahrms1)
@@ -69,7 +74,7 @@ name <- basename(files)
 file.rename(files,paste0('simcsv2/',name))
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
 library(mzrtsim)
 # the following part is the same with previous simulation
 data(monahrms1)
@@ -101,10 +106,18 @@ files <- list.files('sim3',full.names = T,recursive = T,pattern = '*.csv')
 name <- basename(files)
 file.rename(files,paste0('simcsv3/',name))
 
-## ----mzmine------------------------------------------------------------------------------------------
+
+## ---------------------------------------------------------------------------------------------------
+simmzml(name=paste0('simsep/sep',1),db=monahrms1,pheight = rep(10,8),compound=rep(100,8),rtime = c(20,30,50,70,79,116,125,137), rf=c(1500,2500,500,2500,1500,1200,3000,1400),unique = T,matrix = T)
+
+file.rename('simsep/sep1.csv','simsepcsv/sep1.csv')
+
+
+## ----mzmine-----------------------------------------------------------------------------------------
 # GUI mzMine 4.5 is used to extract peaks. Raw data is imported as mzML files and then mass detection with default setting is performed. Feature detection used chromatogram builder in LC-MS with default setting. When feature detection is done for each file, alignment was perfomred with join aligner with weights of m/z 0.5 and retention time 0.5. The aligned feature list is exported for further comparison.
 
-## ----------------------------------------------------------------------------------------------------
+
+## ---------------------------------------------------------------------------------------------------
 library(xcms)
 library(MsExperiment)
 # peak picking for simulated peaks
@@ -154,7 +167,7 @@ df <- cbind.data.frame(re,data)
 write.csv(df,'simxcms.csv')
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
 library(xcms)
 library(MsExperiment)
 # add this for mac os
@@ -206,7 +219,7 @@ df <- cbind.data.frame(re,data)
 write.csv(df,'sim2xcms.csv')
 
 
-## ----leading-----------------------------------------------------------------------------------------
+## ----leading----------------------------------------------------------------------------------------
 library(xcms)
 library(MsExperiment)
 # add this for mac os
@@ -252,7 +265,7 @@ leading <- cbind.data.frame(re,data)
 write.csv(leading,'sim3xcmsleading.csv')
 
 
-## ----normal------------------------------------------------------------------------------------------
+## ----normal-----------------------------------------------------------------------------------------
 library(xcms)
 library(MsExperiment)
 # add this for mac os
@@ -298,7 +311,7 @@ normal <- cbind.data.frame(re,data)
 write.csv(normal,'sim3xcmsnormal.csv')
 
 
-## ----tailing-----------------------------------------------------------------------------------------
+## ----tailing----------------------------------------------------------------------------------------
 library(xcms)
 library(MsExperiment)
 # add this for mac os
@@ -344,9 +357,33 @@ tailing <- cbind.data.frame(re,data)
 write.csv(tailing,'sim3xcmstailing.csv')
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
+library(xcms)
+library(MsExperiment)
+# peak picking for simulated peaks
+path <- 'simsep'
+files <- list.files(path,pattern = ".CDF|.mzXML|.mzML",full.names = T,recursive = T)
+group <- xcms:::phenoDataFromPaths(files)
+  if(NCOL(group)==1){
+      sample_group <- group$class
+  }else{
+      cols <- colnames(group)
+      sample_group <-  do.call(paste,c(group[cols],sep='_'))
+  }
+  sample_name=sub(basename(files),pattern = ".CDF|.mzXML|.mzML",replacement = '')
+  pd <- cbind.data.frame(sample_name, sample_group)
+  
+raw_data <- readMsExperiment(spectraFiles = files[1], sampleData = pd[1,])
+# change peak width to [5,15] to cover simulated compound
+chr_raw <- chromatogram(raw_data, mz = c(269,269.1))
+cwp <- CentWaveParam(ppm=5,peakwidth = c(5,15))
+xdata <- findChromPeaks(chr_raw, param = cwp)
+write.csv(chromPeaks(xdata),'xcms.csv')
+
+
+## ---------------------------------------------------------------------------------------------------
 # you might need to install python and pyopenms to run the following code
-reticulate::use_python('/opt/homebrew/Caskroom/miniconda/base/bin/python')
+reticulate::use_python('/opt/homebrew/Caskroom/miniforge/base/bin/python')
 
 
 ## import os
@@ -796,7 +833,61 @@ reticulate::use_python('/opt/homebrew/Caskroom/miniconda/base/bin/python')
 ## df = consensus_map.get_df()
 ## df.to_csv('sim3openmstailing.csv')
 
-## ----------------------------------------------------------------------------------------------------
+## import pyopenms as oms
+## import pandas as pd
+## import os
+## 
+## def get_abinitio_feature_rt_ranges(mzml_file_path, output_csv):
+##     exp = oms.MSExperiment()
+##     oms.MzMLFile().load(mzml_file_path, exp)
+##     mass_traces = []
+##     mtd = oms.MassTraceDetection()
+##     mtd_par = mtd.getDefaults()
+##     mtd_par.setValue("mass_error_ppm", 5.0) # high-res instrument, orbitraps
+##     mtd_par.setValue("noise_threshold_int", 1.0e02) # data-dependent (usually works for orbitraps)
+##     mtd.setParameters(mtd_par) # set the new parameters
+##     mtd.run(exp, mass_traces, 0) # run mass trace detection
+## 
+##     mass_traces_deconvol = []
+##     epd = oms.ElutionPeakDetection()
+##     epd_par = epd.getDefaults()
+##     epd_par.setValue("width_filtering", "fixed") # The fixed setting filters out mass traces outside the [min_fwhm: 1.0, max_fwhm: 60.0] interval
+##     epd.setParameters(epd_par)
+##     epd.detectPeaks(mass_traces, mass_traces_deconvol)
+## 
+##     feature_map = oms.FeatureMap() # output features
+##     chrom_out = []
+##     ff = oms.FeatureFindingMetabo()
+## 
+##     ff.run(mass_traces_deconvol, feature_map, chrom_out)
+##     feature_map.setUniqueIds() # Assigns a new, valid unique id per feature
+##     # feature_map.setPrimaryMSRunPath([file.encode()]) # Sets the file path to the primary MS run (usually the mzML file)
+## 
+##     feature_data_list = []
+## 
+##     for i, feature in enumerate(feature_map):
+##             feature_dict = {
+##                 'MapIndex': i,
+##                 'FeatureUID': feature.getUniqueId(),
+##                 'MZ_Centroid': round(feature.getMZ(), 5) if feature.getMZ() is not None else None,
+##                 'RT_Centroid_seconds': round(feature.getRT(), 3) if feature.getRT() is not None else None,
+##                 'Intensity': round(feature.getIntensity(), 2) if feature.getIntensity() is not None else None,
+##                 'Charge': feature.getCharge(),
+##                 'RT_Width_seconds': round(feature.getWidth(), 5) if feature.getWidth() is not None else None,
+##                 'Quality': round(feature.getOverallQuality(), 4) if feature.getOverallQuality() is not None else None,
+##                 'NumMassTraces': len(feature.getSubordinates())
+##             }
+##             feature_data_list.append(feature_dict)
+## 
+##     if feature_data_list:
+##       df = pd.DataFrame(feature_data_list)
+##       df.to_csv(output_csv, index=False, encoding='utf-8-sig')
+## 
+## input_mzml = "simsep/sep1.mzML"
+## output_csv = "openms.csv"
+## get_abinitio_feature_rt_ranges(input_mzml, output_csv)
+
+## ---------------------------------------------------------------------------------------------------
 library(mzrtsim)
 # the following code will show database in mzrtsim
 # MoNA MS1 peaks
@@ -820,7 +911,7 @@ mean(as.numeric(pn))
 median(as.numeric(pn))
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
 # load detected peaks from xcms, openms, and mzmine
 xcms <- read.csv('simxcms.csv')
 openms <- read.csv('simopenms.csv')
@@ -873,16 +964,20 @@ des <- ggplot(data, aes(x = Value, fill = Peaks, color = Peaks)) +
   scale_fill_brewer(palette = "Set1") + 
   scale_color_brewer(palette = "Set1") +
   labs(title = "Overlaid Density Plot", x = "Relative Intensity Distribution", y = "Density") + ggtitle('B') +
-  theme_minimal() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+  theme_minimal() + 
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.position = c(0.8,0.8))
 
 library(patchwork)
 p <- pvenn|des
-ggsave('figure1.png',p,width = 10,height = 6)
+ggsave('figure2.png',p,width = 12,height = 5)
 
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
 # load detected peaks from xcms, openms, and mzmine
 xcms <- read.csv('sim3xcmsnormal.csv')
 openms <- read.csv('sim3openmsnormal.csv')
@@ -919,7 +1014,7 @@ ggvenn(list(XCMS=real$name[unique(xcmsalign$xid)],OpenMS=real$name[unique(openms
 
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
 # load detected peaks from xcms, openms, and mzmine
 xcms <- read.csv('sim3xcmsleading.csv')
 openms <- read.csv('sim3openmsleading.csv')
@@ -956,7 +1051,7 @@ ggvenn(list(XCMS=real$name[unique(xcmsalign$xid)],OpenMS=real$name[unique(openms
 
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
 # load detected peaks from xcms, openms, and mzmine
 xcms <- read.csv('sim3xcmstailing.csv')
 openms <- read.csv('sim3openmstailing.csv')
@@ -993,7 +1088,32 @@ ggvenn(list(XCMS=real$name[unique(xcmsalign$xid)],OpenMS=real$name[unique(openms
 
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
+library(xcms)
+library(MsExperiment)
+raw_data <- readMsExperiment(spectraFiles = 'simsep/sep1.mzML')
+# change peak width to [5,15] to cover simulated compound
+chr_raw <- chromatogram(raw_data, mz = c(269,269.1))
+png('figure2c.png',width = 2000,height = 1000,res=300)
+par(mar=c(4.1,4.1,2,1))
+plot(chr_raw,xlab="Retention time(s)",ylab='Intensity',xlim=c(0,200),main='')
+xcms <- read.csv('xcms.csv')
+points(xcms[,'rt'],rep(1e8,4),type = 'h',col='blue',lwd = 3)
+segments(x0 = xcms[,'rtmin'],y0 =5e7,x1=xcms[,'rtmax'],y1 = 5e7,col = 'blue',lwd = 2)
+openms <- read.csv('openms.csv')
+openmssub <- openms[openms$MZ_Centroid>269&openms$MZ_Centroid<269.1,]
+points(openmssub$RT_Centroid_seconds,rep(1.2e8,5),type = 'h',lwd = 2.5,col='yellow')
+segments(x0 = openmssub$RT_Centroid_seconds-openmssub$RT_Width_seconds/2,y0 = 6e7,x1=openmssub$RT_Centroid_seconds+openmssub$RT_Width_seconds/2,y1 = 6e7,col = 'yellow',lwd = 2)
+mzmine <- read.csv('mzmine.csv')
+mzminesub <- mzmine[mzmine$mz>269&mzmine$mz<269.1,]
+points(mzminesub$rt*60,rep(8e7,3),type = 'h',col='green',lwd = 2)
+segments(x0 = mzminesub$rt_range.min*60,y0 = 4e7,x1=mzminesub$rt_range.max*60,y1 = 4e7,col = 'green',lwd = 1.8)
+points(c(20,30,50,70,79,116,125,137),rep(0,8),pch=17,col='black',cex=1)
+legend('topright',legend=c('XCMS','OpenMS','MZmine 4.5','True Peak'),col=c('blue','yellow','green','black'),pch = c(3,3,3,17),bg = NULL,bty = 'n')
+dev.off()
+
+
+## ---------------------------------------------------------------------------------------------------
 real <- read.csv('simcsv2/control10.csv')
 realsub <- real[real$rt>=rt[21]&real$rt<=rt[30]|real$rt>=rt[51]&real$rt<=rt[70],]
 length(unique(realsub$name))
@@ -1059,7 +1179,7 @@ sum(unique(real$name[unique(alignc$xid)]) %in% unique(real$name[unique(alignchan
 # 22 True positive 2 false positive 4 false negative
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
 full <- read.csv('sim2openms.csv')
 cutoff <- read.csv('simopenms.csv')
 library(genefilter)
@@ -1112,7 +1232,7 @@ sum(unique(real$name[unique(alignc$xid)]) %in% unique(real$name[unique(alignchan
 # 28 True positive 1 False positive
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
 full <- read.csv('sim2mzmine.csv')
 cutoff <- read.csv('simmzmine.csv')
 
@@ -1174,11 +1294,11 @@ sum(unique(real$name[unique(alignc$xid)]) %in% unique(real$name[unique(alignchan
 # 28 True positive 1 false positive
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
 knitr::knit_exit()
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
 library(mzrtsim)
 # load the high resolution MS1 database from MoNA
 data(monahrms1)
@@ -1203,6 +1323,7 @@ mzv <- mzv[idx]
 rtimev <- rtimev[idx]
 intensityv <- intensityv[idx]
 norm <- (intensityv - min(intensityv)) / (max(intensityv) - min(intensityv))
+png("toc.png",width = 500, height = 250)
 plot(
                         rtimev,
                         mzv,
@@ -1211,10 +1332,11 @@ plot(
                         col = grDevices::gray(1 - norm),
                         xlab = 'retention time(s)',
                         ylab = 'm/z'
-                )                
+                )  
+dev.off()
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
 realm <- real[-xcmsalign$xid,]
 realn <- real[xcmsalign$xid,]
 xcmsalign2 <- enviGCMS::getalign(real$mz,xcms$mz,real$rt,xcms$rt)
@@ -1246,7 +1368,7 @@ z <- rawd[unique(rawx$xid),]
 zz <- rawd[unique(rawy$xid),]
 
 
-## ----------------------------------------------------------------------------------------------------
+## ---------------------------------------------------------------------------------------------------
 full <- read.csv('sim2xcms.csv')
 cutoff <- read.csv('simxcms.csv')
 # impute NA just in case
@@ -1303,3 +1425,22 @@ length(unique(real$name[unique(alignchange$xid)]))
 # 22
 sum(unique(real$name[unique(alignc$xid)]) %in% unique(real$name[unique(alignchange$xid)]))
 # 22 True positive 2 false positive
+
+
+## ---------------------------------------------------------------------------------------------------
+mzml = 'sim/case/case1.mzML'
+dt <- Spectra::Spectra(mzml)
+rt <- Spectra::rtime(dt)
+ins <- Spectra::intensity(dt)
+mz <- Spectra::mz(dt)
+mzv <- unlist(mz)
+rtimev <- rep(rt, times = sapply(mz, length))
+intensityv <- unlist(ins)
+idx <- mzv>100.93&mzv<100.934
+mzv <- mzv[idx]
+rtimev <- rtimev[idx]
+intensityv <- intensityv[idx]
+png("mation.png",width = 1500, height = 1200,res=200)
+plot(rtimev,intensityv,type = 'h',main='m/z 100.9339 @ case1.mzML',xlab = 'retention time(s)',ylab='intensity')
+dev.off()
+
