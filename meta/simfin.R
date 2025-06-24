@@ -1,0 +1,942 @@
+## ----setup, include=FALSE---------------------------------------------------------------------------
+knitr::opts_chunk$set(echo = TRUE)
+
+
+## ---------------------------------------------------------------------------------------------------
+library(mzrtsim)
+# load the high resolution MS1 database from MoNA
+data(monahrms1)
+# Set peak height
+ph1 <- c(rep(5,30),rep(10,40),rep(15,30))
+ph2 <- c(rep(5,20),rep(10,30),rep(15,50))
+# Set retention time
+rt <- seq(10,590,length.out=100)
+rtx <- seq(10,590,length.out=10)
+rtxall <- rnorm(n = 100, mean = rtx, sd = 3)
+# rt[c(21:30,51:70)]
+# display peaks profile
+plot(ph1~rt,cex=0.5,col='blue')
+points(ph2~rt,col='red')
+# for reproducible purpose
+set.seed(1)
+# select compounds
+compound <- sample(c(1:1114),100)
+compoundx <- sample(c(1:1114),10)
+compoundxall <- rep(compoundx,10)
+set.seed(2)
+# sample response factors for each compounds
+rf <- sample(c(100:10000),100)
+
+# 30% changed
+for(i in c(1:10)){
+  # with unique, only one spectra will be used for simulated compound and no duplicated spectra for the same compound as database will contain multiple spectra for the same compound
+  simmzml(name=paste0('sim/case/case',i),db=monahrms1,pheight = ph1,compound=compound,rtime = rt, rf=rf,unique = T,matrix = T)
+}
+
+for(i in c(1:10)){
+  # set different peak width
+  simmzml(name=paste0('sim/control/control',i),db=monahrms1,pheight = ph2,compound=compound,rtime = rt, rf=rf,unique = T,matrix = T)
+}
+files <- list.files('sim',full.names = T,recursive = T,pattern = '*.csv')
+name <- basename(files)
+file.rename(files,paste0('simcsv/',name))
+
+
+
+## ---------------------------------------------------------------------------------------------------
+library(mzrtsim)
+# the following part is the same with previous simulation
+data(monahrms1)
+ph <- c(rep(5,30),rep(10,40),rep(15,30))
+rt <- seq(10,590,length.out=100)
+plot(ph1~rt,cex=0.5,col='blue')
+points(ph2~rt,col='red')
+set.seed(1)
+compound <- sample(c(1:1114),100)
+set.seed(2)
+SNR <- sample(c(100:10000),100)
+
+for(i in c(1:10)){
+  # change tailing factor to 1.5 to simulate tailing peaks, add matrix effect
+  simmzml(name=paste0('sim3/tailing/tailing',i),db=monahrms1,pheight = ph,compound=compound,rtime = rt, SNR=SNR,unique = T,tailingfactor = 1.5,matrix = T)
+}
+
+for(i in c(1:10)){
+  # change tailing factor to 1 to simulate normal peaks, add matrix effect
+  simmzml(name=paste0('sim3/normal/normal',i),db=monahrms1,pheight = ph,compound=compound,rtime = rt, SNR=SNR,unique = T,tailingfactor = 1,matrix = T)
+}
+
+for(i in c(1:10)){
+  # change tailing factor to 0.8 to simulate leading peaks, add matrix effect
+  simmzml(name=paste0('sim3/leading/leading',i),db=monahrms1,pwidth = ph,compound=compound,rtime = rt, SNR=SNR,unique = T,tailingfactor = 0.8,matrix = T)
+}
+
+files <- list.files('sim3',full.names = T,recursive = T,pattern = '*.csv')
+name <- basename(files)
+file.rename(files,paste0('simcsv3/',name))
+
+
+## ---------------------------------------------------------------------------------------------------
+simmzml(name=paste0('simsep/sep',1),db=monahrms1,pheight = rep(10,8),compound=rep(100,8),rtime = c(20,30,50,70,79,116,125,137), rf=c(1500,2500,500,2500,1500,1200,3000,1400),unique = T,matrix = T)
+
+file.rename('simsep/sep1.csv','simsepcsv/sep1.csv')
+
+
+## ----mzmine-----------------------------------------------------------------------------------------
+# GUI mzMine 4.5 is used to extract peaks. Raw data is imported as mzML files and then mass detection with default setting is performed. Feature detection used chromatogram builder in LC-MS with default setting. When feature detection is done for each file, alignment was perfomred with join aligner with weights of m/z 0.5 and retention time 0.5. The aligned feature list is exported for further comparison.
+
+
+## ---------------------------------------------------------------------------------------------------
+library(xcms)
+library(MsExperiment)
+# peak picking for simulated peaks
+path <- 'sim'
+files <- list.files(path,pattern = ".CDF|.mzXML|.mzML",full.names = T,recursive = T)
+group <- xcms:::phenoDataFromPaths(files)
+  if(NCOL(group)==1){
+      sample_group <- group$class
+  }else{
+      cols <- colnames(group)
+      sample_group <-  do.call(paste,c(group[cols],sep='_'))
+  }
+  sample_name=sub(basename(files),pattern = ".CDF|.mzXML|.mzML",replacement = '')
+  pd <- cbind.data.frame(sample_name, sample_group)
+  
+raw_data <- readMsExperiment(spectraFiles = files, sampleData = pd)
+# change peak width to [5,15] to cover simulated compound
+cwp <- CentWaveParam(ppm=5,peakwidth = c(5,15))
+xdata <- findChromPeaks(raw_data, param = cwp)
+xdata <- groupChromPeaks(xdata, param = PeakDensityParam(pd$sample_group))
+xdata<- fillChromPeaks(xdata, param = ChromPeakAreaParam())
+# extract peaks profile as csv file
+re <- featureDefinitions(xdata)[, c("mzmed","rtmed")]
+# 340 peaks
+# save peaks profile with name
+compound <- read.csv('simcsv/case1.csv')
+# 593 peaks
+# simulate mass range [100,1000] for MS1 scan
+compoundsub <- compound[compound$mz>100&compound$mz<1000,]
+# 533 peaks
+# align simulated peaks with detected peaks
+align2 <- enviGCMS::getalign(compoundsub$mz,re$mzmed,compoundsub$rt,re$rtmed)
+length(unique(compound$name[align2$xid]))
+# 74
+length(unique(paste(align2$mz2,align2$rt2)))
+# 330 found peaks match to 335 peaks
+library(SummarizedExperiment)
+res <- quantify(xdata, value = "maxo", method = "max")
+data <- assay(res)
+library(genefilter)
+# check changed peaks
+rda <- rowttests(as.matrix(data),fac=as.factor(pd$sample_group))
+p.value <- p.adjust(rda$p.value,'BH')
+sum(p.value<0.05,na.rm = T)
+# 134
+df <- cbind.data.frame(re,data)
+write.csv(df,'simxcms.csv')
+
+
+## ----leading----------------------------------------------------------------------------------------
+library(xcms)
+library(MsExperiment)
+# add this for mac os
+# setMSnbaseFastLoad(opt = F)
+# peak picking for simulated peaks
+path <- 'sim3/leading/'
+files <- list.files(path,pattern = ".CDF|.mzXML|.mzML",full.names = T,recursive = T)
+group <- xcms:::phenoDataFromPaths(files)
+  if(NCOL(group)==1){
+      sample_group <- group$class
+  }else{
+      cols <- colnames(group)
+      sample_group <-  do.call(paste,c(group[cols],sep='_'))
+  }
+  sample_name=sub(basename(files),pattern = ".CDF|.mzXML|.mzML",replacement = '')
+  pd <- cbind.data.frame(sample_name, sample_group)
+  
+raw_data <- readMsExperiment(spectraFiles = files, sampleData = pd)
+# change peak width to [5,15] to cover simulated compound
+cwp <- CentWaveParam(ppm=5,peakwidth = c(5,15))
+xdata <- findChromPeaks(raw_data, param = cwp)
+xdata <- groupChromPeaks(xdata, param = PeakDensityParam(pd$sample_group))
+xdata<- fillChromPeaks(xdata, param = ChromPeakAreaParam())
+# extract peaks profile as csv file
+re <- featureDefinitions(xdata)[, c("mzmed","rtmed")]
+# 412 peaks
+# save peaks profile with name
+compound <- read.csv('simcsv3/leading1.csv')
+# 593 peaks
+# simulate mass range [100,1000] for MS1 scan
+compoundsub <- compound[compound$mz>100&compound$mz<1000,]
+# 533 peaks
+# align simulated peaks with detected peaks
+align2 <- enviGCMS::getalign(compoundsub$mz,re$mzmed,compoundsub$rt,re$rtmed,ppm = 5,deltart = 5)
+length(unique(compound$name[align2$xid]))
+# 83
+length(unique(paste(align2$mz2,align2$rt2)))
+# 396 found peaks match to 397 peaks
+library(SummarizedExperiment)
+res <- quantify(xdata, value = "maxo", method = "max")
+data <- assay(res)
+leading <- cbind.data.frame(re,data)
+write.csv(leading,'sim3xcmsleading.csv')
+
+
+## ----normal-----------------------------------------------------------------------------------------
+library(xcms)
+library(MsExperiment)
+# add this for mac os
+# setMSnbaseFastLoad(opt = F)
+# peak picking for simulated peaks
+path <- 'sim3/normal'
+files <- list.files(path,pattern = ".CDF|.mzXML|.mzML",full.names = T,recursive = T)
+group <- xcms:::phenoDataFromPaths(files)
+  if(NCOL(group)==1){
+      sample_group <- group$class
+  }else{
+      cols <- colnames(group)
+      sample_group <-  do.call(paste,c(group[cols],sep='_'))
+  }
+  sample_name=sub(basename(files),pattern = ".CDF|.mzXML|.mzML",replacement = '')
+  pd <- cbind.data.frame(sample_name, sample_group)
+  
+raw_data <- readMsExperiment(spectraFiles = files, sampleData = pd)
+# change peak width to [5,15] to cover simulated compound
+cwp <- CentWaveParam(ppm=5,peakwidth = c(5,15))
+xdata <- findChromPeaks(raw_data, param = cwp)
+xdata <- groupChromPeaks(xdata, param = PeakDensityParam(pd$sample_group))
+xdata<- fillChromPeaks(xdata, param = ChromPeakAreaParam())
+# extract peaks profile as csv file
+re <- featureDefinitions(xdata)[, c("mzmed","rtmed")]
+# 377 peaks
+# save peaks profile with name
+compound <- read.csv('simcsv3/normal1.csv')
+# 593 peaks
+# simulate mass range [100,1000] for MS1 scan
+compoundsub <- compound[compound$mz>100&compound$mz<1000,]
+# 533 peaks
+# align simulated peaks with detected peaks
+align2 <- enviGCMS::getalign(compoundsub$mz,re$mzmed,compoundsub$rt,re$rtmed,ppm = 5,deltart = 5)
+length(unique(compoundsub$name[align2$xid]))
+# 82
+length(unique(paste(align2$mz2,align2$rt2)))
+# 367 found peaks match to 367 peaks
+library(SummarizedExperiment)
+res <- quantify(xdata, value = "maxo", method = "max")
+data <- assay(res)
+normal <- cbind.data.frame(re,data)
+write.csv(normal,'sim3xcmsnormal.csv')
+
+
+## ----tailing----------------------------------------------------------------------------------------
+library(xcms)
+library(MsExperiment)
+# add this for mac os
+# setMSnbaseFastLoad(opt = F)
+# peak picking for simulated peaks
+path <- 'sim3/tailing'
+files <- list.files(path,pattern = ".CDF|.mzXML|.mzML",full.names = T,recursive = T)
+group <- xcms:::phenoDataFromPaths(files)
+  if(NCOL(group)==1){
+      sample_group <- group$class
+  }else{
+      cols <- colnames(group)
+      sample_group <-  do.call(paste,c(group[cols],sep='_'))
+  }
+  sample_name=sub(basename(files),pattern = ".CDF|.mzXML|.mzML",replacement = '')
+  pd <- cbind.data.frame(sample_name, sample_group)
+  
+raw_data <- readMsExperiment(spectraFiles = files, sampleData = pd)
+# change peak width to [5,15] to cover simulated compound
+cwp <- CentWaveParam(ppm=5,peakwidth = c(5,15))
+xdata <- findChromPeaks(raw_data, param = cwp)
+xdata <- groupChromPeaks(xdata, param = PeakDensityParam(pd$sample_group))
+xdata<- fillChromPeaks(xdata, param = ChromPeakAreaParam())
+# extract peaks profile as csv file
+re <- featureDefinitions(xdata)[, c("mzmed","rtmed")]
+# 294 peaks
+# save peaks profile with name
+compound <- read.csv('simcsv3/tailing1.csv')
+# 593 peaks
+# simulate mass range [100,1000] for MS1 scan
+compoundsub <- compound[compound$mz>100&compound$mz<1000,]
+# 533 peaks
+# align simulated peaks with detected peaks
+align2 <- enviGCMS::getalign(compoundsub$mz,re$mzmed,compoundsub$rt,re$rtmed,ppm = 5,deltart = 5)
+length(unique(compound$name[align2$xid]))
+# 77
+length(unique(paste(align2$mz2,align2$rt2)))
+# 289 found peaks match to 289 peaks
+library(SummarizedExperiment)
+res <- quantify(xdata, value = "maxo", method = "max")
+data <- assay(res)
+tailing <- cbind.data.frame(re,data)
+write.csv(tailing,'sim3xcmstailing.csv')
+
+
+## ---------------------------------------------------------------------------------------------------
+library(xcms)
+library(MsExperiment)
+# peak picking for simulated peaks
+path <- 'simsep'
+files <- list.files(path,pattern = ".CDF|.mzXML|.mzML",full.names = T,recursive = T)
+group <- xcms:::phenoDataFromPaths(files)
+  if(NCOL(group)==1){
+      sample_group <- group$class
+  }else{
+      cols <- colnames(group)
+      sample_group <-  do.call(paste,c(group[cols],sep='_'))
+  }
+  sample_name=sub(basename(files),pattern = ".CDF|.mzXML|.mzML",replacement = '')
+  pd <- cbind.data.frame(sample_name, sample_group)
+  
+raw_data <- readMsExperiment(spectraFiles = files[1], sampleData = pd[1,])
+# change peak width to [5,15] to cover simulated compound
+chr_raw <- chromatogram(raw_data, mz = c(269,269.1))
+cwp <- CentWaveParam(ppm=5,peakwidth = c(5,15))
+xdata <- findChromPeaks(chr_raw, param = cwp)
+write.csv(chromPeaks(xdata),'xcms.csv')
+
+
+## ---------------------------------------------------------------------------------------------------
+# you might need to install python and pyopenms to run the following code
+reticulate::use_python('/opt/homebrew/Caskroom/miniforge/base/bin/python')
+
+
+## import os
+## import shutil
+## import requests
+## import pandas as pd
+## from pyopenms import *
+## import os
+## import numpy as np
+## file1 = "sim/case/"
+## file2 = "sim/control/"
+## 
+## mzML_files = [file1+x for x in os.listdir(file1)]+[file2+x for x in os.listdir(file2)]
+## 
+## feature_maps = []
+## for file in mzML_files:
+##     # load mzML file into MSExperiment
+##     exp = MSExperiment()
+##     MzMLFile().load(file, exp) # load each mzML file to an OpenMS file format (MSExperiment)
+## 
+##     # mass trace detection
+##     mass_traces = [] # introduce an empty list where the mass traces will be loaded
+##     mtd = MassTraceDetection()
+##     mtd_par = mtd.getDefaults() # get the default parameters in order to edit them
+##     mtd_par.setValue("mass_error_ppm", 5.0) # high-res instrument, orbitraps
+##     mtd_par.setValue("noise_threshold_int", 1.0e02) # data-dependent (usually works for orbitraps)
+##     mtd.setParameters(mtd_par) # set the new parameters
+##     mtd.run(exp, mass_traces, 0) # run mass trace detection
+## 
+##     # elution peak detection
+##     mass_traces_deconvol = []
+##     epd = ElutionPeakDetection()
+##     epd_par = epd.getDefaults()
+##     epd_par.setValue("width_filtering", "fixed") # The fixed setting filters out mass traces outside the [min_fwhm: 1.0, max_fwhm: 60.0] interval
+##     epd.setParameters(epd_par)
+##     epd.detectPeaks(mass_traces, mass_traces_deconvol)
+## 
+##     # feature detection
+##     feature_map = FeatureMap() # output features
+##     chrom_out = [] # output chromatograms
+##     ffm = FeatureFindingMetabo()
+##     ffm_par = ffm.getDefaults()
+##     #ffm_par.setValue("remove_single_traces", "true") # remove mass traces without satellite isotopic traces
+##     #ffm.setParameters(ffm_par)
+##     ffm.run(mass_traces_deconvol, feature_map, chrom_out)
+##     feature_map.setUniqueIds() # Assigns a new, valid unique id per feature
+##     feature_map.setPrimaryMSRunPath([file.encode()]) # Sets the file path to the primary MS run (usually the mzML file)
+##     feature_maps.append(feature_map)
+## 
+## 
+## # use as reference for alignment, the file with the largest number of features (works well if you have a pooled QC for example)
+## 
+## ref_index = feature_maps.index(sorted(feature_maps, key=lambda x: x.size())[-1])
+## 
+## aligner = MapAlignmentAlgorithmPoseClustering()
+## 
+## trafos = {}
+## 
+## # parameter optimization
+## aligner_par= aligner.getDefaults()
+## aligner_par.setValue("max_num_peaks_considered", -1) # infinite
+## aligner_par.setValue("pairfinder:distance_MZ:max_difference", 10.0) # Never pair features with larger m/z distance
+## aligner_par.setValue("pairfinder:distance_MZ:unit", "ppm")
+## aligner.setParameters(aligner_par)
+## aligner.setReference(feature_maps[ref_index])
+## 
+## for feature_map in feature_maps[:ref_index] + feature_maps[ref_index+1:]:
+##     trafo = TransformationDescription() # save the transformed data points
+##     aligner.align(feature_map, trafo)
+##     trafos[feature_map.getMetaValue("spectra_data")[0].decode()] = trafo
+##     transformer = MapAlignmentTransformer()
+##     transformer.transformRetentionTimes(feature_map, trafo, True)
+## 
+## 
+## feature_grouper = FeatureGroupingAlgorithmKD()
+## 
+## consensus_map = ConsensusMap()
+## file_descriptions = consensus_map.getColumnHeaders()
+## 
+## for i, feature_map in enumerate(feature_maps):
+##     file_description = file_descriptions.get(i, ColumnHeader())
+##     file_description.filename = os.path.basename(
+##         feature_map.getMetaValue("spectra_data")[0].decode())
+##     file_description.size = feature_map.size()
+##     file_descriptions[i] = file_description
+## 
+## 
+## feature_grouper.group(feature_maps, consensus_map)
+## consensus_map.setColumnHeaders(file_descriptions)
+## consensus_map.setUniqueIds()
+## ConsensusXMLFile().store("FeatureMatrix.consensusXML", consensus_map)
+## df = consensus_map.get_df()
+## df.to_csv('simopenms.csv')
+
+## import os
+## import shutil
+## import requests
+## import pandas as pd
+## from pyopenms import *
+## import os
+## import numpy as np
+## file1 = "sim3/leading/"
+## file2 = "sim3/normal/"
+## file3 = "sim3/tailing/"
+## 
+## # mzML_files = [file1+x for x in os.listdir(file1)]+[file2+x for x in os.listdir(file2)]+[file3+x for x in os.listdir(file3)]
+## 
+## # mzML_files = [file2+x for x in os.listdir(file2)]+[file3+x for x in os.listdir(file3)]
+## 
+## # mzML_files = [file3+x for x in os.listdir(file3)]
+## 
+## mzML_files = [file1+x for x in os.listdir(file1)]
+## 
+## feature_maps = []
+## for file in mzML_files:
+##     # load mzML file into MSExperiment
+##     exp = MSExperiment()
+##     MzMLFile().load(file, exp) # load each mzML file to an OpenMS file format (MSExperiment)
+## 
+##     # mass trace detection
+##     mass_traces = [] # introduce an empty list where the mass traces will be loaded
+##     mtd = MassTraceDetection()
+##     mtd_par = mtd.getDefaults() # get the default parameters in order to edit them
+##     mtd_par.setValue("mass_error_ppm", 5.0) # high-res instrument, orbitraps
+##     mtd_par.setValue("noise_threshold_int", 1.0e02) # data-dependent (usually works for orbitraps)
+##     mtd.setParameters(mtd_par) # set the new parameters
+##     mtd.run(exp, mass_traces, 0) # run mass trace detection
+## 
+##     # elution peak detection
+##     mass_traces_deconvol = []
+##     epd = ElutionPeakDetection()
+##     epd_par = epd.getDefaults()
+##     epd_par.setValue("width_filtering", "fixed") # The fixed setting filters out mass traces outside the [min_fwhm: 1.0, max_fwhm: 60.0] interval
+##     epd.setParameters(epd_par)
+##     epd.detectPeaks(mass_traces, mass_traces_deconvol)
+## 
+##     # feature detection
+##     feature_map = FeatureMap() # output features
+##     chrom_out = [] # output chromatograms
+##     ffm = FeatureFindingMetabo()
+##     ffm_par = ffm.getDefaults()
+##     #ffm_par.setValue("remove_single_traces", "true") # remove mass traces without satellite isotopic traces
+##     #ffm.setParameters(ffm_par)
+##     ffm.run(mass_traces_deconvol, feature_map, chrom_out)
+##     feature_map.setUniqueIds() # Assigns a new, valid unique id per feature
+##     feature_map.setPrimaryMSRunPath([file.encode()]) # Sets the file path to the primary MS run (usually the mzML file)
+##     feature_maps.append(feature_map)
+## 
+## 
+## # use as reference for alignment, the file with the largest number of features (works well if you have a pooled QC for example)
+## 
+## ref_index = feature_maps.index(sorted(feature_maps, key=lambda x: x.size())[-1])
+## 
+## aligner = MapAlignmentAlgorithmPoseClustering()
+## 
+## trafos = {}
+## 
+## # parameter optimization
+## aligner_par= aligner.getDefaults()
+## aligner_par.setValue("max_num_peaks_considered", -1) # infinite
+## aligner_par.setValue("pairfinder:distance_MZ:max_difference", 10.0) # Never pair features with larger m/z distance
+## aligner_par.setValue("pairfinder:distance_MZ:unit", "ppm")
+## aligner.setParameters(aligner_par)
+## aligner.setReference(feature_maps[ref_index])
+## 
+## for feature_map in feature_maps[:ref_index] + feature_maps[ref_index+1:]:
+##     trafo = TransformationDescription() # save the transformed data points
+##     aligner.align(feature_map, trafo)
+##     trafos[feature_map.getMetaValue("spectra_data")[0].decode()] = trafo
+##     transformer = MapAlignmentTransformer()
+##     transformer.transformRetentionTimes(feature_map, trafo, True)
+## 
+## 
+## feature_grouper = FeatureGroupingAlgorithmKD()
+## 
+## consensus_map = ConsensusMap()
+## file_descriptions = consensus_map.getColumnHeaders()
+## 
+## for i, feature_map in enumerate(feature_maps):
+##     file_description = file_descriptions.get(i, ColumnHeader())
+##     file_description.filename = os.path.basename(
+##         feature_map.getMetaValue("spectra_data")[0].decode())
+##     file_description.size = feature_map.size()
+##     file_descriptions[i] = file_description
+## 
+## 
+## feature_grouper.group(feature_maps, consensus_map)
+## consensus_map.setColumnHeaders(file_descriptions)
+## consensus_map.setUniqueIds()
+## ConsensusXMLFile().store("FeatureMatrix.consensusXML", consensus_map)
+## df = consensus_map.get_df()
+## df.to_csv('sim3openmsleading.csv')
+## 
+## mzML_files = [file2+x for x in os.listdir(file2)]
+## 
+## feature_maps = []
+## for file in mzML_files:
+##     # load mzML file into MSExperiment
+##     exp = MSExperiment()
+##     MzMLFile().load(file, exp) # load each mzML file to an OpenMS file format (MSExperiment)
+## 
+##     # mass trace detection
+##     mass_traces = [] # introduce an empty list where the mass traces will be loaded
+##     mtd = MassTraceDetection()
+##     mtd_par = mtd.getDefaults() # get the default parameters in order to edit them
+##     mtd_par.setValue("mass_error_ppm", 5.0) # high-res instrument, orbitraps
+##     mtd_par.setValue("noise_threshold_int", 1.0e02) # data-dependent (usually works for orbitraps)
+##     mtd.setParameters(mtd_par) # set the new parameters
+##     mtd.run(exp, mass_traces, 0) # run mass trace detection
+## 
+##     # elution peak detection
+##     mass_traces_deconvol = []
+##     epd = ElutionPeakDetection()
+##     epd_par = epd.getDefaults()
+##     epd_par.setValue("width_filtering", "fixed") # The fixed setting filters out mass traces outside the [min_fwhm: 1.0, max_fwhm: 60.0] interval
+##     epd.setParameters(epd_par)
+##     epd.detectPeaks(mass_traces, mass_traces_deconvol)
+## 
+##     # feature detection
+##     feature_map = FeatureMap() # output features
+##     chrom_out = [] # output chromatograms
+##     ffm = FeatureFindingMetabo()
+##     ffm_par = ffm.getDefaults()
+##     #ffm_par.setValue("remove_single_traces", "true") # remove mass traces without satellite isotopic traces
+##     #ffm.setParameters(ffm_par)
+##     ffm.run(mass_traces_deconvol, feature_map, chrom_out)
+##     feature_map.setUniqueIds() # Assigns a new, valid unique id per feature
+##     feature_map.setPrimaryMSRunPath([file.encode()]) # Sets the file path to the primary MS run (usually the mzML file)
+##     feature_maps.append(feature_map)
+## 
+## 
+## # use as reference for alignment, the file with the largest number of features (works well if you have a pooled QC for example)
+## 
+## ref_index = feature_maps.index(sorted(feature_maps, key=lambda x: x.size())[-1])
+## 
+## aligner = MapAlignmentAlgorithmPoseClustering()
+## 
+## trafos = {}
+## 
+## # parameter optimization
+## aligner_par= aligner.getDefaults()
+## aligner_par.setValue("max_num_peaks_considered", -1) # infinite
+## aligner_par.setValue("pairfinder:distance_MZ:max_difference", 10.0) # Never pair features with larger m/z distance
+## aligner_par.setValue("pairfinder:distance_MZ:unit", "ppm")
+## aligner.setParameters(aligner_par)
+## aligner.setReference(feature_maps[ref_index])
+## 
+## for feature_map in feature_maps[:ref_index] + feature_maps[ref_index+1:]:
+##     trafo = TransformationDescription() # save the transformed data points
+##     aligner.align(feature_map, trafo)
+##     trafos[feature_map.getMetaValue("spectra_data")[0].decode()] = trafo
+##     transformer = MapAlignmentTransformer()
+##     transformer.transformRetentionTimes(feature_map, trafo, True)
+## 
+## 
+## feature_grouper = FeatureGroupingAlgorithmKD()
+## 
+## consensus_map = ConsensusMap()
+## file_descriptions = consensus_map.getColumnHeaders()
+## 
+## for i, feature_map in enumerate(feature_maps):
+##     file_description = file_descriptions.get(i, ColumnHeader())
+##     file_description.filename = os.path.basename(
+##         feature_map.getMetaValue("spectra_data")[0].decode())
+##     file_description.size = feature_map.size()
+##     file_descriptions[i] = file_description
+## 
+## 
+## feature_grouper.group(feature_maps, consensus_map)
+## consensus_map.setColumnHeaders(file_descriptions)
+## consensus_map.setUniqueIds()
+## ConsensusXMLFile().store("FeatureMatrix.consensusXML", consensus_map)
+## df = consensus_map.get_df()
+## df.to_csv('sim3openmsnormal.csv')
+## 
+## mzML_files = [file3+x for x in os.listdir(file3)]
+## 
+## feature_maps = []
+## for file in mzML_files:
+##     # load mzML file into MSExperiment
+##     exp = MSExperiment()
+##     MzMLFile().load(file, exp) # load each mzML file to an OpenMS file format (MSExperiment)
+## 
+##     # mass trace detection
+##     mass_traces = [] # introduce an empty list where the mass traces will be loaded
+##     mtd = MassTraceDetection()
+##     mtd_par = mtd.getDefaults() # get the default parameters in order to edit them
+##     mtd_par.setValue("mass_error_ppm", 5.0) # high-res instrument, orbitraps
+##     mtd_par.setValue("noise_threshold_int", 1.0e02) # data-dependent (usually works for orbitraps)
+##     mtd.setParameters(mtd_par) # set the new parameters
+##     mtd.run(exp, mass_traces, 0) # run mass trace detection
+## 
+##     # elution peak detection
+##     mass_traces_deconvol = []
+##     epd = ElutionPeakDetection()
+##     epd_par = epd.getDefaults()
+##     epd_par.setValue("width_filtering", "fixed") # The fixed setting filters out mass traces outside the [min_fwhm: 1.0, max_fwhm: 60.0] interval
+##     epd.setParameters(epd_par)
+##     epd.detectPeaks(mass_traces, mass_traces_deconvol)
+## 
+##     # feature detection
+##     feature_map = FeatureMap() # output features
+##     chrom_out = [] # output chromatograms
+##     ffm = FeatureFindingMetabo()
+##     ffm_par = ffm.getDefaults()
+##     #ffm_par.setValue("remove_single_traces", "true") # remove mass traces without satellite isotopic traces
+##     #ffm.setParameters(ffm_par)
+##     ffm.run(mass_traces_deconvol, feature_map, chrom_out)
+##     feature_map.setUniqueIds() # Assigns a new, valid unique id per feature
+##     feature_map.setPrimaryMSRunPath([file.encode()]) # Sets the file path to the primary MS run (usually the mzML file)
+##     feature_maps.append(feature_map)
+## 
+## 
+## # use as reference for alignment, the file with the largest number of features (works well if you have a pooled QC for example)
+## 
+## ref_index = feature_maps.index(sorted(feature_maps, key=lambda x: x.size())[-1])
+## 
+## aligner = MapAlignmentAlgorithmPoseClustering()
+## 
+## trafos = {}
+## 
+## # parameter optimization
+## aligner_par= aligner.getDefaults()
+## aligner_par.setValue("max_num_peaks_considered", -1) # infinite
+## aligner_par.setValue("pairfinder:distance_MZ:max_difference", 10.0) # Never pair features with larger m/z distance
+## aligner_par.setValue("pairfinder:distance_MZ:unit", "ppm")
+## aligner.setParameters(aligner_par)
+## aligner.setReference(feature_maps[ref_index])
+## 
+## for feature_map in feature_maps[:ref_index] + feature_maps[ref_index+1:]:
+##     trafo = TransformationDescription() # save the transformed data points
+##     aligner.align(feature_map, trafo)
+##     trafos[feature_map.getMetaValue("spectra_data")[0].decode()] = trafo
+##     transformer = MapAlignmentTransformer()
+##     transformer.transformRetentionTimes(feature_map, trafo, True)
+## 
+## 
+## feature_grouper = FeatureGroupingAlgorithmKD()
+## 
+## consensus_map = ConsensusMap()
+## file_descriptions = consensus_map.getColumnHeaders()
+## 
+## for i, feature_map in enumerate(feature_maps):
+##     file_description = file_descriptions.get(i, ColumnHeader())
+##     file_description.filename = os.path.basename(
+##         feature_map.getMetaValue("spectra_data")[0].decode())
+##     file_description.size = feature_map.size()
+##     file_descriptions[i] = file_description
+## 
+## 
+## feature_grouper.group(feature_maps, consensus_map)
+## consensus_map.setColumnHeaders(file_descriptions)
+## consensus_map.setUniqueIds()
+## ConsensusXMLFile().store("FeatureMatrix.consensusXML", consensus_map)
+## df = consensus_map.get_df()
+## df.to_csv('sim3openmstailing.csv')
+
+## import pyopenms as oms
+## import pandas as pd
+## import os
+## 
+## def get_abinitio_feature_rt_ranges(mzml_file_path, output_csv):
+##     exp = oms.MSExperiment()
+##     oms.MzMLFile().load(mzml_file_path, exp)
+##     mass_traces = []
+##     mtd = oms.MassTraceDetection()
+##     mtd_par = mtd.getDefaults()
+##     mtd_par.setValue("mass_error_ppm", 5.0) # high-res instrument, orbitraps
+##     mtd_par.setValue("noise_threshold_int", 1.0e02) # data-dependent (usually works for orbitraps)
+##     mtd.setParameters(mtd_par) # set the new parameters
+##     mtd.run(exp, mass_traces, 0) # run mass trace detection
+## 
+##     mass_traces_deconvol = []
+##     epd = oms.ElutionPeakDetection()
+##     epd_par = epd.getDefaults()
+##     epd_par.setValue("width_filtering", "fixed") # The fixed setting filters out mass traces outside the [min_fwhm: 1.0, max_fwhm: 60.0] interval
+##     epd.setParameters(epd_par)
+##     epd.detectPeaks(mass_traces, mass_traces_deconvol)
+## 
+##     feature_map = oms.FeatureMap() # output features
+##     chrom_out = []
+##     ff = oms.FeatureFindingMetabo()
+## 
+##     ff.run(mass_traces_deconvol, feature_map, chrom_out)
+##     feature_map.setUniqueIds() # Assigns a new, valid unique id per feature
+##     # feature_map.setPrimaryMSRunPath([file.encode()]) # Sets the file path to the primary MS run (usually the mzML file)
+## 
+##     feature_data_list = []
+## 
+##     for i, feature in enumerate(feature_map):
+##             feature_dict = {
+##                 'MapIndex': i,
+##                 'FeatureUID': feature.getUniqueId(),
+##                 'MZ_Centroid': round(feature.getMZ(), 5) if feature.getMZ() is not None else None,
+##                 'RT_Centroid_seconds': round(feature.getRT(), 3) if feature.getRT() is not None else None,
+##                 'Intensity': round(feature.getIntensity(), 2) if feature.getIntensity() is not None else None,
+##                 'Charge': feature.getCharge(),
+##                 'RT_Width_seconds': round(feature.getWidth(), 5) if feature.getWidth() is not None else None,
+##                 'Quality': round(feature.getOverallQuality(), 4) if feature.getOverallQuality() is not None else None,
+##                 'NumMassTraces': len(feature.getSubordinates())
+##             }
+##             feature_data_list.append(feature_dict)
+## 
+##     if feature_data_list:
+##       df = pd.DataFrame(feature_data_list)
+##       df.to_csv(output_csv, index=False, encoding='utf-8-sig')
+## 
+## input_mzml = "simsep/sep1.mzML"
+## output_csv = "openms.csv"
+## get_abinitio_feature_rt_ranges(input_mzml, output_csv)
+
+## ---------------------------------------------------------------------------------------------------
+library(mzrtsim)
+# the following code will show database in mzrtsim
+# MoNA MS1 peaks
+data("monams1")
+name <- sapply(monams1,function(x) x$name)
+length(unique(name))
+# MoNA MS1 peaks collected from high resolution mass spectrometry
+data("monahrms1")
+name <- sapply(monahrms1,function(x) x$name)
+length(unique(name))
+# HMDB experiment data from GCMS
+data("hmdbcms")
+name <- sapply(hmdbcms,function(x) x$name)
+length(unique(name))
+# peak number for different database
+pn <- sapply(monams1,function(x) x$np)
+mean(as.numeric(pn))
+median(as.numeric(pn))
+pn <- sapply(hmdbcms,function(x) x$np)
+mean(as.numeric(pn))
+median(as.numeric(pn))
+
+
+## ---------------------------------------------------------------------------------------------------
+# load detected peaks from xcms, openms, and mzmine
+xcms <- read.csv('simxcms.csv')
+openms <- read.csv('simopenms.csv')
+mzmine <- read.csv('simmzmine.csv')
+# load simulated peaks
+real <- read.csv('simcsv/case1.csv')
+# check overlap
+xcmsalign <- enviGCMS::getalign(real$mz,xcms$mz,real$rt,xcms$rt,ppm = 5,deltart = 5)
+openmsalign <- enviGCMS::getalign(real$mz,openms$mz,real$rt,openms$RT,ppm = 5,deltart = 5)
+mzminealign <- enviGCMS::getalign(real$mz,mzmine$mz,real$rt,mzmine$rt*60,ppm = 5,deltart = 5)
+# check unique peaks
+xcmsname <- paste(xcmsalign$mz2,xcmsalign$rt2)
+openmsname <- paste(openmsalign$mz2,openmsalign$rt2)
+mzminename <- paste(mzminealign$mz2,mzminealign$rt2)
+
+length(unique(xcmsname))
+# 327/340
+length(unique(openmsname))
+# 474/564
+length(unique(mzminename))
+# 523/523
+
+xcmsnamer <- paste(xcmsalign$mz1,xcmsalign$rt1)
+openmsnamer <- paste(openmsalign$mz1,openmsalign$rt1)
+mzminenamer <- paste(mzminealign$mz1,mzminealign$rt1)
+
+length(unique(xcmsnamer))
+# 328/593
+length(unique(openmsnamer))
+# 449/593
+length(unique(mzminenamer))
+# 484/593
+
+library(ggvenn)
+# display overlap
+cvenn <- ggvenn(list(XCMS=real$name[unique(xcmsalign$xid)],OpenMS=real$name[unique(openmsalign$xid)],MZmine4.5=real$name[unique(mzminealign$xid)]))+ggtitle('B')
+name <- paste(real$mz,real$rt)
+pvenn <- ggvenn(list(XCMS=name[unique(xcmsalign$xid)],OpenMS=name[unique(openmsalign$xid)],MZmine4.5=name[unique(mzminealign$xid)]))+ggtitle('A')
+
+z <- real[real$name %in% unique(real$name[unique(xcmsalign$xid)]),]
+library(ggplot2)
+
+data <- data.frame(
+  Value = c(real$ins[unique(xcmsalign$xid)], real$ins[-unique(xcmsalign$xid)], real$ins[unique(openmsalign$xid)], real$ins[-unique(openmsalign$xid)], real$ins[unique(mzminealign$xid)], real$ins[-unique(mzminealign$xid)]),
+  Peaks = factor(c(rep('TP(XCMS)',length(real$ins[unique(xcmsalign$xid)])),rep('FN(XCMS)',length(real$ins[-unique(xcmsalign$xid)])),rep('TP(OpenMS)',length(real$ins[unique(openmsalign$xid)])),rep('FN(OpenMS)',length(real$ins[-unique(openmsalign$xid)])),rep('TP(MZmine 4.5)',length(real$ins[unique(mzminealign$xid)])),rep('FN(MZmine 4.5)',length(real$ins[-unique(mzminealign$xid)]))))
+)
+
+des <- ggplot(data, aes(x = Value, fill = Peaks, color = Peaks)) +
+  geom_density(alpha = 0.15) +  
+  scale_fill_brewer(palette = "Set1") + 
+  scale_color_brewer(palette = "Set1") +
+  labs(title = "Overlaid Density Plot", x = "Relative Intensity Distribution", y = "Density") + ggtitle('B') +
+  theme_minimal() + 
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.position = c(0.8,0.8))
+
+library(patchwork)
+p <- pvenn|des
+ggsave('figure2.png',p,width = 12,height = 5)
+
+
+
+## ---------------------------------------------------------------------------------------------------
+# load detected peaks from xcms, openms, and mzmine
+xcms <- read.csv('sim3xcmsnormal.csv')
+openms <- read.csv('sim3openmsnormal.csv')
+mzmine <- read.csv('sim3mzminenormal.csv')
+# load simulated peaks
+real <- read.csv('simcsv3/normal1.csv')
+# check overlap
+xcmsalign <- enviGCMS::getalign(real$mz,xcms$mz,real$rt,xcms$rt,ppm = 5,deltart = 5)
+openmsalign <- enviGCMS::getalign(real$mz,openms$mz,real$rt,openms$RT,ppm = 5,deltart = 5)
+mzminealign <- enviGCMS::getalign(real$mz,mzmine$mz,real$rt,mzmine$rt*60,ppm = 5,deltart = 5)
+# check unique peaks
+xcmsname <- paste(xcmsalign$mz2,xcmsalign$rt2)
+openmsname <- paste(openmsalign$mz2,openmsalign$rt2)
+mzminename <- paste(mzminealign$mz2,mzminealign$rt2)
+
+length(unique(xcmsname))
+# 367/377
+length(unique(openmsname))
+# 466/580
+length(unique(mzminename))
+# 514/516
+
+xcmsnamer <- paste(xcmsalign$mz1,xcmsalign$rt1)
+openmsnamer <- paste(openmsalign$mz1,openmsalign$rt1)
+mzminenamer <- paste(mzminealign$mz1,mzminealign$rt1)
+
+length(unique(xcmsnamer))
+# 367/593
+length(unique(openmsnamer))
+# 449/593
+length(unique(mzminenamer))
+# 480/593
+ggvenn(list(XCMS=real$name[unique(xcmsalign$xid)],OpenMS=real$name[unique(openmsalign$xid)],MZmine4.5=real$name[unique(mzminealign$xid)]))+ggtitle('B')
+
+
+
+## ---------------------------------------------------------------------------------------------------
+# load detected peaks from xcms, openms, and mzmine
+xcms <- read.csv('sim3xcmsleading.csv')
+openms <- read.csv('sim3openmsleading.csv')
+mzmine <- read.csv('sim3mzmineleading.csv')
+# load simulated peaks
+real <- read.csv('simcsv3/leading1.csv')
+# check overlap
+xcmsalign <- enviGCMS::getalign(real$mz,xcms$mz,real$rt,xcms$rt,ppm = 5,deltart = 5)
+openmsalign <- enviGCMS::getalign(real$mz,openms$mz,real$rt,openms$RT,ppm = 5,deltart = 5)
+mzminealign <- enviGCMS::getalign(real$mz,mzmine$mz,real$rt,mzmine$rt*60,ppm = 5,deltart = 5)
+# check unique peaks
+xcmsname <- paste(xcmsalign$mz2,xcmsalign$rt2)
+openmsname <- paste(openmsalign$mz2,openmsalign$rt2)
+mzminename <- paste(mzminealign$mz2,mzminealign$rt2)
+
+length(unique(xcmsname))
+# 396/412
+length(unique(openmsname))
+# 466/795
+length(unique(mzminename))
+# 503/503
+
+xcmsnamer <- paste(xcmsalign$mz1,xcmsalign$rt1)
+openmsnamer <- paste(openmsalign$mz1,openmsalign$rt1)
+mzminenamer <- paste(mzminealign$mz1,mzminealign$rt1)
+
+length(unique(xcmsnamer))
+# 397/593
+length(unique(openmsnamer))
+# 445/593
+length(unique(mzminenamer))
+# 482/593
+ggvenn(list(XCMS=real$name[unique(xcmsalign$xid)],OpenMS=real$name[unique(openmsalign$xid)],MZmine3=real$name[unique(mzminealign$xid)]))+ggtitle('B')
+
+
+
+## ---------------------------------------------------------------------------------------------------
+# load detected peaks from xcms, openms, and mzmine
+xcms <- read.csv('sim3xcmstailing.csv')
+openms <- read.csv('sim3openmstailing.csv')
+mzmine <- read.csv('sim3mzminetailing.csv')
+# load simulated peaks
+real <- read.csv('simcsv3/tailing1.csv')
+# check overlap
+xcmsalign <- enviGCMS::getalign(real$mz,xcms$mz,real$rt,xcms$rt,ppm = 5,deltart = 5)
+openmsalign <- enviGCMS::getalign(real$mz,openms$mz,real$rt,openms$RT,ppm = 5,deltart = 5)
+mzminealign <- enviGCMS::getalign(real$mz,mzmine$mz,real$rt,mzmine$rt*60,ppm = 5,deltart = 5)
+# check unique peaks
+xcmsname <- paste(xcmsalign$mz2,xcmsalign$rt2)
+openmsname <- paste(openmsalign$mz2,openmsalign$rt2)
+mzminename <- paste(mzminealign$mz2,mzminealign$rt2)
+
+length(unique(xcmsname))
+# 289/294
+length(unique(openmsname))
+# 462/567
+length(unique(mzminename))
+# 511/512
+
+xcmsnamer <- paste(xcmsalign$mz1,xcmsalign$rt1)
+openmsnamer <- paste(openmsalign$mz1,openmsalign$rt1)
+mzminenamer <- paste(mzminealign$mz1,mzminealign$rt1)
+
+length(unique(xcmsnamer))
+# 289/593
+length(unique(openmsnamer))
+# 443/593
+length(unique(mzminenamer))
+# 479/593
+ggvenn(list(XCMS=real$name[unique(xcmsalign$xid)],OpenMS=real$name[unique(openmsalign$xid)],MZmine3=real$name[unique(mzminealign$xid)]))+ggtitle('B')
+
+
+
+## ---------------------------------------------------------------------------------------------------
+library(xcms)
+library(MsExperiment)
+raw_data <- readMsExperiment(spectraFiles = 'simsep/sep1.mzML')
+# change peak width to [5,15] to cover simulated compound
+chr_raw <- chromatogram(raw_data, mz = c(269,269.1))
+png('figure2c.png',width = 2000,height = 1000,res=300)
+par(mar=c(4.1,4.1,2,1))
+plot(chr_raw,xlab="Retention time(s)",ylab='Intensity',xlim=c(0,200),main='')
+xcms <- read.csv('xcms.csv')
+points(xcms[,'rt'],rep(1e8,4),type = 'h',col='blue',lwd = 3)
+segments(x0 = xcms[,'rtmin'],y0 =5e7,x1=xcms[,'rtmax'],y1 = 5e7,col = 'blue',lwd = 2)
+openms <- read.csv('openms.csv')
+openmssub <- openms[openms$MZ_Centroid>269&openms$MZ_Centroid<269.1,]
+points(openmssub$RT_Centroid_seconds,rep(1.2e8,5),type = 'h',lwd = 2.5,col='yellow')
+segments(x0 = openmssub$RT_Centroid_seconds-openmssub$RT_Width_seconds/2,y0 = 6e7,x1=openmssub$RT_Centroid_seconds+openmssub$RT_Width_seconds/2,y1 = 6e7,col = 'yellow',lwd = 2)
+mzmine <- read.csv('mzmine.csv')
+mzminesub <- mzmine[mzmine$mz>269&mzmine$mz<269.1,]
+points(mzminesub$rt*60,rep(8e7,3),type = 'h',col='green',lwd = 2)
+segments(x0 = mzminesub$rt_range.min*60,y0 = 4e7,x1=mzminesub$rt_range.max*60,y1 = 4e7,col = 'green',lwd = 1.8)
+points(c(20,30,50,70,79,116,125,137),rep(0,8),pch=17,col='black',cex=1)
+legend('topright',legend=c('XCMS','OpenMS','MZmine 4.5','True Peak'),col=c('blue','yellow','green','black'),pch = c(3,3,3,17),bg = NULL,bty = 'n')
+dev.off()
+
+
+## ---------------------------------------------------------------------------------------------------
+knitr::knit_exit()
