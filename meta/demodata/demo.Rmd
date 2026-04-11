@@ -760,6 +760,29 @@ list <- list(data=posdata,mz=posmzrt$mass_to_charge,rt=posmzrt$retention_time,gr
 enviGCMS::getcsv(list,'MTBLS341exudateneg')
 ```
 
+## MTBLS1267
+
+```{r}
+# Risa package, pls download metadata from metabolights and put those file in current work dir
+library(Risa)
+
+setwd('meta/demodata/MTBLS1267')
+test <- readISAtab()
+metadata <- test@study.files$MTBLS1267
+# change the file name to load in the metabolites data
+data0 <- read.table(file = 'm_mtbls1267_NEG_HILIC_mass_spectrometry_v2_maf.tsv', sep = '\t',header = T)
+head <- read.table(file = 'm_mtbls1267_NEG_HILIC_mass_spectrometry_v2_maf.tsv',sep = '\t',nrows = 1)
+data <- data0[,match(metadata$`Sample Name`,head,nomatch = F)]
+colnames(data) <- head[,match(metadata$`Sample Name`,head,nomatch = F)]
+group <- metadata[match(colnames(data),metadata$`Sample Name`,nomatch = F),]
+mz <- data0[,head=='mass_to_charge']
+rt <- data0[,head=='retention_time']*60
+# construnt the list
+list <- list(data=data,group=group,mz=mz,rt=rt)
+
+```
+
+
 # Target metabolomics
 
 ## MTBLS404

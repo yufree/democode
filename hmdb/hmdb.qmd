@@ -1,0 +1,39 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+```{r}
+library(data.table)
+hmdb <- fread('hmdb_output.csv')
+```
+
+```{r}
+data <- unique(hmdb$monisotopic_molecular_weight)
+data <- data[!is.na(data)]
+
+min_val <- floor(min(data))
+max_val <- ceiling(max(data))
+breaks <- seq(min_val, max_val, by = 0.2)
+
+freq_table <- table(cut(data, breaks = breaks, right = FALSE))
+result <- data.frame(
+  Interval = names(freq_table),
+  Frequency = as.numeric(freq_table),
+  stringsAsFactors = FALSE
+)
+result <- result[result$Frequency>0,]
+table(result$Frequency)
+
+breaks <- seq(min_val, max_val, by = 0.01)
+
+freq_table <- table(cut(data, breaks = breaks, right = FALSE))
+result <- data.frame(
+  Interval = names(freq_table),
+  Frequency = as.numeric(freq_table),
+  stringsAsFactors = FALSE
+)
+result <- result[result$Frequency>0,]
+table(result$Frequency)
+```

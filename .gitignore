@@ -1,5 +1,62 @@
+# === R ===
 .Rproj.user
 .Rhistory
 .RData
-democode.Rproj
+.Rproj.user/
+*.Rproj
+rsconnect/
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+.eggs/
+*.pyc
+venv/
+.venv/
+env/
+.env/
+
+# === Jupyter ===
+.ipynb_checkpoints/
+
+# === macOS ===
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# === Large data files ===
+*.mzML
+*.mzXML
+*.mzData
+*.raw
+*.RAW
+*.h5
+*.hdf5
+*.gguf
+*.wiff
+*.d/
+
+# === Common data files (uncomment if needed) ===
+# *.csv
+# *.xlsx
+# *.xml
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === Misc ===
+.claude/
+node_modules/
+*.log
+data

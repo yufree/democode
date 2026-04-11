@@ -1,0 +1,93 @@
+ONTOLOGY SOURCE REFERENCE
+Term Source Name	MTBLS	EPO	NCBITAXON	BTO	NCIT	OBI	EFO	CHMO	MS
+Term Source File	https://www.ebi.ac.uk/metabolights/	http://data.bioontology.org/ontologies/EPO	http://data.bioontology.org/ontologies/NCBITAXON	http://data.bioontology.org/ontologies/BTO	http://data.bioontology.org/ontologies/NCIT	http://data.bioontology.org/ontologies/OBI	http://data.bioontology.org/ontologies/EFO	http://data.bioontology.org/ontologies/CHMO	http://data.bioontology.org/ontologies/MS
+Term Source Version	1.0	1	2	22	85	22	195	22	150
+Term Source Description	Metabolights Ontology	Early Pregnancy Ontology	National Center for Biotechnology Information (NCBI) Organismal Classification	BRENDA Tissue and Enzyme Source Ontology	National Cancer Institute Thesaurus	Ontology for Biomedical Investigations	Experimental Factor Ontology	Chemical Methods Ontology	Mass Spectrometry Ontology
+INVESTIGATION
+Investigation Identifier	MTBLS1267
+Investigation Title	Investigation
+Investigation Description	
+Investigation Submission Date	
+Investigation Public Release Date	2020-02-03
+Comment[Created With Configuration]	D:\METABOLOMICS\Metabolights\Configurations\MetaboLightsConfig20150707
+Comment[Last Opened With Configuration]	MetaboLightsConfig20150707
+INVESTIGATION PUBLICATIONS
+Investigation PubMed ID
+Investigation Publication DOI
+Investigation Publication Author List
+Investigation Publication Title
+Investigation Publication Status
+Investigation Publication Status Term Accession Number
+Investigation Publication Status Term Source REF
+INVESTIGATION CONTACTS
+Investigation Person Last Name
+Investigation Person First Name
+Investigation Person Mid Initials
+Investigation Person Email
+Investigation Person Phone
+Investigation Person Fax
+Investigation Person Address
+Investigation Person Affiliation
+Investigation Person Roles
+Investigation Person Roles Term Accession Number
+Investigation Person Roles Term Source REF
+STUDY
+Study Identifier	MTBLS1267
+Study Title	Metabolomics Characterization of Human Calcific Aortic Valve Stenosis
+Study Description	<p><strong>BACKGROUND:</strong> Calcific aortic valve stenosis (CAVS) is the most prevalent valvular heart disease in developed countries with significant morbidity and mortality. Given the poor understanding of the pathophysiological processes leading to CAVS, we utilized a joint non-targeted metabolomics and targeted lipidomics approach to better characterize the metabolic perturbations involved in its development and progression.</p><p><strong>METHODS:</strong> We collected human aortic valve tissue from 106 patients undergoing aortic valve replacement surgery. Our cohort represented aortic valvular hemodynamics from mild to severe aortic stenosis with varying degrees of valvular calcification.</p><p><strong>RESULTS:</strong> Seventy-two significantly differential (p&lt;0.01) metabolites across different stages of CAVS severity were filtered and identified from the tissue metabolome. Each stage of valvular stenosis was characterized by a distinct metabolic signature. The top three perturbed metabolic pathways in the setting of CAVS involved glycerophospholipid metabolism, linoleic acid metabolism and primary bile acid biosynthesis. The lysophosphatidic acid species (LysoPA) exhibited significant (p&lt;0.05) association with CAVS severity and were also found to select patients with accelerated rate of CAVS progression. Two LysoPA species namely, 18:2 LysoPA and 20:4 LysoPA, exhibited potential to serve as biomarkers of CAVS severity.</p><p><strong>CONCLUSIONS:</strong> The present study reports the largest and most comprehensive metabolomics analysis of human aortic valve stenosis that highlights the dysregulated LysoPA pathway involved in the pathogenesis of CAVS.</p>
+Study Submission Date	2019-09-21
+Study Public Release Date	2020-02-03
+Study File Name	s_mtbls1267.txt
+STUDY DESIGN DESCRIPTORS
+Study Design Type	untargeted metabolites	Calcific aortic valve stenosis	Ultra-performance liquid chromatography-mass spectrometry	Heart valve disease	surgical treatment	Ion mobility spectrometry-mass spectrometry
+Study Design Type Term Accession Number	http://www.ebi.ac.uk/metabolights/ontology/MTBLS_000279	http://www.ebi.ac.uk/metabolights/ontology/placeholder	http://purl.obolibrary.org/obo/CHMO_0000715	http://www.ebi.ac.uk/efo/EFO_0009551	http://www.semanticweb.org/ontologies/epo.owl	
+Study Design Type Term Source REF	MTBLS	MTBLS	CHMO	EFO	EPO	CHMO
+STUDY PUBLICATIONS
+Study PubMed ID	
+Study Publication DOI	
+Study Publication Author List	Arun Surendran, Andrea Edel, Mahesh Chandran, Pascal Bogaert, Pedram Hassan-Tash, Aneesh Kumar A, Zahra Solati, Michael Raab, Malek Kass, Ashish Shah, Davinder S. Jassal, Abdul Jaleel, Amir Ravandi
+Study Publication Title	Metabolomics reveals the association of lysophosphatidic acids with severity and progression of calcific aortic valve stenosis in humans
+Study Publication Status	In preparation
+Study Publication Status Term Accession Number	http://www.ebi.ac.uk/efo/EFO_0001795
+Study Publication Status Term Source REF	EFO
+STUDY FACTORS
+Study Factor Name	CAVS Severity
+Study Factor Type	Severity
+Study Factor Type Term Accession Number	http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl
+Study Factor Type Term Source REF	NCIT
+STUDY ASSAYS
+Study Assay File Name	a_mtbls1267_POS_RP_mass_spectrometry.txt	a_mtbls1267_NEG_RP_mass_spectrometry.txt	a_mtbls1267_POS_HILIC_mass_spectrometry.txt	a_mtbls1267_NEG_HILIC_mass_spectrometry.txt
+Study Assay Measurement Type	metabolite profiling	metabolite profiling	metabolite profiling	metabolite profiling
+Study Assay Measurement Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000366	http://purl.obolibrary.org/obo/OBI_0000366	http://purl.obolibrary.org/obo/OBI_0000366	http://purl.obolibrary.org/obo/OBI_0000366
+Study Assay Measurement Type Term Source REF	OBI	OBI	OBI	OBI
+Study Assay Technology Type	mass spectrometry	mass spectrometry	mass spectrometry	mass spectrometry
+Study Assay Technology Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000470	http://purl.obolibrary.org/obo/OBI_0000470	http://purl.obolibrary.org/obo/OBI_0000470	http://purl.obolibrary.org/obo/OBI_0000470
+Study Assay Technology Type Term Source REF	OBI	OBI	OBI	OBI
+Study Assay Technology Platform	RP_Pos_Synapt_HDMS	RP_Neg_Synapt_HDMS	HILIC_Pos_Synapt_HDMS	HILIC_Neg_Synapt_HDMS
+STUDY PROTOCOLS
+Study Protocol Name	Sample collection	Extraction	Chromatography	Mass spectrometry	Data transformation	Metabolite identification
+Study Protocol Type	Sample collection	Extraction	Chromatography	Mass spectrometry	Data transformation	Metabolite identification
+Study Protocol Type Term Accession Number						
+Study Protocol Type Term Source REF						
+Study Protocol Description	<p>Aortic valve (AV) leaflets were obtained from 106 patients from St. Boniface Hospital (MB, Canada). All these patients underwent aortic valvular surgery with a diagnosis of clinically significant aortic stenosis (AS) requiring AV replacement. After surgical removal, the AV leaflets were immediately placed in an ice-cold solution containing EDTA/PBS and stored at -80 °C until analysis.</p>	<p>In brief, the entire explanted valve was cryo-milled until a fine powder was obtained. A 100 mg portion of the frozen powder homogenate was weighed and kept aside for metabolite extraction via untargeted analysis. The metabolites were extracted from 96 AV leaflets (N=96) using a pre-chilled extraction solution containing 2:2:1 methanol, acetonitrile and water (vol/vol/vol). Briefly, approximately 100 mg of frozen tissue homogenate was suspended in 900 µl of extraction solution, vortexed and sonicated in an ice-cold water bath sonicator for 10 min. The samples were then centrifuged at 3000 x g at 4°C for 20 min to remove the denatured proteins. The supernatant was dried down in a nitrogen evaporator and stored at -80 °C until UPLC-HDMSE analysis. The samples were finally reconstituted in 100 µl of 50% methanol with 0.1% formic acid and transferred into a sampling vial immediately prior to injection.</p>	<p>The metabolites were separated using a UPLC chromatographic system (ACQUITY, WATERS, Milford, USA) in both reverse phase (RP) and hydrophilic interaction liquid chromatography (HILIC) columns. For RP liquid chromatography (RPLC) separation, we used a C18 (ACQUITY UPLC HSS T3 C18, 100 Å, 1.8 μm, 2.1 mm x 100 mm, Waters) column. The oven temperature was maintained at 40 °C and the auto-sampler at 4 °C. The eluent solutions consisted of aqueous (A) and organic (B) components, where A was ultrapure water and B was acetonitrile. Both A and B contained 0.1% formic acid or 0.1% acetic acid in positive ion mode and negative ion mode respectively. A 22 min linear gradient was performed as follows: 0-1 min, 1% B; 16-20 min, 100% B; and 22 min, 1% B. Samples were ionized in positive and negative ion modes employing the same gradient. HILIC separation was achieved using a BEH (ACQUITY BEH HILIC column, 130 Å, 1.7 μm, 2.1 mm x 150 mm, Waters) column. For HILIC, eluent solutions were 95% acetonitrile in 10 mM ammonium acetate (A) and 50% acetonitrile in 10 mM ammonium acetate (B). Both A and B contained 0.1% formic acid or 0.1% acetic acid in positive ion mode and negative ion mode respectively. A 20 min linear gradient was performed as follows in both modes as follows: 0 min, 1% B; 5 min, 20% B; 10 min, 50% B; 14-16 min, 95 %B; and 17-20 min, 1% B. For both RP and HILIC separations, the sample injection volume was 5 µl and flow rate was set to 400 μl/min.</p>	<p>For mass spectrometry analysis, we used an ion mobility spectrometry (IMS) in conjunction with the UPLC System coupled to a Quadrupole-Time of Flight (Q-TOF) mass spectrometer (SYNAPT-G2, Waters). Both the systems were operated and controlled by MassLynx4.1 SCN781 workstation (Waters, MA, USA). Mass spectral analysis was conducted in positive and negative ion modes with ESI parameters as follows: capillary voltage 2.85 kV, sample cone 40 V, extraction cone 6 V, IMS gas (N2) flow 90 ml/min. To perform the mobility separation, the IMS T-Wave pulse height is set to 40 V during transmission and the IMS T-Wave velocity was set to 650 m/s. The travelling wave height was ramped linearly over 100% of the IMS cycle between 8 V and 20 V.</p>	In untargeted mode, MassLynx4.1 workstation was used to acquire the data from Q-TOF/MS. The raw data was then imported to Progenesis QI v.2.1.5 software (Nonlinear Dynamics, UK) for automatic data processing. Overall, the Progenesis co-detection workflow comprised selecting a reference run, alignment of the runs, peak picking, normalization, deconvolution, compound identification and statistics. All stages are automated up to the point of compound identification.	<p>Progenesis MetaScope was used for the tentative annotation of metabolite features of interest. The annotation is based on accurate mass, isotopic distribution, and the theoretical fragmentation patterns produced by compounds against an in-house human database. The in-house metabolite database was made with the help of Progenesis SDF Studio (Nonlinear Dynamics, UK) software. This in-house human database contained 8,971 entries, which are either already quantified or detected in humans, in SDF (structure-data file) format. To further increase the confidence in metabolite identification, experimental fragmentation data were matched against theoretical fragmentation patterns generated by the simulated breaking of bonds in the structures of possible identifications. Metabolite identifications were searched for with a mass tolerance of ±10 ppm.</p>
+Study Protocol URI						
+Study Protocol Version						
+Study Protocol Parameters Name		Derivatization;Post Extraction	Column type;Column model;Chromatography Instrument	Scan polarity;Mass analyzer;Ion source;Instrument;Scan m/z range		
+Study Protocol Parameters Name Term Accession Number		;	;;	;;;;		
+Study Protocol Parameters Name Term Source REF		;	;;	;;;;		
+Study Protocol Components Name						
+Study Protocol Components Type						
+Study Protocol Components Type Term Accession Number						
+Study Protocol Components Type Term Source REF						
+STUDY CONTACTS
+Study Person Last Name	Surendran	Chandran	Kumar A	Jaleel	Ravandi
+Study Person First Name	Arun	Mahesh	Aneesh	Abdul	Amir
+Study Person Mid Initials					
+Study Person Email	arunsuran@gmail.com	maheshchandran@rgcb.res.in	aneeshkumar@rgcb.res.in	jaleel@rgcb.res.in	aravandi@sbgh.mb.ca
+Study Person Phone					
+Study Person Fax					
+Study Person Address				Rajiv Gandhi Centre for Biotechnology	Institute of Cardiovascular Sciences, St. Boniface Hospital Research
+Study Person Affiliation				Scientist F	
+Study Person Roles				Investigator	Principal Investigator
+Study Person Roles Term Accession Number				http://purl.obolibrary.org/obo/NCIT_C25936	http://purl.obolibrary.org/obo/NCIT_C19924
+Study Person Roles Term Source REF				NCIT	NCIT
